@@ -159,6 +159,7 @@ def create_receipt(agent, task, parents=None):
         "depth": depth,
         "agent": agent.name,
         "parents": [p["receipt_id"] for p in (parents or [])],
+        "parent_refs": parent_refs,
     }
     agent.receipts.append(receipt)
     return receipt
@@ -184,6 +185,13 @@ def submit_transfer(from_agent, to_agent, receipt, log_url=None):
     transfer_hash = sha256(canonical)
     signature = from_agent.key.sign(transfer_hash)
 
+    parent_receipts_payload = []
+    for pr in receipt.get("parent_refs", []):
+        parent_receipts_payload.append({
+            "parent_receipt_id": pr["receipt_id"].hex(),
+            "relationship": pr["relationship"],
+        })
+
     payload = {
         "receipt_id": receipt["receipt_id"].hex(),
         "from_key": from_agent.pub.hex(),
@@ -194,6 +202,7 @@ def submit_transfer(from_agent, to_agent, receipt, log_url=None):
         "royalties_paid": [],
         "seller_signature": signature.hex(),
         "canonical_bytes": canonical.hex(),
+        "parent_receipts": parent_receipts_payload,
     }
 
     try:

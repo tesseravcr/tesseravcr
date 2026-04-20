@@ -104,7 +104,7 @@ a{color:#7c6ff7}
   <div class="stat-card"><div class="stat-val" id="s-nodes">-</div><div class="stat-label">Nodes Online</div></div>
   <div class="stat-card"><div class="stat-val" id="s-entries">-</div><div class="stat-label">Log Entries</div></div>
   <div class="stat-card"><div class="stat-val" id="s-witnesses">-</div><div class="stat-label">Witness Sigs</div></div>
-  <div class="stat-card"><div class="stat-val" id="s-depth">-</div><div class="stat-label">Max Depth</div></div>
+  <div class="stat-card"><div class="stat-val" id="s-depth">-</div><div class="stat-label">With Parents</div></div>
 </div>
 
 <div class="section-label">Seed Nodes</div>
@@ -285,6 +285,7 @@ async function refresh(){
       <div class="tx-row"><span class="label">receipt</span><span class="val hash">${sh(t.receipt_id)}</span></div>
       <div class="tx-row"><span class="label">from</span><span class="val">${sh(t.from_key)}</span><span class="label" style="margin-left:auto">to</span><span class="val">${sh(t.to_key)}</span></div>
       <div class="tx-row"><span class="label">price</span><span class="val price">${price}</span><span class="label" style="margin-left:auto">time</span><span class="val">${fmtTime(t.timestamp)}</span></div>
+      ${t.parent_receipts&&t.parent_receipts.length?`<div class="tx-row" style="margin-top:2px"><span class="label">parents</span><span class="val" style="color:#f59e0b">${t.parent_receipts.map(p=>sh(p.parent_receipt_id)+' ('+p.relationship+')').join(', ')}</span></div>`:''}
     </div>`;
   });
   feed.innerHTML=fh||'<div style="color:#333;padding:20px;text-align:center">no transfers yet</div>';
@@ -311,7 +312,7 @@ async function refresh(){
   document.getElementById('s-nodes').textContent=online;
   document.getElementById('s-entries').textContent=totalEntries;
   document.getElementById('s-witnesses').textContent=totalWitnesses;
-  document.getElementById('s-depth').textContent=allEntries.length;
+  document.getElementById('s-depth').textContent=allEntries.filter(e=>e.parent_receipts&&e.parent_receipts.length>0).length;
   document.getElementById('last-update').textContent=new Date().toLocaleTimeString();
 }
 

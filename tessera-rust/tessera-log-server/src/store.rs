@@ -28,6 +28,12 @@ pub struct SignedCheckpoint {
 }
 
 #[derive(Debug)]
+pub struct ParentRefRow {
+    pub parent_receipt_id: String,
+    pub relationship: String,
+}
+
+#[derive(Debug)]
 pub struct EntryRow {
     pub idx: u64,
     pub receipt_id: String,
@@ -40,6 +46,7 @@ pub struct EntryRow {
     pub leaf_hash: [u8; 32],
     pub raw_entry: Vec<u8>,
     pub seller_sig: Vec<u8>,
+    pub parent_receipts: Vec<ParentRefRow>,
 }
 
 #[derive(Debug)]
@@ -112,6 +119,16 @@ CREATE TABLE IF NOT EXISTS checkpoints (
 );
 
 CREATE INDEX IF NOT EXISTS idx_entries_receipt ON entries(receipt_id);
+
+CREATE TABLE IF NOT EXISTS parent_receipts (
+    receipt_id        TEXT NOT NULL,
+    parent_receipt_id TEXT NOT NULL,
+    relationship      TEXT NOT NULL,
+    PRIMARY KEY (receipt_id, parent_receipt_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_parent_by_receipt ON parent_receipts(receipt_id);
+CREATE INDEX IF NOT EXISTS idx_parent_by_parent ON parent_receipts(parent_receipt_id);
 "#;
 
 fn now_unix() -> u64 {
@@ -238,6 +255,13 @@ impl Store {
             params![receipt_id_hex, to_key_hex, idx as i64],
         )?;
 
+        for pr in &transfer.parent_receipts {
+            self.conn.execute(
+                "INSERT OR IGNORE INTO parent_receipts (receipt_id, parent_receipt_id, relationship) VALUES (?1, ?2, ?3)",
+                params![receipt_id_hex, hex::encode(&pr.parent_receipt_id), &pr.relationship],
+            )?;
+        }
+
         // 6. update in-memory state
         self.leaves.push(leaf_hash);
         self.cached_root = merkle::compute_root(&self.leaves);
@@ -310,10 +334,17 @@ impl Store {
                     leaf_hash,
                     raw_entry: row.get(9)?,
                     seller_sig: row.get(10)?,
+                    parent_receipts: Vec::new(),
                 })
             },
         ).optional()?;
-        Ok(result)
+
+        if let Some(mut entry) = result {
+            entry.parent_receipts = self.load_parents(&entry.receipt_id)?;
+            Ok(Some(entry))
+        } else {
+            Ok(None)
+        }
     }
 
     pub fn get_receipt_owner(&self, receipt_id: &str) -> Result<Option<(String, u64)>, StoreError> {
@@ -346,13 +377,33 @@ impl Store {
                 leaf_hash,
                 raw_entry: row.get(9)?,
                 seller_sig: row.get(10)?,
+                parent_receipts: Vec::new(),
             })
         })?;
         let mut entries = Vec::new();
         for row in rows {
-            entries.push(row?);
+            let mut entry = row?;
+            entry.parent_receipts = self.load_parents(&entry.receipt_id)?;
+            entries.push(entry);
         }
         Ok(entries)
+    }
+
+    fn load_parents(&self, receipt_id: &str) -> Result<Vec<ParentRefRow>, StoreError> {
+        let mut stmt = self.conn.prepare(
+            "SELECT parent_receipt_id, relationship FROM parent_receipts WHERE receipt_id = ?1",
+        )?;
+        let rows = stmt.query_map(params![receipt_id], |row| {
+            Ok(ParentRefRow {
+                parent_receipt_id: row.get(0)?,
+                relationship: row.get(1)?,
+            })
+        })?;
+        let mut parents = Vec::new();
+        for row in rows {
+            parents.push(row?);
+        }
+        Ok(parents)
     }
 
     pub fn latest_checkpoint(&self) -> Result<Option<SignedCheckpoint>, StoreError> {
@@ -437,6 +488,7 @@ mod tests {
             timestamp: 1714500000,
             royalties_paid: vec![],
             seller_signature: vec![],
+            parent_receipts: vec![],
         };
         transfer.sign(seller);
         transfer

@@ -109,6 +109,10 @@ Ship with a `README.md` containing "Run your own log node" instructions (Docker 
 - ✅ Double-spend rejection verified (409 Conflict)
 - ✅ Inclusion proofs working
 - ✅ Live URLs: log1/log2/log3.tesseravcr.org
+- ✅ Provenance DAG persistence: parent_receipts stored in log server, returned in API
+- ✅ Demo agents with provenance chains (depth 5+, 60% of transfers reference parents)
+- ✅ Live dashboard at log1.tesseravcr.org/network.html
+- ✅ join_network.py one-command onboarding script
 
 ---
 

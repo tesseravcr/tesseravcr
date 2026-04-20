@@ -81,6 +81,7 @@ fn make_signed_transfer(
         timestamp: 1714500000,
         royalties_paid: vec![],
         seller_signature: vec![],
+        parent_receipts: vec![],
     };
     t.sign(seller);
     t

@@ -268,6 +268,7 @@ fn transfer_record_canonical_bytes() {
         timestamp: inputs["timestamp"].as_u64().unwrap(),
         royalties_paid: royalties,
         seller_signature: Vec::new(),
+        parent_receipts: vec![],
     };
 
     let expected_hex = v["expected"]["canonical_bytes_hex"].as_str().unwrap();

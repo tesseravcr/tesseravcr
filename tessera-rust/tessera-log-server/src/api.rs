@@ -11,7 +11,7 @@ use crate::error::AppError;
 use crate::store::{Store, StoreError};
 use crate::witness::{WitnessClient, WitnessError, WitnessRequest, WitnessResponse, WitnessState};
 use tessera::merkle;
-use tessera::transfer::{RoyaltyPayment, TransferRecord};
+use tessera::transfer::{ParentRef, RoyaltyPayment, TransferRecord};
 
 pub struct AppState {
     pub store: Mutex<Store>,
@@ -95,6 +95,8 @@ pub struct SubmitRequest {
     pub royalties_paid: Vec<RoyaltyPaymentReq>,
     pub seller_signature: String,
     pub canonical_bytes: String,
+    #[serde(default)]
+    pub parent_receipts: Vec<ParentReceiptReq>,
 }
 
 #[derive(Deserialize)]
@@ -102,6 +104,12 @@ pub struct RoyaltyPaymentReq {
     pub recipient: String,
     pub amount: u64,
     pub receipt_id: String,
+}
+
+#[derive(Deserialize)]
+pub struct ParentReceiptReq {
+    pub parent_receipt_id: String,
+    pub relationship: String,
 }
 
 pub async fn submit(
@@ -123,6 +131,14 @@ pub async fn submit(
         });
     }
 
+    let mut parents = Vec::with_capacity(req.parent_receipts.len());
+    for pr in &req.parent_receipts {
+        parents.push(ParentRef {
+            parent_receipt_id: hex32(&pr.parent_receipt_id)?,
+            relationship: pr.relationship.clone(),
+        });
+    }
+
     let transfer = TransferRecord {
         receipt_id,
         from_key,
@@ -132,6 +148,7 @@ pub async fn submit(
         timestamp: req.timestamp,
         royalties_paid: royalties,
         seller_signature,
+        parent_receipts: parents,
     };
 
     let mut result = {
@@ -199,6 +216,10 @@ pub async fn entry(
         .get_entry(index)
         .map_err(store_err)?
         .ok_or_else(|| AppError::NotFound(format!("no entry at index {}", index)))?;
+    let parent_refs: Vec<Value> = row.parent_receipts.iter().map(|p| {
+        json!({"parent_receipt_id": p.parent_receipt_id, "relationship": p.relationship})
+    }).collect();
+
     Ok(Json(json!({
         "index": row.idx,
         "receipt_id": row.receipt_id,
@@ -210,6 +231,7 @@ pub async fn entry(
         "log_timestamp": row.log_ts,
         "leaf_hash": hex::encode(row.leaf_hash),
         "seller_signature": hex::encode(row.seller_sig),
+        "parent_receipts": parent_refs,
     })))
 }
 
@@ -236,6 +258,9 @@ pub async fn receipt(
     let transfers: Vec<Value> = entries
         .iter()
         .map(|e| {
+            let prefs: Vec<Value> = e.parent_receipts.iter().map(|p| {
+                json!({"parent_receipt_id": p.parent_receipt_id, "relationship": p.relationship})
+            }).collect();
             json!({
                 "index": e.idx,
                 "from_key": e.from_key,
@@ -244,6 +269,7 @@ pub async fn receipt(
                 "currency": e.currency,
                 "transfer_timestamp": e.transfer_ts,
                 "log_timestamp": e.log_ts,
+                "parent_receipts": prefs,
             })
         })
         .collect();

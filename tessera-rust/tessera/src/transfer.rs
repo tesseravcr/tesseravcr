@@ -23,6 +23,12 @@ impl RoyaltyPayment {
 }
 
 #[derive(Clone, Debug)]
+pub struct ParentRef {
+    pub parent_receipt_id: Vec<u8>, // bytes32
+    pub relationship: String,
+}
+
+#[derive(Clone, Debug)]
 pub struct TransferRecord {
     pub receipt_id: Vec<u8>,
     pub from_key: Vec<u8>,
@@ -32,6 +38,8 @@ pub struct TransferRecord {
     pub timestamp: u64,
     pub royalties_paid: Vec<RoyaltyPayment>,
     pub seller_signature: Vec<u8>,
+    #[allow(dead_code)]
+    pub parent_receipts: Vec<ParentRef>,
 }
 
 impl TransferRecord {
