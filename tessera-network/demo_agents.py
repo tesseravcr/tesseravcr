@@ -6,9 +6,9 @@ and transfer ownership. Runs continuously, generating a new transaction
 every 30-60 seconds.
 
 Usage:
-    python3 demo_agents.py                     # run against live network
-    python3 demo_agents.py --once              # single round then exit
-    LOG_URL=http://localhost:7800 python3 demo_agents.py  # local testing
+    python3 demo_agents.py --once              # single round
+    python3 demo_agents.py --rounds=20         # 20 rounds then exit
+    python3 demo_agents.py                     # run forever
 """
 
 import hashlib
@@ -264,22 +264,27 @@ def main():
     for a in agents:
         print(f"  {a.name}: {a.pub_hex()[:16]}...")
 
-    once = "--once" in sys.argv
-    round_num = 0
+    max_rounds = 1 if "--once" in sys.argv else None
+    for arg in sys.argv[1:]:
+        if arg.startswith("--rounds="):
+            max_rounds = int(arg.split("=")[1])
 
-    while True:
+    round_num = 0
+    while max_rounds is None or round_num < max_rounds:
         round_num += 1
         try:
             run_round(agents, round_num)
         except Exception as e:
             print(f"  ERROR: {e}")
 
-        if once:
+        if max_rounds and round_num >= max_rounds:
             break
 
-        delay = random.randint(20, 45)
+        delay = random.randint(3, 8)
         print(f"\n  Next round in {delay}s...")
         time.sleep(delay)
+
+    print(f"\nDone. {round_num} rounds completed.")
 
 
 if __name__ == "__main__":
