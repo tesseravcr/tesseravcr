@@ -6,266 +6,549 @@
 <title>Tessera VCR — Live Network</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#11111b;color:#cdd6f4;font-size:13px;line-height:1.5}
-a{color:#89b4fa;text-decoration:none}
-a:hover{text-decoration:underline}
-::selection{background:#89b4fa30}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0f0f17;color:#cdd6f4;overflow:hidden;height:100vh}
+canvas{display:block;position:fixed;top:0;left:0;z-index:0}
 
-.container{max-width:1100px;margin:0 auto;padding:16px 24px}
+/* Overlay UI */
+.ui{position:fixed;z-index:10;pointer-events:none}
+.ui *{pointer-events:auto}
 
-/* Header */
-.hdr{display:flex;justify-content:space-between;align-items:center;padding:14px 0 14px;border-bottom:1px solid #1e1e2e}
-.hdr-left{display:flex;align-items:center;gap:10px}
-.hdr h1{font-size:15px;font-weight:700;color:#cdd6f4;letter-spacing:0.5px}
-.hdr h1 span{color:#a6e3a1}
-.live-badge{font-size:9px;background:#a6e3a120;color:#a6e3a1;padding:2px 8px;border-radius:10px;font-weight:600;display:flex;align-items:center;gap:4px}
-.live-badge::before{content:'';width:5px;height:5px;border-radius:50%;background:#a6e3a1;animation:pulse 2s infinite}
+.top-bar{top:0;left:0;right:0;padding:14px 20px;display:flex;justify-content:space-between;align-items:center}
+.top-left{display:flex;align-items:center;gap:12px}
+.logo{font-size:15px;font-weight:700;letter-spacing:.5px}
+.logo span{color:#a6e3a1}
+.live{font-size:9px;background:#a6e3a120;color:#a6e3a1;padding:2px 8px;border-radius:10px;font-weight:600;display:flex;align-items:center;gap:4px}
+.live::before{content:'';width:5px;height:5px;border-radius:50%;background:#a6e3a1;animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.hdr nav{display:flex;gap:14px;font-size:11px}
-.hdr nav a{color:#6c7086;transition:color .2s}
-.hdr nav a:hover{color:#cdd6f4;text-decoration:none}
+.top-right{display:flex;gap:14px;font-size:11px}
+.top-right a{color:#585b70;text-decoration:none;transition:color .2s}
+.top-right a:hover{color:#cdd6f4}
 
-/* Stats */
-.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:20px 0}
-.stat{background:#1e1e2e;border-radius:8px;padding:16px;text-align:center;border:1px solid #313244}
-.stat-n{font-size:32px;font-weight:800;color:#89b4fa;line-height:1}
-.stat-n.green{color:#a6e3a1}
-.stat-n.yellow{color:#f9e2af}
-.stat-n.mauve{color:#cba6f7}
-.stat-l{font-size:9px;color:#585b70;text-transform:uppercase;letter-spacing:1.5px;margin-top:6px}
+.stats-bar{top:50px;left:0;right:0;display:flex;justify-content:center;gap:24px;padding:8px}
+.sb{text-align:center}
+.sb-n{font-size:22px;font-weight:800;line-height:1}
+.sb-n.blue{color:#89b4fa}.sb-n.green{color:#a6e3a1}.sb-n.mauve{color:#cba6f7}.sb-n.yellow{color:#f9e2af}.sb-n.peach{color:#fab387}
+.sb-l{font-size:8px;color:#45475a;text-transform:uppercase;letter-spacing:1.5px;margin-top:2px}
 
-/* Network map */
-.net-map{background:#1e1e2e;border:1px solid #313244;border-radius:8px;padding:20px;margin:20px 0;position:relative;overflow:hidden}
-.net-map canvas{display:block;margin:0 auto}
+/* Legend */
+.legend{bottom:20px;left:20px;background:#1e1e2e;border:1px solid #313244;border-radius:8px;padding:12px 16px;font-size:11px}
+.legend-item{display:flex;align-items:center;gap:8px;margin:4px 0;color:#585b70}
+.legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.legend-line{width:20px;height:2px;flex-shrink:0;border-radius:1px}
 
-/* Sections */
-.sec{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:#45475a;margin:24px 0 12px;display:flex;align-items:center;gap:10px}
-.sec::after{content:'';flex:1;height:1px;background:#1e1e2e}
-
-/* Activity feed */
-.activity{display:flex;flex-direction:column;gap:4px}
-.act{background:#1e1e2e;border:1px solid #313244;border-radius:8px;padding:12px 16px;cursor:pointer;transition:border-color .2s,background .2s}
-.act:hover{border-color:#45475a;background:#181825}
-.act.fresh{animation:slideIn .4s ease;border-left:2px solid #89b4fa}
-@keyframes slideIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
-.act-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
-.act-desc{font-size:13px;color:#cdd6f4}
-.act-desc b{color:#89b4fa;font-weight:600}
-.act-desc .price{color:#a6e3a1;font-weight:600}
-.act-meta{display:flex;gap:12px;font-size:11px;color:#585b70}
-.act-meta .tag{background:#313244;padding:1px 6px;border-radius:4px;font-size:10px}
-.act-meta .tag.prov{color:#f9e2af;background:#f9e2af15}
-.act-meta .tag.wit{color:#a6e3a1;background:#a6e3a115}
-.act-meta .tag.log{color:#6c7086}
-.act-parents{margin-top:6px;padding-top:6px;border-top:1px solid #31324440;font-size:11px;color:#585b70}
-.act-parents span{color:#f9e2af}
+/* Feed */
+.feed-panel{top:90px;right:16px;width:320px;max-height:calc(100vh - 120px);overflow-y:auto;scrollbar-width:thin;scrollbar-color:#1e1e2e transparent}
+.feed-panel::-webkit-scrollbar{width:3px}
+.feed-panel::-webkit-scrollbar-thumb{background:#313244;border-radius:2px}
+.feed-toggle{background:#1e1e2e;border:1px solid #313244;border-radius:8px;padding:8px 12px;font-size:11px;color:#585b70;cursor:pointer;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+.feed-toggle:hover{border-color:#45475a}
+.feed-list{display:flex;flex-direction:column;gap:4px}
+.fi{background:#1e1e2ef0;border:1px solid #313244;border-radius:6px;padding:8px 12px;font-size:11px;cursor:pointer;transition:border-color .2s;backdrop-filter:blur(8px)}
+.fi:hover{border-color:#45475a}
+.fi.fresh{border-left:2px solid #89b4fa;animation:fadeIn .4s}
+@keyframes fadeIn{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:translateX(0)}}
+.fi-top{display:flex;justify-content:space-between;margin-bottom:2px}
+.fi-desc{color:#cdd6f4}.fi-desc b{font-weight:600}
+.fi-time{color:#45475a;font-size:10px}
+.fi-meta{color:#45475a;font-size:10px;display:flex;gap:8px}
+.fi-tag{padding:0 4px;border-radius:3px}
+.fi-tag.prov{color:#f9e2af;background:#f9e2af10}
+.fi-tag.wit{color:#a6e3a1;background:#a6e3a110}
 
 /* Detail panel */
-.detail-overlay{display:none;position:fixed;inset:0;background:#11111be0;z-index:100;justify-content:center;align-items:center}
+.detail-overlay{display:none;position:fixed;inset:0;background:#0f0f17e0;z-index:200;justify-content:center;align-items:center}
 .detail-overlay.show{display:flex}
-.detail{background:#1e1e2e;border:1px solid #313244;border-radius:12px;padding:24px;max-width:640px;width:90%;max-height:85vh;overflow-y:auto}
-.detail-close{float:right;background:none;border:none;color:#6c7086;font-size:18px;cursor:pointer;padding:4px 8px}
+.detail{background:#1e1e2e;border:1px solid #313244;border-radius:12px;padding:24px;max-width:580px;width:90%;max-height:80vh;overflow-y:auto}
+.detail-close{float:right;background:none;border:none;color:#585b70;font-size:18px;cursor:pointer;padding:4px 8px}
 .detail-close:hover{color:#cdd6f4}
-.detail h2{font-size:14px;font-weight:700;margin-bottom:16px;color:#cdd6f4}
-.detail-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #31324440;font-size:12px}
-.detail-row .k{color:#585b70;min-width:140px}
-.detail-row .v{color:#cdd6f4;font-family:'SF Mono',monospace;font-size:11px;word-break:break-all;text-align:right}
-.detail-row .v.hash{color:#89b4fa}
-.detail-row .v.green{color:#a6e3a1}
-.detail-row .v.yellow{color:#f9e2af}
-.prov-chain{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:12px 0}
-.prov-node{background:#313244;padding:6px 10px;border-radius:6px;font-size:11px;font-family:monospace;color:#cdd6f4}
-.prov-node.current{border:1px solid #89b4fa;color:#89b4fa}
-.prov-arrow{color:#45475a;font-size:14px}
-.proof-box{background:#11111b;border:1px solid #313244;border-radius:6px;padding:12px;margin-top:12px;font-family:monospace;font-size:10px;color:#585b70;max-height:120px;overflow-y:auto}
+.detail h2{font-size:14px;font-weight:700;margin-bottom:14px}
+.dr{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #31324440;font-size:11px}
+.dr .k{color:#45475a;min-width:110px}
+.dr .v{font-family:monospace;font-size:10px;word-break:break-all;text-align:right;color:#6c7086}
+.dr .v.h{color:#89b4fa}.dr .v.g{color:#a6e3a1}.dr .v.y{color:#f9e2af}
+.prov-chain{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:12px 0}
+.prov-n{background:#313244;padding:5px 8px;border-radius:5px;font-size:10px;font-family:monospace}
+.prov-n.cur{border:1px solid #89b4fa;color:#89b4fa}
+.prov-a{color:#45475a}
+.proof-box{background:#11111b;border:1px solid #313244;border-radius:6px;padding:10px;margin-top:10px;font-family:monospace;font-size:9px;color:#45475a;max-height:100px;overflow-y:auto;white-space:pre}
 
-/* Nodes */
-.nodes{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.nd{background:#1e1e2e;border:1px solid #313244;border-radius:8px;padding:14px;position:relative;overflow:hidden}
-.nd::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
-.nd.on::before{background:linear-gradient(90deg,#a6e3a1,#94e2d5)}
-.nd.off::before{background:#f38ba8}
-.nd-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.nd-name{font-weight:700;font-size:13px}
-.nd-status{font-size:9px;padding:2px 8px;border-radius:10px;font-weight:600}
-.nd-status.on{color:#a6e3a1;background:#a6e3a115;border:1px solid #a6e3a130}
-.nd-status.off{color:#f38ba8;background:#f38ba815;border:1px solid #f38ba830}
-.nd-info{font-size:11px;color:#585b70;line-height:1.8}
-.nd-info b{color:#6c7086;font-weight:400}
-
-/* Join box */
-.join{background:#1e1e2e;border:1px solid #313244;border-radius:8px;padding:20px;margin:16px 0}
-.join h3{font-size:13px;font-weight:700;margin-bottom:4px}
-.join p{color:#585b70;font-size:11px;margin-bottom:10px}
-.join code{display:block;background:#11111b;border:1px solid #313244;padding:10px 14px;border-radius:6px;font-size:11px;color:#89b4fa;word-break:break-all}
-.join .sub{font-size:10px;color:#45475a;margin-top:6px}
-
-.footer{text-align:center;padding:24px 0;color:#313244;font-size:10px;border-top:1px solid #1e1e2e;margin-top:24px}
+/* Join bar */
+.join-bar{bottom:20px;right:16px;width:320px}
+.jb{background:#1e1e2ef0;border:1px solid #313244;border-radius:8px;padding:10px 14px;margin-bottom:6px;font-size:11px;backdrop-filter:blur(8px)}
+.jb h4{font-size:11px;font-weight:600;margin-bottom:2px}
+.jb p{color:#45475a;font-size:10px;margin-bottom:4px}
+.jb code{font-size:9px;color:#89b4fa;word-break:break-all}
+.jb a{color:#585b70;font-size:9px}
 
 @media(max-width:768px){
-  .stats{grid-template-columns:repeat(3,1fr)}
-  .nodes,.two-col{grid-template-columns:1fr}
+  .feed-panel,.join-bar{display:none}
+  .stats-bar{flex-wrap:wrap;gap:12px}
 }
 </style>
 </head>
 <body>
-<div class="container">
 
-<div class="hdr">
-  <div class="hdr-left">
-    <h1><span>&#9646;</span> tessera vcr</h1>
-    <div class="live-badge">LIVE</div>
+<canvas id="c"></canvas>
+
+<div class="ui top-bar">
+  <div class="top-left">
+    <div class="logo"><span>&#9646;</span> tessera vcr</div>
+    <div class="live">LIVE NETWORK</div>
   </div>
-  <nav>
+  <div class="top-right">
     <a href="index.html">protocol</a>
     <a href="https://github.com/Henry-Shelton/tesseravcr/blob/main/spec/VCR-SPEC.md">spec</a>
     <a href="https://github.com/Henry-Shelton/tesseravcr">github</a>
-  </nav>
+  </div>
 </div>
 
-<div class="stats">
-  <div class="stat"><div class="stat-n green" id="s-nodes">-</div><div class="stat-l">nodes online</div></div>
-  <div class="stat"><div class="stat-n" id="s-entries">-</div><div class="stat-l">verified receipts</div></div>
-  <div class="stat"><div class="stat-n mauve" id="s-provenance">-</div><div class="stat-l">provenance links</div></div>
-  <div class="stat"><div class="stat-n green" id="s-witnesses">-</div><div class="stat-l">witness sigs</div></div>
-  <div class="stat"><div class="stat-n yellow" id="s-volume">-</div><div class="stat-l">total volume</div></div>
+<div class="ui stats-bar">
+  <div class="sb"><div class="sb-n green" id="s-nodes">-</div><div class="sb-l">nodes</div></div>
+  <div class="sb"><div class="sb-n blue" id="s-receipts">-</div><div class="sb-l">receipts</div></div>
+  <div class="sb"><div class="sb-n mauve" id="s-agents">-</div><div class="sb-l">agents</div></div>
+  <div class="sb"><div class="sb-n yellow" id="s-links">-</div><div class="sb-l">provenance</div></div>
+  <div class="sb"><div class="sb-n green" id="s-witnesses">-</div><div class="sb-l">witnesses</div></div>
+  <div class="sb"><div class="sb-n peach" id="s-volume">-</div><div class="sb-l">volume</div></div>
 </div>
 
-<div class="sec">Network Nodes</div>
-<div class="nodes" id="nodes"></div>
+<div class="ui legend">
+  <div style="font-size:10px;font-weight:600;margin-bottom:6px;color:#6c7086">NETWORK GRAPH</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#94e2d5;width:14px;height:14px"></div> Log node (infrastructure)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#89b4fa"></div> Agent (operator)</div>
+  <div class="legend-item"><div class="legend-line" style="background:#89b4fa50"></div> Transfer</div>
+  <div class="legend-item"><div class="legend-line" style="background:#f9e2af50"></div> Provenance link</div>
+  <div class="legend-item" style="font-size:10px;color:#45475a;margin-top:4px">thicker line = more transactions</div>
+  <div class="legend-item" style="font-size:10px;color:#45475a">bigger node = more activity</div>
+</div>
 
-<div class="sec">Live Activity</div>
-<div class="activity" id="activity"><div style="color:#45475a;padding:24px;text-align:center">connecting to network...</div></div>
+<div class="ui feed-panel" id="feed-panel">
+  <div class="feed-toggle" onclick="toggleFeed()">
+    <span>Activity Feed</span>
+    <span id="feed-count" style="color:#89b4fa">0</span>
+  </div>
+  <div class="feed-list" id="feed"></div>
+</div>
 
-<div class="sec">Join the Network</div>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px" class="two-col">
-  <div class="join">
-    <h3>Submit a receipt</h3>
-    <p>Generate a VCR and submit it to the live network. Takes 10 seconds.</p>
+<div class="ui join-bar">
+  <div class="jb">
+    <h4>Join the network</h4>
+    <p>Submit a receipt from your terminal</p>
     <code>pip install requests cryptography && curl -sL https://raw.githubusercontent.com/Henry-Shelton/tesseravcr/main/tessera-network/join_network.py | python3 -</code>
-    <div class="sub"><a href="https://github.com/Henry-Shelton/tesseravcr/blob/main/tessera-network/join_network.py">view source</a> — no dependencies beyond Python 3.8</div>
-  </div>
-  <div class="join">
-    <h3>Run a log node</h3>
-    <p>Join the witness network. Countersign checkpoints from peers. ~$5/month.</p>
-    <code>curl -fsSL https://raw.githubusercontent.com/Henry-Shelton/tesseravcr/main/tessera-rust/tessera-log-server/deploy/setup.sh | sudo bash</code>
-    <div class="sub"><a href="https://github.com/Henry-Shelton/tesseravcr/blob/main/tessera-rust/tessera-log-server/deploy/README.md">deployment guide</a></div>
+    <div style="margin-top:4px"><a href="https://github.com/Henry-Shelton/tesseravcr/blob/main/tessera-network/join_network.py">view source</a></div>
   </div>
 </div>
 
-<div class="footer">auto-refreshes every 8s &middot; <span id="last-update"></span></div>
-
-</div>
-
-<!-- Detail overlay -->
 <div class="detail-overlay" id="detail-overlay" onclick="if(event.target===this)closeDetail()">
   <div class="detail" id="detail"></div>
 </div>
 
 <script>
+// ── Config ──
 const NODES = [
-  {name:'log1',url:'https://log1.tesseravcr.org',loc:'Nuremberg, DE',flag:'🇩🇪'},
-  {name:'log2',url:'https://log2.tesseravcr.org',loc:'Helsinki, FI',flag:'🇫🇮'},
-  {name:'log3',url:'https://log3.tesseravcr.org',loc:'Helsinki, FI',flag:'🇫🇮'},
+  {name:'log1',url:'https://log1.tesseravcr.org',loc:'Nuremberg, DE'},
+  {name:'log2',url:'https://log2.tesseravcr.org',loc:'Helsinki, FI'},
+  {name:'log3',url:'https://log3.tesseravcr.org',loc:'Helsinki, FI'},
 ];
 
-const MODELS = {
-  'legal-risk-v2':'Legal risk analysis',
-  'summarise-v3':'Summary generation',
-  'code-review-v1':'Code review',
-  'translate-v2':'Translation',
-  'sentiment-v1':'Sentiment analysis',
-  'med-triage-v1':'Medical triage',
-  'fin-forecast-v1':'Financial forecast',
-  'image-classify-v2':'Image classification',
-};
+const AGENT_COLORS = ['#89b4fa','#f38ba8','#a6e3a1','#f9e2af','#cba6f7','#fab387','#74c7ec','#f2cdcd','#b4befe','#94e2d5','#eba0ac','#89dceb'];
+const LOG_COLOR = '#94e2d5';
 
+// ── State ──
+let graphNodes = [];   // {id, type:'log'|'agent', x, y, vx, vy, radius, color, label, activity, meta}
+let graphEdges = [];   // {from, to, type:'transfer'|'provenance', weight, particles:[]}
 let allEntries = [];
 let knownKeys = new Set();
-let keyColors = {};
+let agentColorMap = {};
 let colorIdx = 0;
-const COLORS = ['#89b4fa','#f38ba8','#a6e3a1','#f9e2af','#cba6f7','#94e2d5','#fab387','#74c7ec','#f2cdcd','#b4befe'];
+let canvas, ctx, W, H;
+let mouse = {x:0, y:0, down:false, dragging:null};
+let hoveredNode = null;
+let feedVisible = true;
 
-function getColor(key) {
-  if (!key) return '#585b70';
+function getAgentColor(key) {
   const k = key.slice(0,16);
-  if (!keyColors[k]) keyColors[k] = COLORS[colorIdx++ % COLORS.length];
-  return keyColors[k];
+  if (!agentColorMap[k]) agentColorMap[k] = AGENT_COLORS[colorIdx++ % AGENT_COLORS.length];
+  return agentColorMap[k];
 }
 
 function sh(h) { return h ? h.slice(0,6)+'..'+h.slice(-4) : '—'; }
-function shKey(h) { return h ? h.slice(0,8) : '—'; }
+function shName(h) { return h ? h.slice(0,8) : '?'; }
 
 function fmtTime(ts) {
-  if (!ts) return '—';
-  const diff = Math.floor((Date.now()/1000) - ts);
-  if (diff < 0) return 'just now';
-  if (diff < 60) return diff + 's ago';
-  if (diff < 3600) return Math.floor(diff/60) + 'm ago';
-  if (diff < 86400) return Math.floor(diff/3600) + 'h ago';
-  return Math.floor(diff/86400) + 'd ago';
+  const diff = Math.floor(Date.now()/1000 - ts);
+  if (diff < 0) return 'now';
+  if (diff < 60) return diff + 's';
+  if (diff < 3600) return Math.floor(diff/60) + 'm';
+  if (diff < 86400) return Math.floor(diff/3600) + 'h';
+  return Math.floor(diff/86400) + 'd';
 }
 
-function fmtUptime(s) {
-  if (!s && s !== 0) return '—';
-  if (s < 3600) return Math.floor(s/60) + 'm';
-  if (s < 86400) return Math.floor(s/3600) + 'h ' + Math.floor((s%3600)/60) + 'm';
-  return Math.floor(s/86400) + 'd ' + Math.floor((s%86400)/3600) + 'h';
+// ── Graph helpers ──
+function findOrCreateNode(id, type, meta) {
+  let n = graphNodes.find(n => n.id === id);
+  if (n) {
+    n.activity++;
+    return n;
+  }
+  const angle = Math.random() * Math.PI * 2;
+  const dist = 100 + Math.random() * 150;
+  n = {
+    id, type,
+    x: W/2 + Math.cos(angle) * dist,
+    y: H/2 + Math.sin(angle) * dist,
+    vx: 0, vy: 0,
+    radius: type === 'log' ? 22 : 8,
+    color: type === 'log' ? LOG_COLOR : getAgentColor(id),
+    label: type === 'log' ? meta.name : shName(id),
+    activity: 1,
+    meta: meta || {},
+  };
+  graphNodes.push(n);
+  return n;
 }
 
+function findOrCreateEdge(fromId, toId, type) {
+  let e = graphEdges.find(e => (e.from === fromId && e.to === toId) || (e.from === toId && e.to === fromId));
+  if (e) {
+    e.weight++;
+    // Add particle
+    e.particles.push({t: 0, speed: 0.005 + Math.random()*0.005, color: type === 'provenance' ? '#f9e2af' : '#89b4fa'});
+    return e;
+  }
+  e = {from: fromId, to: toId, type, weight: 1, particles: [{t:0, speed:0.005+Math.random()*0.005, color: type==='provenance'?'#f9e2af':'#89b4fa'}]};
+  graphEdges.push(e);
+  return e;
+}
+
+// ── Physics ──
+function simulate() {
+  const k = 0.0008;   // spring
+  const rep = 8000;    // repulsion
+  const damp = 0.92;
+  const center = 0.001;
+
+  // Repulsion between all nodes
+  for (let i = 0; i < graphNodes.length; i++) {
+    for (let j = i+1; j < graphNodes.length; j++) {
+      const a = graphNodes[i], b = graphNodes[j];
+      let dx = a.x - b.x, dy = a.y - b.y;
+      let dist = Math.sqrt(dx*dx + dy*dy) || 1;
+      let force = rep / (dist * dist);
+      let fx = (dx/dist) * force, fy = (dy/dist) * force;
+      a.vx += fx; a.vy += fy;
+      b.vx -= fx; b.vy -= fy;
+    }
+  }
+
+  // Spring attraction along edges
+  for (const e of graphEdges) {
+    const a = graphNodes.find(n => n.id === e.from);
+    const b = graphNodes.find(n => n.id === e.to);
+    if (!a || !b) continue;
+    let dx = b.x - a.x, dy = b.y - a.y;
+    let dist = Math.sqrt(dx*dx + dy*dy) || 1;
+    let target = 120 + 40 / Math.max(1, e.weight);
+    let force = (dist - target) * k * Math.min(e.weight, 5);
+    a.vx += (dx/dist)*force; a.vy += (dy/dist)*force;
+    b.vx -= (dx/dist)*force; b.vy -= (dy/dist)*force;
+  }
+
+  // Center gravity
+  for (const n of graphNodes) {
+    n.vx += (W/2 - n.x) * center;
+    n.vy += (H/2 - n.y) * center;
+  }
+
+  // Integrate
+  for (const n of graphNodes) {
+    if (mouse.dragging === n) continue;
+    n.vx *= damp;
+    n.vy *= damp;
+    n.x += n.vx;
+    n.y += n.vy;
+    n.x = Math.max(40, Math.min(W-40, n.x));
+    n.y = Math.max(60, Math.min(H-40, n.y));
+  }
+
+  // Update particles
+  for (const e of graphEdges) {
+    for (let i = e.particles.length - 1; i >= 0; i--) {
+      e.particles[i].t += e.particles[i].speed;
+      if (e.particles[i].t > 1) e.particles.splice(i, 1);
+    }
+  }
+}
+
+// ── Render ──
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+
+  // Subtle grid
+  ctx.strokeStyle = '#181825';
+  ctx.lineWidth = 1;
+  for (let x = 0; x < W; x += 60) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+  for (let y = 0; y < H; y += 60) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+
+  // Edges
+  for (const e of graphEdges) {
+    const a = graphNodes.find(n => n.id === e.from);
+    const b = graphNodes.find(n => n.id === e.to);
+    if (!a || !b) continue;
+
+    const baseColor = e.type === 'provenance' ? '#f9e2af' : '#89b4fa';
+    const alpha = Math.min(0.15 + e.weight * 0.06, 0.5);
+    ctx.strokeStyle = baseColor + Math.floor(alpha*255).toString(16).padStart(2,'0');
+    ctx.lineWidth = Math.min(1 + e.weight * 0.5, 5);
+    ctx.beginPath();
+    ctx.moveTo(a.x, a.y);
+    ctx.lineTo(b.x, b.y);
+    ctx.stroke();
+
+    // Particles (money/data flowing)
+    for (const p of e.particles) {
+      const px = a.x + (b.x - a.x) * p.t;
+      const py = a.y + (b.y - a.y) * p.t;
+      const size = 3 * (1 - Math.abs(p.t - 0.5) * 2);
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = 0.8;
+      ctx.beginPath();
+      ctx.arc(px, py, Math.max(1.5, size), 0, Math.PI*2);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+  }
+
+  // Nodes
+  for (const n of graphNodes) {
+    const r = n.type === 'log' ? 22 : Math.min(8 + n.activity * 0.8, 20);
+    const isHovered = hoveredNode === n;
+
+    // Glow
+    if (n.activity > 2 || isHovered) {
+      const grad = ctx.createRadialGradient(n.x, n.y, r, n.x, n.y, r * 3);
+      grad.addColorStop(0, n.color + '20');
+      grad.addColorStop(1, 'transparent');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, r * 3, 0, Math.PI*2);
+      ctx.fill();
+    }
+
+    // Node circle
+    ctx.fillStyle = n.color + (isHovered ? 'ff' : '40');
+    ctx.strokeStyle = n.color;
+    ctx.lineWidth = isHovered ? 2.5 : 1.5;
+    ctx.beginPath();
+    ctx.arc(n.x, n.y, r, 0, Math.PI*2);
+    ctx.fill();
+    ctx.stroke();
+
+    // Label
+    ctx.fillStyle = isHovered ? '#cdd6f4' : '#6c7086';
+    ctx.font = n.type === 'log' ? 'bold 11px -apple-system,sans-serif' : '10px -apple-system,sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(n.label, n.x, n.y + r + 14);
+
+    // Activity count for agents
+    if (n.type === 'agent' && n.activity > 1) {
+      ctx.fillStyle = '#45475a';
+      ctx.font = '9px -apple-system,sans-serif';
+      ctx.fillText(n.activity + ' txns', n.x, n.y + r + 24);
+    }
+
+    // Log node extra info
+    if (n.type === 'log' && n.meta.entries !== undefined) {
+      ctx.fillStyle = '#45475a';
+      ctx.font = '9px -apple-system,sans-serif';
+      ctx.fillText(n.meta.entries + ' entries', n.x, n.y + r + 24);
+      ctx.fillText(n.meta.loc || '', n.x, n.y + r + 34);
+    }
+
+    // Inner icon for log nodes
+    if (n.type === 'log') {
+      ctx.fillStyle = n.color;
+      ctx.font = 'bold 10px monospace';
+      ctx.fillText(n.label.toUpperCase().slice(0,2), n.x, n.y + 4);
+    }
+  }
+
+  // Tooltip for hovered
+  if (hoveredNode) {
+    const n = hoveredNode;
+    const tx = n.x + 30;
+    const ty = n.y - 20;
+    ctx.fillStyle = '#1e1e2ef0';
+    ctx.strokeStyle = '#313244';
+    ctx.lineWidth = 1;
+    const lines = n.type === 'log'
+      ? [n.meta.name + ' — ' + n.meta.loc, n.meta.entries + ' entries, ' + n.meta.uptime]
+      : [n.id.slice(0,32)+'...', n.activity + ' transactions'];
+    const tw = Math.max(...lines.map(l => ctx.measureText(l).width)) + 20;
+    const th = lines.length * 16 + 12;
+    ctx.beginPath();
+    ctx.roundRect(tx, ty, tw, th, 6);
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = '#cdd6f4';
+    ctx.font = '10px -apple-system,sans-serif';
+    ctx.textAlign = 'left';
+    lines.forEach((l, i) => {
+      ctx.fillStyle = i === 0 ? '#cdd6f4' : '#585b70';
+      ctx.fillText(l, tx + 10, ty + 16 + i * 16);
+    });
+    ctx.textAlign = 'center';
+  }
+}
+
+function loop() {
+  simulate();
+  draw();
+  requestAnimationFrame(loop);
+}
+
+// ── Mouse interaction ──
+function getNodeAt(x, y) {
+  for (let i = graphNodes.length - 1; i >= 0; i--) {
+    const n = graphNodes[i];
+    const r = n.type === 'log' ? 22 : Math.min(8 + n.activity * 0.8, 20);
+    const dx = x - n.x, dy = y - n.y;
+    if (dx*dx + dy*dy < (r+8)*(r+8)) return n;
+  }
+  return null;
+}
+
+// ── Data fetching ──
 async function fetchJSON(url) {
   try {
     const r = await fetch(url, {signal: AbortSignal.timeout(5000)});
-    if (!r.ok) throw new Error(r.status);
+    if (!r.ok) throw new Error();
     return await r.json();
   } catch(e) { return null; }
 }
 
-async function fetchEntries(node, health) {
-  if (!health) return [];
-  const entries = [];
-  const start = Math.max(0, health.log_size - 10);
-  const fetches = [];
-  for (let i = start; i < health.log_size; i++) {
-    fetches.push(fetchJSON(node.url+'/v1/entry/'+i).then(e => {
-      if (e) { e._idx = i; e._node = node.name; e._nodeUrl = node.url; entries.push(e); }
-    }));
+async function refresh() {
+  const healths = await Promise.all(NODES.map(n => fetchJSON(n.url+'/v1/health')));
+  const checkpoints = await Promise.all(NODES.map(n => fetchJSON(n.url+'/v1/checkpoint')));
+
+  let online = 0, totalEntries = 0, totalWitnesses = 0, totalVolume = 0, provLinks = 0;
+
+  // Create/update log nodes
+  healths.forEach((h, i) => {
+    const n = NODES[i];
+    if (h) {
+      online++;
+      totalEntries += h.log_size;
+      const cp = checkpoints[i];
+      const wc = cp && cp.witnesses ? cp.witnesses.length : 0;
+      totalWitnesses += wc;
+      const node = findOrCreateNode('log:'+n.name, 'log', {
+        name: n.name, loc: n.loc,
+        entries: h.log_size,
+        uptime: fmtTime(Date.now()/1000 - h.uptime_seconds) + ' uptime',
+        root: h.root,
+      });
+      node.meta.entries = h.log_size;
+      node.meta.uptime = fmtTime(Date.now()/1000 - h.uptime_seconds) + ' uptime';
+    }
+  });
+
+  // Fetch entries
+  for (let ni = 0; ni < NODES.length; ni++) {
+    const h = healths[ni];
+    if (!h) continue;
+    const node = NODES[ni];
+    const start = Math.max(0, h.log_size - 12);
+    const fetches = [];
+    for (let i = start; i < h.log_size; i++) {
+      fetches.push(fetchJSON(node.url+'/v1/entry/'+i).then(e => {
+        if (e) { e._idx = i; e._node = node.name; e._nodeUrl = node.url; return e; }
+      }));
+    }
+    const entries = (await Promise.all(fetches)).filter(Boolean);
+    let newOnes = [];
+    entries.forEach(e => {
+      const key = e._node + ':' + e._idx;
+      if (!knownKeys.has(key)) {
+        knownKeys.add(key);
+        allEntries.push(e);
+        newOnes.push(e);
+
+        // Create agent nodes and edges
+        const fromNode = findOrCreateNode(e.from_key, 'agent', {});
+        const toNode = findOrCreateNode(e.to_key, 'agent', {});
+
+        // Transfer edge between agents
+        findOrCreateEdge(e.from_key, e.to_key, 'transfer');
+
+        // Edges from agents to the log they used
+        findOrCreateEdge(e.from_key, 'log:'+e._node, 'transfer');
+
+        // Provenance edges
+        if (e.parent_receipts && e.parent_receipts.length) {
+          for (const p of e.parent_receipts) {
+            // Find the agent who created the parent receipt
+            const parentEntry = allEntries.find(pe => pe.receipt_id === p.parent_receipt_id);
+            if (parentEntry) {
+              findOrCreateEdge(parentEntry.from_key, e.from_key, 'provenance');
+            }
+            provLinks++;
+          }
+        }
+
+        totalVolume += (e.price || 0);
+      }
+    });
+
+    // Update feed
+    if (newOnes.length) updateFeed(newOnes);
   }
-  await Promise.all(fetches);
-  return entries;
+
+  // Compute total volume from all entries
+  let vol = 0;
+  allEntries.forEach(e => vol += (e.price || 0));
+  const uniqueAgents = new Set();
+  allEntries.forEach(e => { uniqueAgents.add(e.from_key); uniqueAgents.add(e.to_key); });
+
+  // Stats
+  document.getElementById('s-nodes').textContent = online;
+  document.getElementById('s-receipts').textContent = totalEntries;
+  document.getElementById('s-agents').textContent = uniqueAgents.size;
+  document.getElementById('s-links').textContent = provLinks;
+  document.getElementById('s-witnesses').textContent = totalWitnesses;
+  document.getElementById('s-volume').textContent = '$' + (vol/100).toFixed(0);
+  document.getElementById('feed-count').textContent = allEntries.length;
 }
 
-function renderActivity(entry, isNew) {
-  const from = shKey(entry.from_key);
-  const to = shKey(entry.to_key);
-  const price = '$' + (entry.price/100).toFixed(2);
-  const fromColor = getColor(entry.from_key);
-  const toColor = getColor(entry.to_key);
-  const hasParents = entry.parent_receipts && entry.parent_receipts.length > 0;
-  const parentCount = hasParents ? entry.parent_receipts.length : 0;
+function updateFeed(newEntries) {
+  const feed = document.getElementById('feed');
+  const sorted = [...allEntries].sort((a,b) => (b.transfer_timestamp||0) - (a.transfer_timestamp||0)).slice(0, 25);
 
-  let parentHtml = '';
-  if (hasParents) {
-    parentHtml = `<div class="act-parents">built on ${entry.parent_receipts.map(p =>
-      `<span>${sh(p.parent_receipt_id)}</span> (${p.relationship})`
-    ).join(', ')}</div>`;
-  }
-
-  return `<div class="act${isNew?' fresh':''}" onclick="showDetail('${entry._nodeUrl}',${entry._idx},'${entry._node}')">
-    <div class="act-top">
-      <div class="act-desc">
-        <b style="color:${fromColor}">${from}</b> → <b style="color:${toColor}">${to}</b> for <span class="price">${price}</span>
+  feed.innerHTML = sorted.map(e => {
+    const isNew = newEntries.includes(e);
+    const from = shName(e.from_key);
+    const to = shName(e.to_key);
+    const price = '$'+(e.price/100).toFixed(2);
+    const hasParents = e.parent_receipts && e.parent_receipts.length;
+    const fromColor = getAgentColor(e.from_key);
+    const toColor = getAgentColor(e.to_key);
+    return `<div class="fi${isNew?' fresh':''}" onclick="showDetail('${e._nodeUrl}',${e._idx},'${e._node}')">
+      <div class="fi-top">
+        <span class="fi-desc"><b style="color:${fromColor}">${from}</b> → <b style="color:${toColor}">${to}</b> <span style="color:#a6e3a1">${price}</span></span>
+        <span class="fi-time">${fmtTime(e.transfer_timestamp)}</span>
       </div>
-      <span style="font-size:11px;color:#585b70">${fmtTime(entry.transfer_timestamp)}</span>
-    </div>
-    <div class="act-meta">
-      <span class="tag log">${entry._node} #${entry._idx}</span>
-      <span class="tag wit">2 witnesses</span>
-      ${hasParents ? `<span class="tag prov">${parentCount} parent${parentCount>1?'s':''}</span>` : ''}
-      <span style="color:#45475a">${sh(entry.receipt_id)}</span>
-    </div>
-    ${parentHtml}
-  </div>`;
+      <div class="fi-meta">
+        <span class="fi-tag">${e._node}#${e._idx}</span>
+        <span class="fi-tag wit">2w</span>
+        ${hasParents?`<span class="fi-tag prov">${e.parent_receipts.length}p</span>`:''}
+        <span style="color:#31324480">${sh(e.receipt_id)}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleFeed() {
+  feedVisible = !feedVisible;
+  document.getElementById('feed').style.display = feedVisible ? 'flex' : 'none';
 }
 
 async function showDetail(nodeUrl, idx, nodeName) {
@@ -276,131 +559,100 @@ async function showDetail(nodeUrl, idx, nodeName) {
 
   const entry = await fetchJSON(nodeUrl + '/v1/entry/' + idx);
   const proof = await fetchJSON(nodeUrl + '/v1/proof/' + idx);
+  if (!entry) { detail.innerHTML = '<button class="detail-close" onclick="closeDetail()">&times;</button><p>Failed to load.</p>'; return; }
 
-  if (!entry) {
-    detail.innerHTML = '<button class="detail-close" onclick="closeDetail()">&times;</button><p>Failed to load entry.</p>';
-    return;
-  }
-
-  const hasParents = entry.parent_receipts && entry.parent_receipts.length > 0;
-
+  const hasP = entry.parent_receipts && entry.parent_receipts.length;
   let provHtml = '';
-  if (hasParents) {
-    provHtml = `<div style="margin:16px 0"><div style="font-size:11px;color:#585b70;margin-bottom:8px">PROVENANCE CHAIN</div><div class="prov-chain">`;
+  if (hasP) {
+    provHtml = '<div style="margin:12px 0"><div style="font-size:10px;color:#45475a;margin-bottom:6px">PROVENANCE CHAIN</div><div class="prov-chain">';
     entry.parent_receipts.forEach(p => {
-      provHtml += `<div class="prov-node">${sh(p.parent_receipt_id)}<div style="font-size:9px;color:#585b70">${p.relationship}</div></div><div class="prov-arrow">→</div>`;
+      provHtml += `<div class="prov-n">${sh(p.parent_receipt_id)}<div style="font-size:9px;color:#45475a">${p.relationship}</div></div><div class="prov-a">→</div>`;
     });
-    provHtml += `<div class="prov-node current">${sh(entry.receipt_id)}<div style="font-size:9px;color:#89b4fa">this receipt</div></div></div></div>`;
+    provHtml += `<div class="prov-n cur">${sh(entry.receipt_id)}<div style="font-size:9px;color:#89b4fa">this</div></div></div></div>`;
   }
 
   let proofHtml = '';
   if (proof && proof.path) {
-    proofHtml = `<div style="margin-top:16px"><div style="font-size:11px;color:#585b70;margin-bottom:8px">MERKLE INCLUSION PROOF</div>
-    <div class="proof-box">leaf: ${proof.leaf_hash}\nroot: ${proof.root}\nlog_size: ${proof.log_size}\npath:\n${proof.path.map((s,i) => '  ['+i+'] '+s.direction+': '+s.sibling).join('\n')}</div></div>`;
+    proofHtml = `<div style="margin-top:12px"><div style="font-size:10px;color:#45475a;margin-bottom:6px">MERKLE PROOF</div>
+    <div class="proof-box">leaf: ${proof.leaf_hash}\nroot: ${proof.root}\nsize: ${proof.log_size}\n${proof.path.map((s,i)=>'['+i+'] '+s.direction+': '+s.sibling).join('\n')}</div></div>`;
   }
 
   detail.innerHTML = `
     <button class="detail-close" onclick="closeDetail()">&times;</button>
-    <h2>Receipt Detail</h2>
-    <div class="detail-row"><span class="k">Receipt ID</span><span class="v hash">${entry.receipt_id}</span></div>
-    <div class="detail-row"><span class="k">From</span><span class="v hash">${entry.from_key}</span></div>
-    <div class="detail-row"><span class="k">To</span><span class="v hash">${entry.to_key}</span></div>
-    <div class="detail-row"><span class="k">Price</span><span class="v green">$${(entry.price/100).toFixed(2)} ${entry.currency}</span></div>
-    <div class="detail-row"><span class="k">Timestamp</span><span class="v">${new Date(entry.transfer_timestamp*1000).toISOString()}</span></div>
-    <div class="detail-row"><span class="k">Log</span><span class="v">${nodeName} — index ${entry.index}</span></div>
-    <div class="detail-row"><span class="k">Leaf Hash</span><span class="v hash">${entry.leaf_hash}</span></div>
-    <div class="detail-row"><span class="k">Signature</span><span class="v" style="color:#cba6f7">${entry.seller_signature}</span></div>
-    <div class="detail-row"><span class="k">Parents</span><span class="v${hasParents?' yellow':''}">${hasParents ? entry.parent_receipts.length + ' provenance links' : 'none (root receipt)'}</span></div>
+    <h2>Verified Compute Receipt</h2>
+    <div class="dr"><span class="k">Receipt ID</span><span class="v h">${entry.receipt_id}</span></div>
+    <div class="dr"><span class="k">From (seller)</span><span class="v h">${entry.from_key}</span></div>
+    <div class="dr"><span class="k">To (buyer)</span><span class="v h">${entry.to_key}</span></div>
+    <div class="dr"><span class="k">Price</span><span class="v g">$${(entry.price/100).toFixed(2)} ${entry.currency}</span></div>
+    <div class="dr"><span class="k">Timestamp</span><span class="v">${new Date(entry.transfer_timestamp*1000).toISOString()}</span></div>
+    <div class="dr"><span class="k">Log</span><span class="v">${nodeName} #${entry.index}</span></div>
+    <div class="dr"><span class="k">Leaf Hash</span><span class="v h">${entry.leaf_hash}</span></div>
+    <div class="dr"><span class="k">Signature</span><span class="v" style="color:#cba6f7">${sh(entry.seller_signature)}</span></div>
+    <div class="dr"><span class="k">Parents</span><span class="v${hasP?' y':''}">${hasP?entry.parent_receipts.length+' provenance links':'root (no parents)'}</span></div>
     ${provHtml}
     ${proofHtml}
-    <div style="margin-top:16px;font-size:10px;color:#45475a">
-      Verify independently: <a href="${nodeUrl}/v1/entry/${idx}" target="_blank">raw entry</a> · <a href="${nodeUrl}/v1/proof/${idx}" target="_blank">merkle proof</a>
-    </div>
-  `;
+    <div style="margin-top:14px;font-size:10px;color:#45475a">
+      Verify: <a href="${nodeUrl}/v1/entry/${idx}" target="_blank" style="color:#585b70">raw</a> · <a href="${nodeUrl}/v1/proof/${idx}" target="_blank" style="color:#585b70">proof</a>
+    </div>`;
 }
 
-function closeDetail() {
-  document.getElementById('detail-overlay').classList.remove('show');
-}
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDetail(); });
+function closeDetail() { document.getElementById('detail-overlay').classList.remove('show'); }
+document.addEventListener('keydown', e => { if (e.key==='Escape') closeDetail(); });
 
-async function refresh() {
-  const healths = await Promise.all(NODES.map(n => fetchJSON(n.url+'/v1/health')));
-  const checkpoints = await Promise.all(NODES.map(n => fetchJSON(n.url+'/v1/checkpoint')));
+// ── Init ──
+function init() {
+  canvas = document.getElementById('c');
+  ctx = canvas.getContext('2d');
 
-  let online = 0, totalEntries = 0, totalWitnesses = 0, totalVolume = 0;
+  function resize() {
+    W = window.innerWidth;
+    H = window.innerHeight;
+    canvas.width = W * devicePixelRatio;
+    canvas.height = H * devicePixelRatio;
+    canvas.style.width = W + 'px';
+    canvas.style.height = H + 'px';
+    ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+  }
+  resize();
+  window.addEventListener('resize', resize);
 
-  // Nodes
-  let nh = '';
-  healths.forEach((h, i) => {
-    const n = NODES[i];
-    if (h) {
-      online++;
-      totalEntries += h.log_size;
-      const cp = checkpoints[i];
-      const wc = cp && cp.witnesses ? cp.witnesses.length : 0;
-      totalWitnesses += wc;
-      nh += `<div class="nd on">
-        <div class="nd-top">
-          <span class="nd-name">${n.flag} ${n.name}</span>
-          <span class="nd-status on">online</span>
-        </div>
-        <div class="nd-info">
-          <b>${n.loc}</b><br>
-          ${h.log_size} entries · ${fmtUptime(h.uptime_seconds)} uptime · ${wc} witnesses<br>
-          root: <span style="font-family:monospace;font-size:10px;color:#6c7086">${sh(h.root)}</span>
-        </div>
-      </div>`;
-    } else {
-      nh += `<div class="nd off">
-        <div class="nd-top">
-          <span class="nd-name">${n.flag} ${n.name}</span>
-          <span class="nd-status off">offline</span>
-        </div>
-        <div class="nd-info"><b>${n.loc}</b><br>unreachable</div>
-      </div>`;
+  // Mouse
+  canvas.addEventListener('mousemove', e => {
+    mouse.x = e.clientX; mouse.y = e.clientY;
+    if (mouse.dragging) {
+      mouse.dragging.x = e.clientX;
+      mouse.dragging.y = e.clientY;
+      mouse.dragging.vx = 0;
+      mouse.dragging.vy = 0;
     }
+    hoveredNode = getNodeAt(e.clientX, e.clientY);
+    canvas.style.cursor = hoveredNode ? 'grab' : 'default';
   });
-  document.getElementById('nodes').innerHTML = nh;
-
-  // Fetch entries
-  const entryArrays = await Promise.all(NODES.map((n,i) => fetchEntries(n, healths[i])));
-  let newEntries = [];
-  entryArrays.flat().forEach(e => {
-    const key = e._node + ':' + e._idx;
-    if (!knownKeys.has(key)) {
-      knownKeys.add(key);
-      newEntries.push(e);
-      allEntries.push(e);
-    }
+  canvas.addEventListener('mousedown', e => {
+    const n = getNodeAt(e.clientX, e.clientY);
+    if (n) { mouse.dragging = n; canvas.style.cursor = 'grabbing'; }
+  });
+  canvas.addEventListener('mouseup', () => {
+    mouse.dragging = null;
+    canvas.style.cursor = hoveredNode ? 'grab' : 'default';
   });
 
-  allEntries.sort((a,b) => (b.transfer_timestamp||0) - (a.transfer_timestamp||0));
-  const display = allEntries.slice(0, 40);
-
-  // Count provenance links and volume
-  let provCount = 0;
-  allEntries.forEach(e => {
-    totalVolume += (e.price || 0);
-    if (e.parent_receipts && e.parent_receipts.length) provCount += e.parent_receipts.length;
+  // Place log nodes in a triangle
+  const cx = W/2, cy = H/2;
+  NODES.forEach((n, i) => {
+    const angle = -Math.PI/2 + (i * Math.PI * 2 / 3);
+    findOrCreateNode('log:'+n.name, 'log', {name:n.name, loc:n.loc, entries:0, uptime:'—'});
+    const node = graphNodes[graphNodes.length-1];
+    node.x = cx + Math.cos(angle) * 180;
+    node.y = cy + Math.sin(angle) * 180;
   });
 
-  // Render activity
-  const actEl = document.getElementById('activity');
-  actEl.innerHTML = display.map(e => renderActivity(e, newEntries.includes(e))).join('')
-    || '<div style="color:#45475a;padding:24px;text-align:center">no activity yet</div>';
-
-  // Stats
-  document.getElementById('s-nodes').textContent = online;
-  document.getElementById('s-entries').textContent = totalEntries;
-  document.getElementById('s-provenance').textContent = provCount;
-  document.getElementById('s-witnesses').textContent = totalWitnesses;
-  document.getElementById('s-volume').textContent = '$' + (totalVolume/100).toFixed(0);
-  document.getElementById('last-update').textContent = 'updated ' + new Date().toLocaleTimeString();
+  refresh();
+  setInterval(refresh, 8000);
+  loop();
 }
 
-refresh();
-setInterval(refresh, 8000);
+init();
 </script>
 </body>
 </html>
