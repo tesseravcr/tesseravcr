@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tessera VCR — Live Network</title>
+<style>
+body{font-family:Verdana,Geneva,sans-serif;max-width:720px;margin:0 auto;padding:20px;background:#fafafa;color:#222;font-size:13px;line-height:1.6}
+a{color:#5046e5}
+h1{font-size:16px;font-weight:bold;margin:0}
+h2{font-size:14px;margin:20px 0 8px;border-bottom:1px solid #ddd;padding-bottom:4px}
+.top{display:flex;justify-content:space-between;align-items:center;padding-bottom:12px;border-bottom:1px solid #ddd;margin-bottom:16px}
+.top nav{font-size:11px;display:flex;gap:12px}
+.mono{font-family:'Courier New',monospace;font-size:11px}
+.dim{color:#888}
+.node-card{background:#fff;border:1px solid #ddd;padding:14px;margin-bottom:12px;border-radius:4px}
+.node-card.ok{border-left:3px solid #16a34a}
+.node-card.down{border-left:3px solid #dc2626}
+.node-header{display:flex;justify-content:space-between;align-items:center}
+.node-name{font-weight:bold;font-size:14px}
+.node-status{font-size:11px;padding:2px 8px;border-radius:10px}
+.node-status.ok{background:#f0fdf4;color:#16a34a}
+.node-status.down{background:#fef2f2;color:#dc2626}
+.node-status.loading{background:#fefce8;color:#a16207}
+.node-detail{margin-top:8px;font-size:11px;font-family:'Courier New',monospace;color:#666}
+.node-detail span{display:inline-block;margin-right:16px}
+.stats-bar{display:flex;gap:20px;margin:16px 0;padding:12px;background:#fff;border:1px solid #ddd;border-radius:4px}
+.stat{text-align:center;flex:1}
+.stat-val{font-size:20px;font-weight:bold;color:#5046e5}
+.stat-label{font-size:10px;color:#888;margin-top:2px}
+.transfer{background:#fff;border:1px solid #ddd;padding:10px;margin-bottom:8px;font-size:11px;font-family:'Courier New',monospace;border-radius:4px}
+.transfer .field{color:#888;display:inline-block;width:100px}
+.refresh{font-size:10px;color:#888;margin-top:8px}
+.join{background:#f0efff;border:1px solid #c4c0f0;padding:14px;margin:16px 0;border-radius:4px}
+.join code{background:#e8e6f8;padding:2px 6px;font-size:11px;border-radius:2px}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <h1>tessera vcr — live network</h1>
+  <nav>
+    <a href="index.html">demo</a>
+    <a href="https://github.com/Henry-Shelton/tesseravcr">github</a>
+    <a href="https://github.com/Henry-Shelton/tesseravcr/blob/main/spec/VCR-SPEC.md">spec</a>
+  </nav>
+</div>
+
+<div class="stats-bar">
+  <div class="stat"><div class="stat-val" id="total-nodes">0</div><div class="stat-label">nodes online</div></div>
+  <div class="stat"><div class="stat-val" id="total-transfers">0</div><div class="stat-label">transfers</div></div>
+  <div class="stat"><div class="stat-val" id="total-witnesses">0</div><div class="stat-label">witness signatures</div></div>
+</div>
+
+<h2>Seed Nodes</h2>
+<div id="nodes"></div>
+
+<h2>Recent Transfers</h2>
+<div id="transfers"><span class="dim">Loading...</span></div>
+
+<h2>Latest Checkpoints</h2>
+<div id="checkpoints"><span class="dim">Loading...</span></div>
+
+<div class="join">
+  <b>Run your own node</b>
+  <p style="margin:6px 0">Join the network for $4-6/month. Your node will automatically witness checkpoints from configured peers.</p>
+  <code>curl -fsSL https://raw.githubusercontent.com/Henry-Shelton/tesseravcr/main/tessera-rust/tessera-log-server/deploy/setup.sh | sudo bash</code>
+  <p style="margin:6px 0 0;font-size:11px"><a href="https://github.com/Henry-Shelton/tesseravcr/blob/main/tessera-rust/tessera-log-server/deploy/README.md">Full deployment guide</a></p>
+</div>
+
+<div class="refresh">Auto-refreshes every 15 seconds. Last update: <span id="last-update">—</span></div>
+
+<script>
+const NODES = [
+  {name: 'log1', url: 'https://log1.tesseravcr.org', location: 'Nuremberg, DE'},
+  {name: 'log2', url: 'https://log2.tesseravcr.org', location: 'Helsinki, FI'},
+  {name: 'log3', url: 'https://log3.tesseravcr.org', location: 'Helsinki, FI'},
+];
+
+function sh(h) { return h ? h.slice(0,10) + '...' + h.slice(-6) : '—'; }
+
+function formatUptime(s) {
+  if (s < 60) return s + 's';
+  if (s < 3600) return Math.floor(s/60) + 'm';
+  if (s < 86400) return Math.floor(s/3600) + 'h ' + Math.floor((s%3600)/60) + 'm';
+  return Math.floor(s/86400) + 'd ' + Math.floor((s%86400)/3600) + 'h';
+}
+
+async function fetchNode(node) {
+  try {
+    const resp = await fetch(node.url + '/v1/health', {signal: AbortSignal.timeout(5000)});
+    if (!resp.ok) throw new Error(resp.status);
+    return {ok: true, data: await resp.json()};
+  } catch(e) {
+    return {ok: false, error: e.message};
+  }
+}
+
+async function fetchCheckpoint(node) {
+  try {
+    const resp = await fetch(node.url + '/v1/checkpoint', {signal: AbortSignal.timeout(5000)});
+    if (!resp.ok) return null;
+    return await resp.json();
+  } catch(e) {
+    return null;
+  }
+}
+
+async function fetchTransfers(node) {
+  const transfers = [];
+  try {
+    const health = await fetch(node.url + '/v1/health', {signal: AbortSignal.timeout(5000)});
+    const hd = await health.json();
+    for (let i = Math.max(0, hd.log_size - 5); i < hd.log_size; i++) {
+      const resp = await fetch(node.url + '/v1/entry/' + i, {signal: AbortSignal.timeout(5000)});
+      if (resp.ok) transfers.push(await resp.json());
+    }
+  } catch(e) {}
+  return transfers;
+}
+
+async function refresh() {
+  const nodesEl = document.getElementById('nodes');
+  let nodesHtml = '';
+  let totalOnline = 0;
+  let totalTransfers = 0;
+
+  const results = await Promise.all(NODES.map(fetchNode));
+  const checkpoints = await Promise.all(NODES.map(fetchCheckpoint));
+
+  results.forEach((r, i) => {
+    const node = NODES[i];
+    if (r.ok) {
+      totalOnline++;
+      totalTransfers += r.data.log_size;
+      nodesHtml += `
+        <div class="node-card ok">
+          <div class="node-header">
+            <span class="node-name">${node.name} <span class="dim" style="font-weight:normal;font-size:11px">${node.location}</span></span>
+            <span class="node-status ok">online</span>
+          </div>
+          <div class="node-detail">
+            <span>entries: ${r.data.log_size}</span>
+            <span>uptime: ${formatUptime(r.data.uptime_seconds)}</span>
+            <span>root: ${sh(r.data.root)}</span>
+          </div>
+          <div class="node-detail">
+            <span>operator: ${sh(r.data.operator_key)}</span>
+            <span>version: ${r.data.version}</span>
+            <span><a href="${node.url}/v1/health" target="_blank">api</a></span>
+          </div>
+        </div>`;
+    } else {
+      nodesHtml += `
+        <div class="node-card down">
+          <div class="node-header">
+            <span class="node-name">${node.name} <span class="dim" style="font-weight:normal;font-size:11px">${node.location}</span></span>
+            <span class="node-status down">offline</span>
+          </div>
+          <div class="node-detail">error: ${r.error}</div>
+        </div>`;
+    }
+  });
+  nodesEl.innerHTML = nodesHtml;
+
+  // Checkpoints
+  let cpHtml = '';
+  let totalWitnesses = 0;
+  checkpoints.forEach((cp, i) => {
+    if (cp) {
+      const wCount = cp.witnesses ? cp.witnesses.length : 0;
+      totalWitnesses += wCount;
+      cpHtml += `
+        <div class="transfer">
+          <div><span class="field">${NODES[i].name}</span> root: ${sh(cp.root)} | size: ${cp.log_size} | witnesses: ${wCount}</div>
+          ${cp.witnesses ? cp.witnesses.map(w => `<div style="margin-left:100px;color:#16a34a">witness: ${sh(w.witness_key)}</div>`).join('') : ''}
+        </div>`;
+    }
+  });
+  document.getElementById('checkpoints').innerHTML = cpHtml || '<span class="dim">No checkpoints yet</span>';
+
+  // Transfers
+  const transfers = await fetchTransfers(NODES[0]);
+  let tHtml = '';
+  transfers.reverse().forEach(t => {
+    tHtml += `
+      <div class="transfer">
+        <div><span class="field">receipt</span>${sh(t.receipt_id)}</div>
+        <div><span class="field">from</span>${sh(t.from_key)}</div>
+        <div><span class="field">to</span>${sh(t.to_key)}</div>
+        <div><span class="field">price</span>${t.price} ${t.currency}</div>
+      </div>`;
+  });
+  document.getElementById('transfers').innerHTML = tHtml || '<span class="dim">No transfers yet</span>';
+
+  // Stats
+  document.getElementById('total-nodes').textContent = totalOnline;
+  document.getElementById('total-transfers').textContent = totalTransfers;
+  document.getElementById('total-witnesses').textContent = totalWitnesses;
+  document.getElementById('last-update').textContent = new Date().toLocaleTimeString();
+}
+
+refresh();
+setInterval(refresh, 15000);
+</script>
+</body>
+</html>
