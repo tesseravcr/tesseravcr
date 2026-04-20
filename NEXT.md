@@ -51,7 +51,7 @@ Five phases. Each has a single exit criterion. No phase starts until its predece
 
 ---
 
-### Phase 2: Log server + seed nodes (3 weeks) — IN PROGRESS
+### Phase 2: Log server + seed nodes (3 weeks) — DONE
 
 This is the network. The log server isn't infrastructure for the network — it IS the network, the same way bitcoind IS Bitcoin. Someone deploying a log server IS joining the network.
 
@@ -100,13 +100,15 @@ Ship with a `README.md` containing "Run your own log node" instructions (Docker 
 
 **Exit criterion:** Three log nodes running on separate infrastructure. A transfer record appended to one log can be verified via inclusion proof on any of the three. Double-spend attempt across logs is detected. `docker run` starts a new log node in under 60 seconds.
 
-**Status (2026-04-20):**
+**Completed 2026-04-20:**
 - ✅ Log server implementation complete (23 tests passing)
-- ✅ Docker image pipeline configured
-- ✅ Deployment automation ready
-- 🚧 Provisioning 3 VMs (Hetzner)
-- 🚧 DNS configuration (log1/log2/log3.tesseravcr.org)
-- ⏳ End-to-end cross-log verification test
+- ✅ Docker image published (ghcr.io/henry-shelton/tessera-log-server)
+- ✅ 3 seed nodes deployed: log1 (Nuremberg), log2 (Helsinki), log3 (Helsinki)
+- ✅ HTTPS with automatic TLS via Caddy + Let's Encrypt
+- ✅ Cross-log witnessing verified (2-of-3 witnesses on first transfer)
+- ✅ Double-spend rejection verified (409 Conflict)
+- ✅ Inclusion proofs working
+- ✅ Live URLs: log1/log2/log3.tesseravcr.org
 
 ---
 
