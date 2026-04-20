@@ -3,7 +3,7 @@
 }
 
 {$DOMAIN:localhost} {
-    reverse_proxy localhost:7800
+    reverse_proxy tessera-log:7800
 
     encode gzip
 
