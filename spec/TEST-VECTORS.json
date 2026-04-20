@@ -1,0 +1,610 @@
+{
+  "_meta": {
+    "description": "VCR Protocol Test Vectors \u2014 generated from reference implementation",
+    "spec_version": "1.0",
+    "generated_by": "tessera/generate_test_vectors.py",
+    "hash_function": "SHA-256",
+    "signature_scheme": "Ed25519 (RFC 8032)",
+    "key_derivation": "Ed25519 keys from SHA-256('tessera-test-key-a'), SHA-256('tessera-test-key-b'), SHA-256('tessera-test-key-c')",
+    "note": "Fully deterministic. All values including receipt IDs, signatures, and hashes are reproducible from the key derivation seeds above."
+  },
+  "vectors": {
+    "minimal_receipt": {
+      "description": "A root receipt with no parents and default royalty terms.",
+      "inputs": {
+        "schema_version": 1,
+        "model_id": "0000000000000000000000000000000000000000000000000000000000000000",
+        "verification_key_id": "0000000000000000000000000000000000000000000000000000000000000000",
+        "input_hash": "9dfe6f15d1ab73af898739394fd22fd72a03db01834582f24bb2e1c66c7aaeae",
+        "output_hash": "0883407507398f58e21ab97dfc45a7795e51dfe427fdd605fbce08db750727f9",
+        "proof": "cHJvb2YtYnl0ZXM=",
+        "public_inputs": "cHVibGljLWlucHV0cw==",
+        "proving_backend": "ezkl-halo2",
+        "timestamp": 1714500000,
+        "parent_receipts": [],
+        "provenance_depth": 0,
+        "provider": "f9d7174a7794c538789d7d877e7bb6f3ddeabc2359249b1a3a449614c10aebc3",
+        "original_price": 2000,
+        "currency": "USD-cents",
+        "royalty_terms": {
+          "provider_royalty": 500,
+          "parent_royalty": 300,
+          "cascade": true
+        },
+        "signature_scheme": "ed25519",
+        "extensions": []
+      },
+      "expected": {
+        "canonical_bytes_hex": "000000020001000000200000000000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000209dfe6f15d1ab73af898739394fd22fd72a03db01834582f24bb2e1c66c7aaeae000000200883407507398f58e21ab97dfc45a7795e51dfe427fdd605fbce08db750727f90000000b70726f6f662d62797465730000000d7075626c69632d696e707574730000000a657a6b6c2d68616c6f320000000800000000663131a00000000000000002000000000020f9d7174a7794c538789d7d877e7bb6f3ddeabc2359249b1a3a449614c10aebc30000000800000000000007d0000000095553442d63656e74730000000201f400000002012c0000000101000000076564323535313900000000",
+        "canonical_bytes_length": 311,
+        "receipt_id": "e9061b1fc39f4f8ac3fad8fba32299cbb6d3b1244e0e1c6b5c1711da0ffcd63a",
+        "receipt_hash": "e9061b1fc39f4f8ac3fad8fba32299cbb6d3b1244e0e1c6b5c1711da0ffcd63a",
+        "receipt_id_equals_receipt_hash": true,
+        "signature": "C/m3VOPKXcyzEePW7FiSPsPSMYVcyIcceartrrlH5nG6RgjrAed//FHP+jRzemAvbB6wE6Iwe3kNdjJz7ES5AQ==",
+        "signature_valid": true
+      }
+    },
+    "receipt_with_parent": {
+      "description": "A derivative receipt referencing Vector 1 as parent. Provenance depth 1.",
+      "inputs": {
+        "schema_version": 1,
+        "model_id": "b1fa183109da97282500b75e07f5ab3d2502178a9d08fc5366208e2d8da91c02",
+        "verification_key_id": "6fd6595290326f2de7297b8eead94b19befd67de0a7fdb2122112fa49a5a0cf6",
+        "input_hash": "2c9689bda95c858e0b8a6e9cfbef88c4979cb78339a36578679f226e34fe369e",
+        "output_hash": "2b6ed8c834125d77a4f7c91868ca67fb61f6b9a2f92e63fe87c7e65ed12c91ce",
+        "proof": "ZGVyaXZhdGl2ZS1wcm9vZg==",
+        "public_inputs": "ZGVyaXZhdGl2ZS1wdWJsaWM=",
+        "proving_backend": "ezkl-halo2",
+        "timestamp": 1714503600,
+        "parent_receipts": [
+          {
+            "receipt_id": "e9061b1fc39f4f8ac3fad8fba32299cbb6d3b1244e0e1c6b5c1711da0ffcd63a",
+            "receipt_hash": "e9061b1fc39f4f8ac3fad8fba32299cbb6d3b1244e0e1c6b5c1711da0ffcd63a",
+            "relationship": "input"
+          }
+        ],
+        "provenance_depth": 1,
+        "provider": "5731478a28de4024eb620232336ce15ca8317bb14900046e3aec0d6993ec3b67",
+        "original_price": 5000,
+        "currency": "USD-cents",
+        "royalty_terms": {
+          "provider_royalty": 500,
+          "parent_royalty": 300,
+          "cascade": true
+        },
+        "signature_scheme": "ed25519",
+        "extensions": []
+      },
+      "expected": {
+        "canonical_bytes_hex": "00000002000100000020b1fa183109da97282500b75e07f5ab3d2502178a9d08fc5366208e2d8da91c02000000206fd6595290326f2de7297b8eead94b19befd67de0a7fdb2122112fa49a5a0cf6000000202c9689bda95c858e0b8a6e9cfbef88c4979cb78339a36578679f226e34fe369e000000202b6ed8c834125d77a4f7c91868ca67fb61f6b9a2f92e63fe87c7e65ed12c91ce00000010646572697661746976652d70726f6f6600000011646572697661746976652d7075626c69630000000a657a6b6c2d68616c6f32000000080000000066313fb00000000100000020e9061b1fc39f4f8ac3fad8fba32299cbb6d3b1244e0e1c6b5c1711da0ffcd63a00000020e9061b1fc39f4f8ac3fad8fba32299cbb6d3b1244e0e1c6b5c1711da0ffcd63a00000005696e707574000000020001000000205731478a28de4024eb620232336ce15ca8317bb14900046e3aec0d6993ec3b67000000080000000000001388000000095553442d63656e74730000000201f400000002012c0000000101000000076564323535313900000000",
+        "canonical_bytes_length": 401,
+        "receipt_id": "1ee01bd2e23aced594a51f8388d245da4d53ed73c05fc951864bb632617714db",
+        "signature": "jxb1BBvpKw9l0sKU/qTChdYL+iPD0lNkxOgkqXjZkeRCjmMPTCC7ineaed0w7XJAOJwloV0xd+9SIa0ajzBpAA==",
+        "signature_valid": true,
+        "parent_ref_canonical_hex": "00000020e9061b1fc39f4f8ac3fad8fba32299cbb6d3b1244e0e1c6b5c1711da0ffcd63a00000020e9061b1fc39f4f8ac3fad8fba32299cbb6d3b1244e0e1c6b5c1711da0ffcd63a00000005696e707574"
+      }
+    },
+    "canonical_serialisation_breakdown": {
+      "description": "Field-by-field canonical byte encoding for the minimal receipt (Vector 1). Concatenate all encoded_hex values to get the full canonical bytes.",
+      "fields": [
+        {
+          "field": "schema_version",
+          "value": 1,
+          "encoded_hex": "000000020001",
+          "note": "BE16(1) = 00 01, length-prefixed"
+        },
+        {
+          "field": "model_id",
+          "value": "0000000000000000000000000000000000000000000000000000000000000000",
+          "encoded_hex": "000000200000000000000000000000000000000000000000000000000000000000000000",
+          "note": "32 zero bytes, length-prefixed"
+        },
+        {
+          "field": "verification_key_id",
+          "value": "0000000000000000000000000000000000000000000000000000000000000000",
+          "encoded_hex": "000000200000000000000000000000000000000000000000000000000000000000000000",
+          "note": "32 zero bytes, length-prefixed"
+        },
+        {
+          "field": "input_hash",
+          "value": "9dfe6f15d1ab73af898739394fd22fd72a03db01834582f24bb2e1c66c7aaeae",
+          "encoded_hex": "000000209dfe6f15d1ab73af898739394fd22fd72a03db01834582f24bb2e1c66c7aaeae",
+          "note": "SHA-256('test input'), length-prefixed"
+        },
+        {
+          "field": "output_hash",
+          "value": "0883407507398f58e21ab97dfc45a7795e51dfe427fdd605fbce08db750727f9",
+          "encoded_hex": "000000200883407507398f58e21ab97dfc45a7795e51dfe427fdd605fbce08db750727f9",
+          "note": "SHA-256('test output'), length-prefixed"
+        },
+        {
+          "field": "proof",
+          "value": "cHJvb2YtYnl0ZXM=",
+          "encoded_hex": "0000000b70726f6f662d6279746573",
+          "note": "Raw bytes, length-prefixed"
+        },
+        {
+          "field": "public_inputs",
+          "value": "cHVibGljLWlucHV0cw==",
+          "encoded_hex": "0000000d7075626c69632d696e70757473",
+          "note": "Raw bytes, length-prefixed"
+        },
+        {
+          "field": "proving_backend",
+          "value": "ezkl-halo2",
+          "encoded_hex": "0000000a657a6b6c2d68616c6f32",
+          "note": "UTF-8, length-prefixed"
+        },
+        {
+          "field": "timestamp",
+          "value": 1714500000,
+          "encoded_hex": "0000000800000000663131a0",
+          "note": "BE64(1714500000), length-prefixed"
+        },
+        {
+          "field": "parent_receipts",
+          "value": "[] (empty list)",
+          "encoded_hex": "00000000",
+          "note": "BE32(0) \u2014 zero items"
+        },
+        {
+          "field": "provenance_depth",
+          "value": 0,
+          "encoded_hex": "000000020000",
+          "note": "BE16(0), length-prefixed"
+        },
+        {
+          "field": "provider",
+          "value": "f9d7174a7794c538789d7d877e7bb6f3ddeabc2359249b1a3a449614c10aebc3",
+          "encoded_hex": "00000020f9d7174a7794c538789d7d877e7bb6f3ddeabc2359249b1a3a449614c10aebc3",
+          "note": "Ed25519 public key (32 bytes), length-prefixed"
+        },
+        {
+          "field": "original_price",
+          "value": 2000,
+          "encoded_hex": "0000000800000000000007d0",
+          "note": "BE64(2000), length-prefixed"
+        },
+        {
+          "field": "currency",
+          "value": "USD-cents",
+          "encoded_hex": "000000095553442d63656e7473",
+          "note": "UTF-8, length-prefixed"
+        },
+        {
+          "field": "royalty_terms.provider_royalty",
+          "value": 500,
+          "encoded_hex": "0000000201f4",
+          "note": "BE16(500), length-prefixed. Nested \u2014 no outer wrapper."
+        },
+        {
+          "field": "royalty_terms.parent_royalty",
+          "value": 300,
+          "encoded_hex": "00000002012c",
+          "note": "BE16(300), length-prefixed"
+        },
+        {
+          "field": "royalty_terms.cascade",
+          "value": true,
+          "encoded_hex": "0000000101",
+          "note": "0x01 (true), length-prefixed"
+        },
+        {
+          "field": "signature_scheme",
+          "value": "ed25519",
+          "encoded_hex": "0000000765643235353139",
+          "note": "UTF-8, length-prefixed"
+        },
+        {
+          "field": "extensions",
+          "value": "[] (empty list)",
+          "encoded_hex": "00000000",
+          "note": "BE32(0) \u2014 zero items"
+        }
+      ],
+      "concatenated_hex": "000000020001000000200000000000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000209dfe6f15d1ab73af898739394fd22fd72a03db01834582f24bb2e1c66c7aaeae000000200883407507398f58e21ab97dfc45a7795e51dfe427fdd605fbce08db750727f90000000b70726f6f662d62797465730000000d7075626c69632d696e707574730000000a657a6b6c2d68616c6f320000000800000000663131a00000000000000002000000000020f9d7174a7794c538789d7d877e7bb6f3ddeabc2359249b1a3a449614c10aebc30000000800000000000007d0000000095553442d63656e74730000000201f400000002012c0000000101000000076564323535313900000000",
+      "sha256_of_concatenated": "e9061b1fc39f4f8ac3fad8fba32299cbb6d3b1244e0e1c6b5c1711da0ffcd63a"
+    },
+    "transfer_record": {
+      "description": "Transfer of Vector 2's receipt from key_b to key_c at $80.00 with royalty payments.",
+      "inputs": {
+        "receipt_id": "1ee01bd2e23aced594a51f8388d245da4d53ed73c05fc951864bb632617714db",
+        "from_key": "5731478a28de4024eb620232336ce15ca8317bb14900046e3aec0d6993ec3b67",
+        "to_key": "53b3d6d7a63fe9a7fd55d97f4848985084af9a051a419fce86d6fee10fee3c2a",
+        "price": 8000,
+        "currency": "USD-cents",
+        "timestamp": 1714510000,
+        "royalties_paid": [
+          {
+            "recipient": "5731478a28de4024eb620232336ce15ca8317bb14900046e3aec0d6993ec3b67",
+            "amount": 400,
+            "receipt_id": "1ee01bd2e23aced594a51f8388d245da4d53ed73c05fc951864bb632617714db"
+          },
+          {
+            "recipient": "f9d7174a7794c538789d7d877e7bb6f3ddeabc2359249b1a3a449614c10aebc3",
+            "amount": 120,
+            "receipt_id": "e9061b1fc39f4f8ac3fad8fba32299cbb6d3b1244e0e1c6b5c1711da0ffcd63a"
+          }
+        ]
+      },
+      "expected": {
+        "canonical_bytes_hex": "000000201ee01bd2e23aced594a51f8388d245da4d53ed73c05fc951864bb632617714db000000205731478a28de4024eb620232336ce15ca8317bb14900046e3aec0d6993ec3b670000002053b3d6d7a63fe9a7fd55d97f4848985084af9a051a419fce86d6fee10fee3c2a000000080000000000001f40000000095553442d63656e74730000000800000000663158b000000002000000205731478a28de4024eb620232336ce15ca8317bb14900046e3aec0d6993ec3b67000000080000000000000190000000201ee01bd2e23aced594a51f8388d245da4d53ed73c05fc951864bb632617714db00000020f9d7174a7794c538789d7d877e7bb6f3ddeabc2359249b1a3a449614c10aebc300000008000000000000007800000020e9061b1fc39f4f8ac3fad8fba32299cbb6d3b1244e0e1c6b5c1711da0ffcd63a",
+        "transfer_hash": "ae11ca352179c7b188c71af9930a66e2941f3522c454b96142941c0d0347fd9f",
+        "signature": "7SuH8DojfJN5SpMTxnmbckYnf3Lg+TgRqUFMVsEG08xGuiENheAGGXga0vAnKb849zeJRyEYG5CeTOJcbEBhBQ==",
+        "signature_valid": true
+      }
+    },
+    "royalty_cascade": {
+      "description": "Resale of Vector 2 for 8000 cents ($80). Royalties cascade through provenance DAG.",
+      "inputs": {
+        "receipt": "1ee01bd2e23aced594a51f8388d245da4d53ed73c05fc951864bb632617714db",
+        "sale_price": 8000,
+        "seller": "5731478a28de4024eb620232336ce15ca8317bb14900046e3aec0d6993ec3b67",
+        "receipt_royalty_terms": {
+          "provider_royalty": 500,
+          "parent_royalty": 300,
+          "cascade": true
+        },
+        "parent_receipt": "e9061b1fc39f4f8ac3fad8fba32299cbb6d3b1244e0e1c6b5c1711da0ffcd63a",
+        "parent_royalty_terms": {
+          "provider_royalty": 500,
+          "parent_royalty": 300,
+          "cascade": true
+        }
+      },
+      "expected": {
+        "payments": {
+          "5731478a28de4024eb620232336ce15ca8317bb14900046e3aec0d6993ec3b67": 7988,
+          "f9d7174a7794c538789d7d877e7bb6f3ddeabc2359249b1a3a449614c10aebc3": 12
+        },
+        "explanation": {
+          "step_1": "provider_cut = 8000 \u00d7 500/10000 = 400 \u2192 to r2.provider (key_b)",
+          "step_2": "parent_cut_total = 8000 \u00d7 300/10000 = 240",
+          "step_3": "per_parent = 240 / 1 parent = 240",
+          "step_4": "cascade=true, so DISTRIBUTE(r1, 240):",
+          "step_4a": "  r1.provider_cut = 240 \u00d7 500/10000 = 12 \u2192 to r1.provider (key_a)",
+          "step_4b": "  r1.parent_cut = 240 \u00d7 300/10000 = 7.2 \u2192 no parents (root), so nothing",
+          "step_5": "seller_cut = 8000 - 400 - 240 = 7360 \u2192 to seller (key_b)",
+          "note": "key_b receives 400 (as provider) + 7360 (as seller) = 7760 total"
+        }
+      }
+    },
+    "tamper_detection": {
+      "description": "Modify output_hash of Vector 1. Receipt ID changes, signature breaks.",
+      "original": {
+        "receipt_id": "e9061b1fc39f4f8ac3fad8fba32299cbb6d3b1244e0e1c6b5c1711da0ffcd63a",
+        "output_hash": "0883407507398f58e21ab97dfc45a7795e51dfe427fdd605fbce08db750727f9",
+        "signature_valid": true
+      },
+      "tampered": {
+        "receipt_id": "1920af838fd487d0bcd943586ce1c632338eb76dfbe05aef3270bf78bce48a9c",
+        "output_hash": "468a5f80f62c762a21c43dfad7c2d600f1a15991c3d896ec94f1d201e65d8dd2",
+        "signature_valid": false
+      },
+      "receipt_id_changed": true,
+      "signature_broken": true
+    },
+    "edge_cases": {
+      "description": "Edge case coverage: royalty bounds, zero-length proofs, empty parents, depth limits, multi-parent DAG, and rejection cases.",
+      "valid_cases": {
+        "royalty_sum_10000_bps": {
+          "description": "Royalty sum exactly 10000 bps (boundary) \u2014 valid",
+          "royalty_terms": {
+            "provider_royalty": 7000,
+            "parent_royalty": 3000,
+            "cascade": false
+          },
+          "receipt_id": "2cbd199d154b9207b456381126b028317ad6ddb4cef02bb2b6b81a6b69b0bddd",
+          "canonical_bytes_hex": "00000002000100000020000000000000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000000000020b48c428cdf8ce9397eada789362128455446d401f71fd57abc10a34632d4342e00000020e1d73419f9844c86bb3924ef367d292b58d712e7fc65a7a139c411dc125dd27b0000000570726f6f66000000000000000a657a6b6c2d68616c6f320000000800000000663131a00000000000000002000000000020f9d7174a7794c538789d7d877e7bb6f3ddeabc2359249b1a3a449614c10aebc30000000800000000000003e8000000095553442d63656e7473000000021b58000000020bb80000000100000000076564323535313900000000",
+          "signature": "rvPhuykmhM2E8gIbhKMXOGz3gdXgC4moAXSYmFtSiRM6QnPrO4u8mLZBLb5ZCQ7OJANr2pK9lBllu06+Ag5zBA==",
+          "signature_valid": true
+        },
+        "zero_length_proof": {
+          "description": "Empty proof field \u2014 valid (backend verifies proof, not receipt layer)",
+          "proof_length": 0,
+          "receipt_id": "75a6ab285848ceb21c14d8539d85d646fc007def5cc5960d9d4db25d18ca35a8",
+          "canonical_bytes_hex": "00000002000100000020000000000000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000000000020a6bc890154d611a1720f523af5caf235f88ecbebde21520b1ead36600ba0c3780000002064611b32f16d46b2327b4884c8091441fe0a4fd8ec913abd07fc6881a8e8bbc000000000000000000000000a657a6b6c2d68616c6f320000000800000000663131a00000000000000002000000000020f9d7174a7794c538789d7d877e7bb6f3ddeabc2359249b1a3a449614c10aebc30000000800000000000001f4000000095553442d63656e74730000000201f400000002012c0000000101000000076564323535313900000000",
+          "signature": "rHo3zhlrtOfioomLbFSDO2tJHw/661VNRTaAscPDFtM0hhkOTZFaPcdBwlYtEQ/XnSOJAwNkdGrHuGIhpaRrBQ==",
+          "signature_valid": true
+        },
+        "empty_parents_cascade_true": {
+          "description": "Root receipt with cascade=true and parent_royalty=300 \u2014 valid. Parent royalty is a no-op with no parents.",
+          "parent_receipts": [],
+          "cascade": true,
+          "parent_royalty": 300,
+          "receipt_id": "778aaef132e785758a416501636f9f793d283925649507c791ed91cd5f49386c",
+          "canonical_bytes_hex": "000000020001000000200000000000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000207ff327fe0a10eed54d737db92b6c25c3b61d1e15f20519250c6faceb4e05767700000020e95e0fa6a3e90ca56fbe9cee99650b93486d75ad728f6e749f88fb377bded1170000000a726f6f742d70726f6f66000000000000000a657a6b6c2d68616c6f320000000800000000663131a00000000000000002000000000020f9d7174a7794c538789d7d877e7bb6f3ddeabc2359249b1a3a449614c10aebc30000000800000000000007d0000000095553442d63656e74730000000201f400000002012c0000000101000000076564323535313900000000",
+          "signature_valid": true
+        },
+        "max_provenance_depth": {
+          "description": "provenance_depth = 256 (maximum allowed) \u2014 valid",
+          "provenance_depth": 256,
+          "receipt_id": "5044bbc7e09f0e5f15e43c16cb45c200ebdca3816d8f464ae406d6a267cef3b6",
+          "canonical_bytes_hex": "00000002000100000020000000000000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000000000020791417a5644e341f26f4bb6d8980acbbf69302e1cb3b5f2450998c21b610f60a000000207b0cf526e9e5d01482cac88e12e1970a29cf535827f8da8ab6d834d86dd376eb0000000a646565702d70726f6f66000000000000000a657a6b6c2d68616c6f320000000800000000663131a00000000100000020e9061b1fc39f4f8ac3fad8fba32299cbb6d3b1244e0e1c6b5c1711da0ffcd63a00000020e9061b1fc39f4f8ac3fad8fba32299cbb6d3b1244e0e1c6b5c1711da0ffcd63a00000005696e707574000000020100000000205731478a28de4024eb620232336ce15ca8317bb14900046e3aec0d6993ec3b67000000080000000000000bb8000000095553442d63656e74730000000201f400000002012c0000000101000000076564323535313900000000",
+          "signature_valid": true
+        },
+        "multi_parent_dag": {
+          "description": "Receipt with two distinct parents (DAG, not chain) \u2014 valid",
+          "parent_count": 2,
+          "parent_receipt_ids": [
+            "e9061b1fc39f4f8ac3fad8fba32299cbb6d3b1244e0e1c6b5c1711da0ffcd63a",
+            "1ee01bd2e23aced594a51f8388d245da4d53ed73c05fc951864bb632617714db"
+          ],
+          "receipt_id": "beeb303106c5f6b6631e5c81eec99636d0ee5a9bb649322598b385916c7bf800",
+          "canonical_bytes_hex": "000000020001000000201017382f2f6ac699268d8ab07e4374088f822123ba1697771a01de9e7402f894000000200000000000000000000000000000000000000000000000000000000000000000000000209eedd653515ce7fe700b85d0671b21b5f5cd9c02e3d7475bfd72c0bf874ee81600000020b7cc4c80599eaa7ebbdae66b9a3c942e68b0e37788933e939a5ac93c42eae03e000000096461672d70726f6f66000000000000000a657a6b6c2d68616c6f32000000080000000066313fb00000000200000020e9061b1fc39f4f8ac3fad8fba32299cbb6d3b1244e0e1c6b5c1711da0ffcd63a00000020e9061b1fc39f4f8ac3fad8fba32299cbb6d3b1244e0e1c6b5c1711da0ffcd63a00000005696e707574000000201ee01bd2e23aced594a51f8388d245da4d53ed73c05fc951864bb632617714db000000201ee01bd2e23aced594a51f8388d245da4d53ed73c05fc951864bb632617714db000000097265666572656e63650000000200020000002053b3d6d7a63fe9a7fd55d97f4848985084af9a051a419fce86d6fee10fee3c2a000000080000000000001b58000000095553442d63656e74730000000201f40000000201900000000101000000076564323535313900000000",
+          "signature": "RBga0GlgF2BfQKFyPMcJqmwoffivjyYfCeGAWiRHcGgF8axRBTdkV04zp6MPG/sBl8bDrbSUmilOOABKzvLhAA==",
+          "signature_valid": true
+        }
+      },
+      "rejection_cases": {
+        "royalty_sum_over_10000": {
+          "description": "provider_royalty=7000 + parent_royalty=5000 = 12000 bps \u2014 MUST reject",
+          "provider_royalty": 7000,
+          "parent_royalty": 5000,
+          "sum_bps": 12000,
+          "rejected": true
+        },
+        "duplicate_parent_entries": {
+          "description": "Same receipt_id appears twice in parent_receipts \u2014 MUST reject",
+          "duplicate_receipt_id": "e9061b1fc39f4f8ac3fad8fba32299cbb6d3b1244e0e1c6b5c1711da0ffcd63a",
+          "rejected": true
+        },
+        "provenance_depth_overflow": {
+          "description": "provenance_depth = 257 (exceeds maximum) \u2014 MUST reject",
+          "provenance_depth": 257,
+          "max_allowed": 256,
+          "rejected": true
+        },
+        "self_referencing_parent": {
+          "description": "Self-referencing is cryptographically impossible. receipt_id = SHA-256(canonical_bytes) includes parent_receipts, so adding yourself as parent changes the hash. Finding a fixed point requires breaking SHA-256.",
+          "property": "cryptographically_impossible"
+        }
+      }
+    },
+    "receipt_with_extensions": {
+      "description": "Receipt with two populated extensions \u2014 exercises non-empty extensions list serialisation",
+      "inputs": {
+        "schema_version": 1,
+        "model_id": "0000000000000000000000000000000000000000000000000000000000000000",
+        "verification_key_id": "0000000000000000000000000000000000000000000000000000000000000000",
+        "input_hash": "5132d5f8b0803339715fbe0850cdf2acf99febef5150ea2c7fb167361eb92bf6",
+        "output_hash": "a8563fef94dc94fde880d43e704fa0e0a6acf1faa230a4a134aaaea39777da7f",
+        "proof": "ZXh0LXByb29m",
+        "public_inputs": "",
+        "proving_backend": "ezkl-halo2",
+        "timestamp": 1714500000,
+        "parent_receipts": [],
+        "provenance_depth": 0,
+        "provider": "f9d7174a7794c538789d7d877e7bb6f3ddeabc2359249b1a3a449614c10aebc3",
+        "original_price": 1500,
+        "currency": "USD-cents",
+        "royalty_terms": {
+          "provider_royalty": 500,
+          "parent_royalty": 300,
+          "cascade": true
+        },
+        "signature_scheme": "ed25519",
+        "extensions": [
+          {
+            "type": "metadata",
+            "data": "YWdlbnQtdjEuMi4w"
+          },
+          {
+            "type": "capability",
+            "data": "dGV4dC1nZW5lcmF0aW9u"
+          }
+        ]
+      },
+      "expected": {
+        "canonical_bytes_hex": "000000020001000000200000000000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000205132d5f8b0803339715fbe0850cdf2acf99febef5150ea2c7fb167361eb92bf600000020a8563fef94dc94fde880d43e704fa0e0a6acf1faa230a4a134aaaea39777da7f000000096578742d70726f6f66000000000000000a657a6b6c2d68616c6f320000000800000000663131a00000000000000002000000000020f9d7174a7794c538789d7d877e7bb6f3ddeabc2359249b1a3a449614c10aebc30000000800000000000005dc000000095553442d63656e74730000000201f400000002012c0000000101000000076564323535313900000002000000086d657461646174610000000c6167656e742d76312e322e300000000a6361706162696c6974790000000f746578742d67656e65726174696f6e",
+        "canonical_bytes_length": 357,
+        "receipt_id": "295e3b492f2bab536c018d26605a3985e8d076351168f00266d650fee072b246",
+        "signature": "TPyyzQoDMha+rJfZ5PTdYb4l7hRxkzTSP83NBCsHL79FO+8grF0h/SJxWRJQKlFi9BFEXHq/HPXLnywGK5SIAg==",
+        "signature_valid": true
+      }
+    },
+    "merkle": {
+      "hash_leaf": {
+        "description": "H(0x00 || data) for various inputs",
+        "cases": [
+          {
+            "input_hex": "7472616e736665722d7265636f72642d616c706861",
+            "expected_hex": "1e841c4865f066b98a6e7517731a12348276a39c4d2c1e6f55a8c55ac0873f8d"
+          },
+          {
+            "input_hex": "7472616e736665722d7265636f72642d62657461",
+            "expected_hex": "78b6bd995163ce9e8b8bc60f8ad6a3edc8b233ea4cf4abdd7e0e69bef540fe5a"
+          },
+          {
+            "input_hex": "7472616e736665722d7265636f72642d67616d6d61",
+            "expected_hex": "bba98b82059e08b476dd2293c68034c8c6d0611a830cbc6ea25e1df72969310d"
+          },
+          {
+            "input_hex": "7472616e736665722d7265636f72642d64656c7461",
+            "expected_hex": "2af5e8afb24cd81fdfbec7913aa9995d1e59df9e79eca22c9ae56d5df6f1addb"
+          },
+          {
+            "input_hex": "7472616e736665722d7265636f72642d657073696c6f6e",
+            "expected_hex": "acb0e5c6911c2929351c07e2c51f2c9e674d8f8d0b91b92bd6f4f1b7c1da291b"
+          },
+          {
+            "input_hex": "",
+            "expected_hex": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d"
+          }
+        ]
+      },
+      "hash_pair": {
+        "description": "H(0x01 || left || right)",
+        "cases": [
+          {
+            "left_hex": "1e841c4865f066b98a6e7517731a12348276a39c4d2c1e6f55a8c55ac0873f8d",
+            "right_hex": "78b6bd995163ce9e8b8bc60f8ad6a3edc8b233ea4cf4abdd7e0e69bef540fe5a",
+            "expected_hex": "86aa15b654cba161e9db9ae8b15055fca77fa9278dd6f09524d8b86f28c6e68d"
+          },
+          {
+            "left_hex": "78b6bd995163ce9e8b8bc60f8ad6a3edc8b233ea4cf4abdd7e0e69bef540fe5a",
+            "right_hex": "1e841c4865f066b98a6e7517731a12348276a39c4d2c1e6f55a8c55ac0873f8d",
+            "expected_hex": "b3961b1d7335bf06fa4a1747c28887ae2a0cfdc0d3f61d7699ba991b68a3e2c9",
+            "note": "Order matters — not commutative"
+          }
+        ]
+      },
+      "compute_root": {
+        "description": "Merkle root from leaf hashes with odd-node duplication",
+        "cases": [
+          {
+            "leaf_count": 0,
+            "leaf_hashes_hex": [],
+            "expected_root_hex": "2e1cfa82b035c26cbbbdae632cea070514eb8b773f616aaeaf668e2f0be8f10d",
+            "note": "Empty tree: H(\"empty\")"
+          },
+          {
+            "leaf_count": 1,
+            "leaf_hashes_hex": [
+              "1e841c4865f066b98a6e7517731a12348276a39c4d2c1e6f55a8c55ac0873f8d"
+            ],
+            "expected_root_hex": "1e841c4865f066b98a6e7517731a12348276a39c4d2c1e6f55a8c55ac0873f8d",
+            "note": "Single leaf is root"
+          },
+          {
+            "leaf_count": 2,
+            "leaf_hashes_hex": [
+              "1e841c4865f066b98a6e7517731a12348276a39c4d2c1e6f55a8c55ac0873f8d",
+              "78b6bd995163ce9e8b8bc60f8ad6a3edc8b233ea4cf4abdd7e0e69bef540fe5a"
+            ],
+            "expected_root_hex": "86aa15b654cba161e9db9ae8b15055fca77fa9278dd6f09524d8b86f28c6e68d"
+          },
+          {
+            "leaf_count": 3,
+            "leaf_hashes_hex": [
+              "1e841c4865f066b98a6e7517731a12348276a39c4d2c1e6f55a8c55ac0873f8d",
+              "78b6bd995163ce9e8b8bc60f8ad6a3edc8b233ea4cf4abdd7e0e69bef540fe5a",
+              "bba98b82059e08b476dd2293c68034c8c6d0611a830cbc6ea25e1df72969310d"
+            ],
+            "expected_root_hex": "e98a3bb6623478d828b28c5f8cdf1fbf7799f4cb8c5ec3c9e486f0b8a9f9110d",
+            "note": "Odd: third leaf duplicated"
+          },
+          {
+            "leaf_count": 4,
+            "leaf_hashes_hex": [
+              "1e841c4865f066b98a6e7517731a12348276a39c4d2c1e6f55a8c55ac0873f8d",
+              "78b6bd995163ce9e8b8bc60f8ad6a3edc8b233ea4cf4abdd7e0e69bef540fe5a",
+              "bba98b82059e08b476dd2293c68034c8c6d0611a830cbc6ea25e1df72969310d",
+              "2af5e8afb24cd81fdfbec7913aa9995d1e59df9e79eca22c9ae56d5df6f1addb"
+            ],
+            "expected_root_hex": "4f1d5a19635d425741f0fe42c4ad6d45dd115341ca50a75102e1464a21c3905a"
+          },
+          {
+            "leaf_count": 5,
+            "leaf_hashes_hex": [
+              "1e841c4865f066b98a6e7517731a12348276a39c4d2c1e6f55a8c55ac0873f8d",
+              "78b6bd995163ce9e8b8bc60f8ad6a3edc8b233ea4cf4abdd7e0e69bef540fe5a",
+              "bba98b82059e08b476dd2293c68034c8c6d0611a830cbc6ea25e1df72969310d",
+              "2af5e8afb24cd81fdfbec7913aa9995d1e59df9e79eca22c9ae56d5df6f1addb",
+              "acb0e5c6911c2929351c07e2c51f2c9e674d8f8d0b91b92bd6f4f1b7c1da291b"
+            ],
+            "expected_root_hex": "e3110b30bb8de37f2e06b2626d40d5b32abd9d83773c7354ed3d6273a77d479d",
+            "note": "Odd at leaf level — tests duplication at multiple levels"
+          }
+        ]
+      },
+      "inclusion_proofs": {
+        "description": "Merkle inclusion proofs: build + verify for various trees and indices",
+        "cases": [
+          {
+            "leaf_count": 5,
+            "root_hex": "e3110b30bb8de37f2e06b2626d40d5b32abd9d83773c7354ed3d6273a77d479d",
+            "index": 0,
+            "leaf_hash_hex": "1e841c4865f066b98a6e7517731a12348276a39c4d2c1e6f55a8c55ac0873f8d",
+            "path": [
+              {"sibling_hex": "78b6bd995163ce9e8b8bc60f8ad6a3edc8b233ea4cf4abdd7e0e69bef540fe5a", "direction": "right"},
+              {"sibling_hex": "a47dd98486e949b762eedca0e8412378020dc1000357d82e84aada9d3697e2d7", "direction": "right"},
+              {"sibling_hex": "32f1ab9e7c973d816c60a11cadf04199f8240c16678aafedba6fa3a960a1321d", "direction": "right"}
+            ],
+            "verified": true
+          },
+          {
+            "leaf_count": 5,
+            "root_hex": "e3110b30bb8de37f2e06b2626d40d5b32abd9d83773c7354ed3d6273a77d479d",
+            "index": 1,
+            "leaf_hash_hex": "78b6bd995163ce9e8b8bc60f8ad6a3edc8b233ea4cf4abdd7e0e69bef540fe5a",
+            "path": [
+              {"sibling_hex": "1e841c4865f066b98a6e7517731a12348276a39c4d2c1e6f55a8c55ac0873f8d", "direction": "left"},
+              {"sibling_hex": "a47dd98486e949b762eedca0e8412378020dc1000357d82e84aada9d3697e2d7", "direction": "right"},
+              {"sibling_hex": "32f1ab9e7c973d816c60a11cadf04199f8240c16678aafedba6fa3a960a1321d", "direction": "right"}
+            ],
+            "verified": true
+          },
+          {
+            "leaf_count": 5,
+            "root_hex": "e3110b30bb8de37f2e06b2626d40d5b32abd9d83773c7354ed3d6273a77d479d",
+            "index": 2,
+            "leaf_hash_hex": "bba98b82059e08b476dd2293c68034c8c6d0611a830cbc6ea25e1df72969310d",
+            "path": [
+              {"sibling_hex": "2af5e8afb24cd81fdfbec7913aa9995d1e59df9e79eca22c9ae56d5df6f1addb", "direction": "right"},
+              {"sibling_hex": "86aa15b654cba161e9db9ae8b15055fca77fa9278dd6f09524d8b86f28c6e68d", "direction": "left"},
+              {"sibling_hex": "32f1ab9e7c973d816c60a11cadf04199f8240c16678aafedba6fa3a960a1321d", "direction": "right"}
+            ],
+            "verified": true
+          },
+          {
+            "leaf_count": 5,
+            "root_hex": "e3110b30bb8de37f2e06b2626d40d5b32abd9d83773c7354ed3d6273a77d479d",
+            "index": 3,
+            "leaf_hash_hex": "2af5e8afb24cd81fdfbec7913aa9995d1e59df9e79eca22c9ae56d5df6f1addb",
+            "path": [
+              {"sibling_hex": "bba98b82059e08b476dd2293c68034c8c6d0611a830cbc6ea25e1df72969310d", "direction": "left"},
+              {"sibling_hex": "86aa15b654cba161e9db9ae8b15055fca77fa9278dd6f09524d8b86f28c6e68d", "direction": "left"},
+              {"sibling_hex": "32f1ab9e7c973d816c60a11cadf04199f8240c16678aafedba6fa3a960a1321d", "direction": "right"}
+            ],
+            "verified": true
+          },
+          {
+            "leaf_count": 5,
+            "root_hex": "e3110b30bb8de37f2e06b2626d40d5b32abd9d83773c7354ed3d6273a77d479d",
+            "index": 4,
+            "leaf_hash_hex": "acb0e5c6911c2929351c07e2c51f2c9e674d8f8d0b91b92bd6f4f1b7c1da291b",
+            "path": [
+              {"sibling_hex": "acb0e5c6911c2929351c07e2c51f2c9e674d8f8d0b91b92bd6f4f1b7c1da291b", "direction": "right"},
+              {"sibling_hex": "53ee5c91eaafb361644181197fd106f73ef133d3061254466ef7c4d784ec785c", "direction": "right"},
+              {"sibling_hex": "4f1d5a19635d425741f0fe42c4ad6d45dd115341ca50a75102e1464a21c3905a", "direction": "left"}
+            ],
+            "verified": true
+          },
+          {
+            "leaf_count": 3,
+            "root_hex": "e98a3bb6623478d828b28c5f8cdf1fbf7799f4cb8c5ec3c9e486f0b8a9f9110d",
+            "index": 2,
+            "leaf_hash_hex": "bba98b82059e08b476dd2293c68034c8c6d0611a830cbc6ea25e1df72969310d",
+            "path": [
+              {"sibling_hex": "bba98b82059e08b476dd2293c68034c8c6d0611a830cbc6ea25e1df72969310d", "direction": "right"},
+              {"sibling_hex": "86aa15b654cba161e9db9ae8b15055fca77fa9278dd6f09524d8b86f28c6e68d", "direction": "left"}
+            ],
+            "verified": true,
+            "note": "Index 2 of 3-leaf tree — this leaf gets duplicated"
+          },
+          {
+            "leaf_count": 1,
+            "root_hex": "1e841c4865f066b98a6e7517731a12348276a39c4d2c1e6f55a8c55ac0873f8d",
+            "index": 0,
+            "leaf_hash_hex": "1e841c4865f066b98a6e7517731a12348276a39c4d2c1e6f55a8c55ac0873f8d",
+            "path": [],
+            "verified": true,
+            "note": "Single leaf — empty proof path"
+          }
+        ]
+      },
+      "entry_bytes": {
+        "description": "entry_bytes = canonical_bytes || BE64(log_timestamp), then leaf_hash",
+        "cases": [
+          {
+            "transfer_canonical_hex": "deadbeef01020304",
+            "log_timestamp": 1714500123,
+            "entry_bytes_hex": "deadbeef01020304000000006631321b",
+            "leaf_hash_hex": "dbf17f041e64ce7b4aee6a53970f75d6d4c4974f19283bcc86412910bfc0d39f"
+          }
+        ]
+      }
+    }
+  }
+}

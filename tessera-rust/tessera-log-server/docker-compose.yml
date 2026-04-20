@@ -1,0 +1,68 @@
+services:
+  log1:
+    build:
+      context: ..
+      dockerfile: tessera-log-server/Dockerfile
+    container_name: tessera-log1
+    ports:
+      - "7801:7800"
+    volumes:
+      - log1-data:/data
+    environment:
+      - TESSERA_LOG_LEVEL=info
+      - TESSERA_PEERS=http://log2:7800,http://log3:7800
+      - TESSERA_WITNESS_THRESHOLD=2
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:7800/v1/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    depends_on:
+      - log2
+      - log3
+
+  log2:
+    build:
+      context: ..
+      dockerfile: tessera-log-server/Dockerfile
+    container_name: tessera-log2
+    ports:
+      - "7802:7800"
+    volumes:
+      - log2-data:/data
+    environment:
+      - TESSERA_LOG_LEVEL=info
+      - TESSERA_PEERS=http://log1:7800,http://log3:7800
+      - TESSERA_WITNESS_THRESHOLD=2
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:7800/v1/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+  log3:
+    build:
+      context: ..
+      dockerfile: tessera-log-server/Dockerfile
+    container_name: tessera-log3
+    ports:
+      - "7803:7800"
+    volumes:
+      - log3-data:/data
+    environment:
+      - TESSERA_LOG_LEVEL=info
+      - TESSERA_PEERS=http://log1:7800,http://log2:7800
+      - TESSERA_WITNESS_THRESHOLD=2
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:7800/v1/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+volumes:
+  log1-data:
+  log2-data:
+  log3-data:

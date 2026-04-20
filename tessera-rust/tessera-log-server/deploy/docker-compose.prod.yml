@@ -1,0 +1,42 @@
+services:
+  tessera-log:
+    image: ghcr.io/henry-shelton/tessera-log-server:latest
+    container_name: tessera-log
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:7800:7800"
+    volumes:
+      - /var/lib/tessera:/data
+    environment:
+      - TESSERA_LOG_LEVEL=info
+      - TESSERA_PEERS=${TESSERA_PEERS:-}
+      - TESSERA_WITNESS_THRESHOLD=${TESSERA_WITNESS_THRESHOLD:-2}
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:7800/v1/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+      - /var/log/caddy:/var/log/caddy
+    environment:
+      - DOMAIN=${DOMAIN}
+      - EMAIL=${EMAIL:-admin@tesseravcr.org}
+    depends_on:
+      tessera-log:
+        condition: service_healthy
+
+volumes:
+  caddy_data:
+  caddy_config:

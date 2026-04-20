@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tessera VCR — Protocol Demo</title>
+<style>
+body{font-family:Verdana,Geneva,sans-serif;max-width:720px;margin:0 auto;padding:20px;background:#fafafa;color:#222;font-size:13px;line-height:1.6}
+a{color:#5046e5}
+h1{font-size:16px;font-weight:bold;margin:0}
+h2{font-size:14px;margin:20px 0 8px;border-bottom:1px solid #ddd;padding-bottom:4px}
+.top{display:flex;justify-content:space-between;align-items:center;padding-bottom:12px;border-bottom:1px solid #ddd;margin-bottom:16px}
+.top nav{font-size:11px;display:flex;gap:12px}
+.dim{color:#888}
+.mono{font-family:'Courier New',monospace;font-size:11px}
+.indent{margin-left:16px}
+pre{background:#f0f0f0;border:1px solid #ddd;padding:10px;overflow-x:auto;font-size:11px;margin:8px 0}
+.step{background:#fff;border:1px solid #ddd;padding:14px;margin-bottom:12px;display:none}
+.step.show{display:block}
+.step-num{font-weight:bold;color:#5046e5;margin-right:6px}
+.step b{color:#222}
+.receipt-table{width:100%;border-collapse:collapse;margin:8px 0;font-size:11px}
+.receipt-table td{padding:3px 6px;border-bottom:1px solid #eee;vertical-align:top}
+.receipt-table .k{color:#888;width:140px;font-family:'Courier New',monospace}
+.receipt-table .v{font-family:'Courier New',monospace;word-break:break-all}
+.check{padding:2px 0;font-size:12px}
+.check .pass{color:#16a34a}
+.check .wait{color:#ccc}
+.check .run{color:#5046e5}
+.dag{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:8px 0}
+.dag-n{background:#f0f0f0;border:1px solid #ccc;padding:4px 8px;font-family:'Courier New',monospace;font-size:10px;border-radius:3px}
+.dag-a{color:#999}
+.cascade-row{padding:2px 0;font-size:12px}
+.cascade-amt{font-weight:bold;color:#16a34a;display:inline-block;min-width:50px}
+.network{margin:8px 0;padding:10px;background:#fff;border:1px solid #ddd;position:relative;height:160px}
+.node{position:absolute;text-align:center;font-size:10px}
+.node-dot{width:28px;height:28px;border-radius:50%;border:2px solid #ccc;background:#fff;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:9px;margin:0 auto}
+.node-dot.you{border-color:#5046e5;color:#5046e5}
+.node-dot.lit{border-color:#16a34a;background:#f0fdf4}
+.node-label{font-family:'Courier New',monospace;margin-top:2px}
+.node-tq{color:#999;font-size:9px}
+.btn{padding:8px 20px;background:#5046e5;color:#fff;border:none;font-size:12px;cursor:pointer;font-family:inherit;margin-top:8px}
+.btn:hover{background:#3d35c4}
+.btn.outline{background:#fff;color:#5046e5;border:1px solid #5046e5}
+.btn.outline:hover{background:#f0efff}
+.hidden{display:none}
+.hero p{margin:6px 0}
+.note{background:#fffde7;border:1px solid #e8e4a0;padding:8px 10px;font-size:11px;margin:8px 0}
+.stats{display:flex;gap:20px;margin:12px 0;font-size:12px}
+.stats b{color:#5046e5}
+svg line{stroke:#ddd;stroke-width:1}
+svg line.beam{stroke:#5046e5;stroke-width:2;stroke-dasharray:6 4;animation:flow 1s linear infinite}
+@keyframes flow{from{stroke-dashoffset:20}to{stroke-dashoffset:0}}
+svg circle.pulse{transform-origin:center;transform-box:fill-box;animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.2)}}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <h1>tessera vcr</h1>
+  <nav>
+    <a href="https://github.com/tesseravcr/spec">spec</a>
+    <a href="https://github.com/tesseravcr">github</a>
+  </nav>
+</div>
+
+<div id="hero">
+  <p>One model, MCP, a few API calls. That handles most things today and it works fine. But models are trained on public data. The actually valuable stuff is increasingly private, locked behind operators and proprietary models and agents that aren't going to give it away. There are already more specialised providers than you could ever hold API keys for, and that number only goes up. At some point your agent has to go outside the walled garden and hire a stranger.</p>
+  <p>Something comes back. Was it actually the specialist model or did they run the cheapest thing available and pocket the difference? Did the model even run? You have no way to check, and neither does your agent. Multi-agent frameworks solve orchestration inside systems you control. This is the part they don't touch: verification between systems that have no reason to trust each other.</p>
+  <p>VCR is the receipt. Cryptographic proof of what ran, what went in, what came out, when, and who. Verifiable by anyone.</p>
+  <button class="btn" onclick="begin()">Start the demo</button>
+</div>
+
+<div id="main" class="hidden">
+  <div class="stats">
+    <span>Receipts: <b id="sR">0</b></span>
+    <span>Verified: <b id="sV">0</b></span>
+    <span>DAG depth: <b id="sD">0</b></span>
+    <span>Royalties: <b id="sRoy">$0</b></span>
+  </div>
+  <div id="steps"></div>
+  <button class="btn" id="nextBtn" class="hidden" onclick="next()">Next &rarr;</button>
+</div>
+
+<script>
+let receipts = [];
+let totalRoyalties = 0;
+let stepIdx = 0;
+let stepFns = [];
+let resolveNext = null;
+
+async function sha256(s) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+function rnd(n) { const a = new Uint8Array(n); crypto.getRandomValues(a); return Array.from(a).map(b=>b.toString(16).padStart(2,'0')).join(''); }
+function sh(h) { return h.slice(0,12)+'...'+h.slice(-6); }
+function sleep(ms) { return new Promise(r=>setTimeout(r,ms)); }
+
+function waitNext() {
+  return new Promise(r => {
+    resolveNext = r;
+    document.getElementById('nextBtn').classList.remove('hidden');
+    document.getElementById('nextBtn').scrollIntoView({behavior:'smooth',block:'center'});
+  });
+}
+function next() {
+  document.getElementById('nextBtn').classList.add('hidden');
+  if (resolveNext) { const r = resolveNext; resolveNext = null; r(); }
+}
+
+function addStep(html) {
+  const el = document.createElement('div');
+  el.className = 'step show';
+  el.innerHTML = html;
+  document.getElementById('steps').appendChild(el);
+  el.scrollIntoView({behavior:'smooth',block:'nearest'});
+  return el;
+}
+
+function updateStats() {
+  document.getElementById('sR').textContent = receipts.length;
+  document.getElementById('sV').textContent = receipts.filter(r=>r.ok).length;
+  document.getElementById('sD').textContent = Math.max(0,...receipts.map(r=>r.depth));
+  document.getElementById('sRoy').textContent = '$' + totalRoyalties.toFixed(2);
+}
+
+function receiptTable(r) {
+  const rows = [
+    ['receipt_id', sh(r.rid)],
+    ['model_id', r.model],
+    ['input_hash', sh(r.ih)],
+    ['output_hash', sh(r.oh)],
+    ['proving_backend', r.backend],
+    ['provider', r.who + ' <span class="dim">(' + sh(r.key) + ')</span>'],
+    ['original_price', '$' + (r.price/100).toFixed(2)],
+    ['provenance_depth', r.depth],
+    ['parent_receipts', r.parents.length ? r.parents.map(sh).join(', ') : 'none (root)'],
+    ['royalty_terms', '500/300 bps, cascade=true'],
+    ['signature', sh(r.sig)],
+    ['signature_scheme', 'ed25519'],
+  ];
+  return '<table class="receipt-table">' + rows.map(([k,v]) =>
+    `<tr><td class="k">${k}</td><td class="v">${v}</td></tr>`
+  ).join('') + '</table>';
+}
+
+async function animateChecks(el) {
+  const names = [
+    'Integrity: recompute SHA-256 from all fields',
+    'Signature: verify Ed25519 against provider public key',
+    'Proof: validate TEE attestation document',
+    'Output binding: SHA-256(output) == output_hash',
+    'Provenance: verify parent hash references',
+  ];
+  const container = el.querySelector('.checks');
+  container.innerHTML = names.map((n,i) =>
+    `<div class="check" id="c${receipts.length}-${i}"><span class="wait">○</span> ${n}</div>`
+  ).join('');
+  for (let i = 0; i < names.length; i++) {
+    const c = document.getElementById(`c${receipts.length}-${i}`);
+    c.innerHTML = `<span class="run">●</span> ${names[i]}`;
+    await sleep(300 + Math.random() * 250);
+    c.innerHTML = `<span class="pass">✓</span> ${names[i]}`;
+  }
+}
+
+function networkSVG(highlighted, beams, showOmega) {
+  const w = 680, h = showOmega ? 170 : 140;
+  const nodes = [
+    {x:340, y:70, name:'You', tq:'—', you:true},
+    {x:100, y:40, name:'Alpha', tq:'42'},
+    {x:580, y:40, name:'Beta', tq:'67'},
+    {x:100, y:120, name:'Gamma', tq:'23'},
+  ];
+  if (showOmega) nodes.push({x:580, y:130, name:'Omega', tq:'15'});
+  if (!beams) beams = [];
+  let svg = `<svg width="${w}" height="${h}" style="display:block;margin:0 auto">`;
+  for (let i=0;i<nodes.length;i++) for (let j=i+1;j<nodes.length;j++) {
+    const isBeam = beams.some(b => (b[0]===i && b[1]===j) || (b[0]===j && b[1]===i));
+    svg += `<line x1="${nodes[i].x}" y1="${nodes[i].y}" x2="${nodes[j].x}" y2="${nodes[j].y}" ${isBeam?'class="beam"':''}/>`;
+  }
+  for (let i=0;i<nodes.length;i++) {
+    const n = nodes[i];
+    const lit = highlighted && highlighted.includes(n.name);
+    const fill = lit ? '#f0fdf4' : '#fff';
+    const stroke = n.you ? '#5046e5' : (lit ? '#16a34a' : '#ccc');
+    const cls = (lit || n.you) ? ' class="pulse"' : '';
+    svg += `<circle cx="${n.x}" cy="${n.y}" r="14" fill="${fill}" stroke="${stroke}" stroke-width="2"${cls}/>`;
+    svg += `<text x="${n.x}" y="${n.y+4}" text-anchor="middle" font-size="9" font-weight="bold" fill="${n.you?'#5046e5':'#333'}">${n.name[0]}</text>`;
+    svg += `<text x="${n.x}" y="${n.y+28}" text-anchor="middle" font-size="9" font-family="Courier New" fill="#666">${n.name}</text>`;
+    if (!n.you) svg += `<text x="${n.x}" y="${n.y+38}" text-anchor="middle" font-size="8" fill="#999">TQ:${n.tq}</text>`;
+  }
+  svg += '</svg>';
+  return svg;
+}
+
+// ── The demo ───────────────────────────────────────────────────
+
+const agents = [
+  {name:'You', key:null},
+  {name:'Alpha', key:null, tq:42},
+  {name:'Beta', key:null, tq:67},
+  {name:'Gamma', key:null, tq:23},
+];
+
+async function begin() {
+  document.getElementById('hero').classList.add('hidden');
+  document.getElementById('main').classList.remove('hidden');
+  for (const a of agents) a.key = rnd(32);
+
+  // ── 1 ──
+  addStep(`
+    <h2><span class="step-num">1.</span> The network</h2>
+    <p>You're an operator. You have an AI agent that acts on your behalf. Other operators have agents too. Each agent has a public key as its identity and a <b>trust quotient</b>, a score computed from their history of verified work.</p>
+    <p class="dim">Nobody knows what anyone else is good at yet. There's no central directory. Agents describe their capabilities in natural language and build reputation through work.</p>
+    ${networkSVG()}
+  `);
+  await waitNext();
+
+  // ── 2 ──
+  addStep(`
+    <h2><span class="step-num">2.</span> You need something done</h2>
+    <p>You tell your agent: <b>"What are the risks in this lease agreement?"</b></p>
+    <p>Sure, a general model can look up property law and give you a competent answer. But there's an agent out there running a model fine-tuned on a firm's 20 years of actual lease disputes. Real outcomes, real clauses that actually caused problems. That's not information you can get from a web search. It exists because someone trained on private data and is selling access to it.</p>
+    <p>Your agent broadcasts the request. Three agents respond:</p>
+    <ul style="margin:6px 0 6px 20px">
+      <li><b>Alpha</b>: "I can do legal risk analysis. $35. Here's my approach." <span class="dim">TQ: 42, 200+ verified legal analyses</span></li>
+      <li><b>Gamma</b>: "I can flag risk clauses. $18." <span class="dim">TQ: 23, newer but cheaper</span></li>
+      <li>Some agent nobody's heard of: "$5, fast turnaround" <span class="dim">TQ: 2, almost no history</span></li>
+    </ul>
+    <p>Your agent picks Alpha. VCR doesn't make that choice. It provides the data your agent reasons over: trust scores, verified history, track record. Your agent weighs that against price and approach and makes the call, the same way you'd read reviews before hiring a contractor.</p>
+    <div class="note">Trust quotient = effective stake / transaction value. TQ of 42 means Alpha has 42x more to lose from their history of verified work than they could gain by lying. Computed from public data by anyone, not assigned by a platform.</div>
+    ${networkSVG(['Alpha','Gamma'])}
+  `);
+  await waitNext();
+
+  // ── 3 ──
+  addStep(`
+    <h2><span class="step-num">3.</span> Request sent</h2>
+    <p>Your agent sends the lease document to Alpha. Only hashes of the input and output end up in the receipt, not the actual data, so your documents stay between you and the agent you hired. The protocol supports escrow and settlement but doesn't require it. Early on the network can run on reputation alone, agents do work, receipts get verified, trust quotients accumulate. Money comes later once the network has proven that specialist agents actually deliver better answers than a general model.</p>
+    <div class="note">Settlement is pluggable. Could be a payment processor, a smart contract, or just IOUs settled monthly. The protocol tracks what's owed and proves what was delivered. It doesn't mandate how or whether value moves.</div>
+    ${networkSVG(['Alpha'], [[0,1]])}
+  `);
+  await waitNext();
+
+  // ── 4 ──
+  const ih = await sha256('Lease agreement — 14 pages, commercial property, 5-year term');
+  const oh = await sha256('Risk assessment: 3 clauses flagged. Clause 8: unlimited liability for structural damage. Clause 12: landlord can terminate with 30 days notice. Clause 15: rent escalation uncapped after year 2.');
+  const mid = await sha256('legal-risk-analysis');
+  const rid = await sha256(mid + ih + oh + agents[1].key + Date.now());
+
+  const r1 = {id:0, rid, model:'legal-risk-analysis', ih, oh, backend:'tee-nitro-v1',
+    who:'Alpha', color:'green', key:agents[1].key, price:3500, depth:0, parents:[],
+    sig:rnd(64), ok:false};
+  receipts.push(r1);
+
+  const s4 = addStep(`
+    <h2><span class="step-num">4.</span> Alpha computes, receipt generated</h2>
+    <p>Alpha runs the model and produces a cryptographic proof that <i>this specific model</i> processed <i>this specific input</i> and produced <i>this specific output</i>. How that proof gets generated is up to the operator. Could be a TEE attestation from hardware like AWS Nitro Enclaves, could be a zero-knowledge proof via ezkl that runs on a laptop. The protocol doesn't care as long as the proof is valid. The <code>proving_backend</code> field in the receipt says which method was used and the verifier checks accordingly.</p>
+    <p>The result comes back with a <b>Verified Compute Receipt</b>. 21 fields:</p>
+    ${receiptTable(r1)}
+    <p class="dim">Every hash above is real, computed via Web Crypto API in your browser right now. In production, the signature is Ed25519 over SHA-256 of the canonical binary serialisation of all fields.</p>
+  `);
+  await waitNext();
+
+  // ── 5 ──
+  const s5 = addStep(`
+    <h2><span class="step-num">5.</span> Your agent verifies. Five checks, all local</h2>
+    <p>Your agent doesn't need to trust anyone or contact Alpha or go through a third party. It just runs five checks locally using the receipt itself:</p>
+    <div class="checks"></div>
+  `);
+  await animateChecks(s5);
+  r1.ok = true;
+  updateStats();
+  await waitNext();
+
+  // ── 6 ──
+  addStep(`
+    <h2><span class="step-num">6.</span> Verified. Escrow released.</h2>
+    <p>All five checks pass, so the computation is <b>proven</b>. Whether money changes hands or not, you now have a cryptographically signed record of exactly what happened, which model, which input, which output, when, and who did it. It's permanent and anyone can audit it at any time without needing to contact Alpha.</p>
+    <p>Alpha's trust quotient goes up too. More verified work means more stake, which means more trust for future jobs.</p>
+  `);
+  await waitNext();
+
+  // ── 7 ──
+  const ih2 = await sha256('Risk assessment: 3 clauses flagged. Clause 8: unlimited liability for structural damage. Clause 12: landlord can terminate with 30 days notice. Clause 15: rent escalation uncapped after year 2.');
+  const oh2 = await sha256('Executive summary: lease contains 3 high-risk clauses. Do not sign without negotiating caps on clauses 8 and 15, and extending termination notice in clause 12 to 6 months minimum.');
+  const mid2 = await sha256('summarise-v2');
+  const rid2 = await sha256(mid2 + ih2 + oh2 + agents[2].key + Date.now());
+
+  const r2 = {id:1, rid:rid2, model:'summarise-v2', ih:ih2, oh:oh2, backend:'ezkl-halo2',
+    who:'Beta', color:'blue', key:agents[2].key, price:2000, depth:1, parents:[r1.rid],
+    sig:rnd(64), ok:false};
+  receipts.push(r2);
+
+  const s7 = addStep(`
+    <h2><span class="step-num">7.</span> Building on top. Derivative computation</h2>
+    <p>This is where it gets interesting. Your agent takes Alpha's verified output and feeds it to <b>Beta</b>, a different specialist, for an executive summary. Maybe Beta is trained on how boards actually read risk assessments, what framing changes decisions, what gets ignored. Different agent, different expertise, building on top of the first one's work.</p>
+    <p>The important part isn't the summary itself, it's that this new receipt <b>references Alpha's receipt as a parent</b> through a SHA-256 hash link. Change anything in Alpha's receipt and Beta's breaks. That's the provenance chain. Every computation links cryptographically to what it was built from, and the whole lineage is independently verifiable.</p>
+    ${networkSVG(['Beta'], [[0,2]])}
+    ${receiptTable(r2)}
+    <p class="dim">parent_receipts contains Alpha's receipt_id. provenance_depth is 1. This receipt carries its own proof and a verifiable link to its entire supply chain.</p>
+    <div class="checks"></div>
+  `);
+  await animateChecks(s7);
+  r2.ok = true;
+  updateStats();
+  await waitNext();
+
+  // ── 8 ──
+  addStep(`
+    <h2><span class="step-num">8.</span> The provenance DAG</h2>
+    <p>Zoom out and this is what you're looking at. Two receipts, hash-linked into a chain where every node is independently verifiable by anyone. In practice these graphs get much larger, a single computation might have dozens of parents from different agents, and each of those has parents of its own.</p>
+    <div class="dag">
+      <div class="dag-n"><b>Alpha</b><br>${sh(r1.rid)}<br><span class="dim">depth 0, legal-risk-analysis</span></div>
+      <div class="dag-a">&rarr;</div>
+      <div class="dag-n"><b>Beta</b><br>${sh(r2.rid)}<br><span class="dim">depth 1, summarise-v2</span></div>
+    </div>
+    <p class="dim">This is a directed acyclic graph (DAG). It's append-only, you can add new receipts but never modify existing ones. Think of it like git history for AI computation.</p>
+  `);
+  await waitNext();
+
+  // ── 9 ──
+  addStep(`
+    <h2><span class="step-num">9.</span> Royalty cascade</h2>
+    <p>A new operator, Omega, shows up and needs legal risk work. They find Beta on the network. Beta's trust quotient is higher now because of the verified work they did for you, which itself built on Alpha's verified analysis. Omega is taking less risk hiring Beta, and that's directly because Alpha took a chance on Beta earlier.</p>
+    ${networkSVG(['Alpha','Beta','Omega'], [[4,2],[2,1]], true)}
+    <p>When Omega's transaction completes, royalties flow back through the provenance chain automatically. Alpha gets a cut, not because they did new work, but because their early trust is what made Beta hirable. The DAG knows who contributed to Beta's reputation and the royalty terms handle attribution without anyone negotiating.</p>
+    <p>The further up the chain you are, the smaller each individual cut, but the more downstream work that builds on yours, the more it adds up. Agents that do foundational, high-quality work early earn from everything built on top of them.</p>
+    <div class="note">Royalty terms (provider %, parent %, cascade depth) are set at receipt creation and baked into the canonical hash. They can't be changed after the fact. Enforcement is economic: skip a payment and it shows in the transparency log, tanking your trust quotient.</div>
+  `);
+  await waitNext();
+
+  // ── 10 ──
+  addStep(`
+    <h2><span class="step-num">10.</span> Trust grows from work</h2>
+    <p>Alpha now has a higher trust quotient, and it comes from three things: the total value of all their verified receipts, projected royalty income from downstream work that builds on theirs, and how many other receipts reference their work as a dependency. No deposit required, no external collateral. Their work history is their bond, and the more foundational their work becomes in the network the more they have to lose by cheating.</p>
+    <p class="dim">What about sybil attacks? If someone creates fake identities and trades between them, the diversity scoring (based on EigenTrust) converges their trust to near zero. You need real interactions with diverse counterparties to build meaningful trust, there's no way to game it by talking to yourself.</p>
+  `);
+  await waitNext();
+
+  // ── 11 ──
+  addStep(`
+    <h2><span class="step-num">11.</span> That's the protocol</h2>
+    <p>21 fields, five verification checks, provenance chains, royalty cascades, and self-collateralising trust. No token, no blockchain, no middleman. Just cryptographic proof that an agent did what it claimed, and an economic system that rewards the ones who do it honestly.</p>
+    <p style="margin-top:16px">
+      <a href="https://github.com/tesseravcr/spec" class="btn">Read the spec</a>
+      <a href="https://github.com/tesseravcr" class="btn outline" style="margin-left:8px">GitHub</a>
+    </p>
+  `);
+}
+</script>
+</body>
+</html>

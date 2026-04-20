@@ -1,0 +1,3 @@
+[workspace]
+members = ["tessera", "tessera-log-server"]
+resolver = "2"

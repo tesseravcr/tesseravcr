@@ -1,0 +1,31 @@
+[package]
+name = "tessera-log-server"
+version = "0.1.0"
+edition = "2021"
+description = "Tessera VCR transparency log server"
+license = "MIT"
+
+[dependencies]
+tessera = { path = "../tessera" }
+axum = "0.7"
+tokio = { version = "1", features = ["full"] }
+clap = { version = "4", features = ["derive", "env"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+tower-http = { version = "0.6", features = ["trace", "cors"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+ed25519-dalek = { version = "2", features = ["rand_core"] }
+hex = "0.4"
+rand = "0.8"
+reqwest = { version = "0.12", features = ["json", "rustls-tls"], default-features = false }
+rusqlite = { version = "0.31", features = ["bundled"] }
+sha2 = "0.10"
+
+[dev-dependencies]
+tempfile = "3"
+reqwest = { version = "0.12", features = ["json", "rustls-tls"], default-features = false }
+
+[[test]]
+name = "integration"
+path = "tests/integration.rs"

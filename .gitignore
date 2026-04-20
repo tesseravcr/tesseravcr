@@ -1,0 +1,26 @@
+# Rust
+target/
+Cargo.lock
+*.db
+*.db-shm
+*.db-wal
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+*.egg-info/
+
+# Keys
+*.key
+*.pub
+!*.pub.example
+
+# OS
+.DS_Store
+.python-version
+
+# Logs
+*.log

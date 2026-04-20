@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tessera"
+version = "0.1.0"
+description = "Cryptographically verified receipts for AI computation between autonomous agents"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+dependencies = [
+    "cryptography>=41.0",
+]
+
+[project.urls]
+Repository = "https://github.com/tesseravcr/tessera"
+Specification = "https://github.com/tesseravcr/tesseravcr/tree/main/spec"
+
+[tool.setuptools.packages.find]
+include = ["protocol*"]
