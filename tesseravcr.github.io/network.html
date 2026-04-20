@@ -6,93 +6,116 @@
 <title>Tessera VCR — Live Network</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'SF Mono','Fira Code','Courier New',monospace;background:#0a0a0f;color:#c8c8d0;font-size:12px;line-height:1.5;overflow-x:hidden}
-a{color:#7c6ff7}
-::selection{background:#7c6ff740}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#11111b;color:#cdd6f4;font-size:13px;line-height:1.5}
+a{color:#89b4fa;text-decoration:none}
+a:hover{text-decoration:underline}
+::selection{background:#89b4fa30}
 
-.container{max-width:960px;margin:0 auto;padding:16px 20px}
+.container{max-width:1100px;margin:0 auto;padding:16px 24px}
 
-.header{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #1a1a2e;margin-bottom:16px}
-.header h1{font-size:14px;font-weight:600;color:#e0e0e8;letter-spacing:1px}
-.header nav{display:flex;gap:16px;font-size:11px}
-.header nav a{text-decoration:none;opacity:0.6;transition:opacity 0.2s}
-.header nav a:hover{opacity:1}
+/* Header */
+.hdr{display:flex;justify-content:space-between;align-items:center;padding:14px 0 14px;border-bottom:1px solid #1e1e2e}
+.hdr-left{display:flex;align-items:center;gap:10px}
+.hdr h1{font-size:15px;font-weight:700;color:#cdd6f4;letter-spacing:0.5px}
+.hdr h1 span{color:#a6e3a1}
+.live-badge{font-size:9px;background:#a6e3a120;color:#a6e3a1;padding:2px 8px;border-radius:10px;font-weight:600;display:flex;align-items:center;gap:4px}
+.live-badge::before{content:'';width:5px;height:5px;border-radius:50%;background:#a6e3a1;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.hdr nav{display:flex;gap:14px;font-size:11px}
+.hdr nav a{color:#6c7086;transition:color .2s}
+.hdr nav a:hover{color:#cdd6f4;text-decoration:none}
 
-.pulse-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:#22c55e;margin-right:6px;animation:blink 2s ease-in-out infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:20px 0}
+.stat{background:#1e1e2e;border-radius:8px;padding:16px;text-align:center;border:1px solid #313244}
+.stat-n{font-size:32px;font-weight:800;color:#89b4fa;line-height:1}
+.stat-n.green{color:#a6e3a1}
+.stat-n.yellow{color:#f9e2af}
+.stat-n.mauve{color:#cba6f7}
+.stat-l{font-size:9px;color:#585b70;text-transform:uppercase;letter-spacing:1.5px;margin-top:6px}
 
-.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
-.stat-card{background:#12121f;border:1px solid #1a1a2e;border-radius:6px;padding:14px 16px;text-align:center}
-.stat-val{font-size:28px;font-weight:700;color:#7c6ff7;letter-spacing:-1px}
-.stat-label{font-size:10px;color:#666;text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+/* Network map */
+.net-map{background:#1e1e2e;border:1px solid #313244;border-radius:8px;padding:20px;margin:20px 0;position:relative;overflow:hidden}
+.net-map canvas{display:block;margin:0 auto}
 
-.section-label{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:#555;margin:20px 0 10px;display:flex;align-items:center;gap:8px}
-.section-label::after{content:'';flex:1;height:1px;background:#1a1a2e}
+/* Sections */
+.sec{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:#45475a;margin:24px 0 12px;display:flex;align-items:center;gap:10px}
+.sec::after{content:'';flex:1;height:1px;background:#1e1e2e}
 
-.nodes-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:8px}
-.node{background:#12121f;border:1px solid #1a1a2e;border-radius:6px;padding:12px 14px;position:relative;overflow:hidden}
-.node.online::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#22c55e,#16a34a)}
-.node.offline::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:#dc2626}
-.node-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.node-name{font-weight:600;color:#e0e0e8;font-size:13px}
-.node-badge{font-size:9px;padding:2px 8px;border-radius:10px;font-weight:600;letter-spacing:0.5px}
-.node-badge.online{background:#22c55e15;color:#22c55e;border:1px solid #22c55e30}
-.node-badge.offline{background:#dc262615;color:#dc2626;border:1px solid #dc262630}
-.node-meta{color:#555;font-size:10px;line-height:1.8}
-.node-meta span{display:block}
-.node-meta .val{color:#888}
+/* Activity feed */
+.activity{display:flex;flex-direction:column;gap:4px}
+.act{background:#1e1e2e;border:1px solid #313244;border-radius:8px;padding:12px 16px;cursor:pointer;transition:border-color .2s,background .2s}
+.act:hover{border-color:#45475a;background:#181825}
+.act.fresh{animation:slideIn .4s ease;border-left:2px solid #89b4fa}
+@keyframes slideIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.act-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.act-desc{font-size:13px;color:#cdd6f4}
+.act-desc b{color:#89b4fa;font-weight:600}
+.act-desc .price{color:#a6e3a1;font-weight:600}
+.act-meta{display:flex;gap:12px;font-size:11px;color:#585b70}
+.act-meta .tag{background:#313244;padding:1px 6px;border-radius:4px;font-size:10px}
+.act-meta .tag.prov{color:#f9e2af;background:#f9e2af15}
+.act-meta .tag.wit{color:#a6e3a1;background:#a6e3a115}
+.act-meta .tag.log{color:#6c7086}
+.act-parents{margin-top:6px;padding-top:6px;border-top:1px solid #31324440;font-size:11px;color:#585b70}
+.act-parents span{color:#f9e2af}
 
-.feed-container{position:relative}
-.feed{max-height:400px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:#1a1a2e #0a0a0f}
-.feed::-webkit-scrollbar{width:4px}
-.feed::-webkit-scrollbar-track{background:#0a0a0f}
-.feed::-webkit-scrollbar-thumb{background:#1a1a2e;border-radius:2px}
+/* Detail panel */
+.detail-overlay{display:none;position:fixed;inset:0;background:#11111be0;z-index:100;justify-content:center;align-items:center}
+.detail-overlay.show{display:flex}
+.detail{background:#1e1e2e;border:1px solid #313244;border-radius:12px;padding:24px;max-width:640px;width:90%;max-height:85vh;overflow-y:auto}
+.detail-close{float:right;background:none;border:none;color:#6c7086;font-size:18px;cursor:pointer;padding:4px 8px}
+.detail-close:hover{color:#cdd6f4}
+.detail h2{font-size:14px;font-weight:700;margin-bottom:16px;color:#cdd6f4}
+.detail-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #31324440;font-size:12px}
+.detail-row .k{color:#585b70;min-width:140px}
+.detail-row .v{color:#cdd6f4;font-family:'SF Mono',monospace;font-size:11px;word-break:break-all;text-align:right}
+.detail-row .v.hash{color:#89b4fa}
+.detail-row .v.green{color:#a6e3a1}
+.detail-row .v.yellow{color:#f9e2af}
+.prov-chain{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:12px 0}
+.prov-node{background:#313244;padding:6px 10px;border-radius:6px;font-size:11px;font-family:monospace;color:#cdd6f4}
+.prov-node.current{border:1px solid #89b4fa;color:#89b4fa}
+.prov-arrow{color:#45475a;font-size:14px}
+.proof-box{background:#11111b;border:1px solid #313244;border-radius:6px;padding:12px;margin-top:12px;font-family:monospace;font-size:10px;color:#585b70;max-height:120px;overflow-y:auto}
 
-.tx{background:#12121f;border:1px solid #1a1a2e;border-radius:6px;padding:10px 14px;margin-bottom:6px;transition:border-color 0.3s}
-.tx.new{border-color:#7c6ff740;animation:fadeIn 0.5s ease}
-@keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
-.tx-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
-.tx-type{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px}
-.tx-type.transfer{color:#7c6ff7}
-.tx-type.resale{color:#f59e0b}
-.tx-log{font-size:9px;color:#444;background:#0a0a0f;padding:1px 6px;border-radius:3px}
-.tx-row{display:flex;gap:16px;color:#555;font-size:11px}
-.tx-row .label{color:#444;min-width:56px}
-.tx-row .val{color:#888}
-.tx-row .hash{color:#7c6ff7;opacity:0.7}
-.tx-row .price{color:#22c55e}
-.tx-depth{display:inline-block;background:#7c6ff715;color:#7c6ff7;padding:0 5px;border-radius:3px;font-size:10px;margin-left:4px}
+/* Nodes */
+.nodes{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.nd{background:#1e1e2e;border:1px solid #313244;border-radius:8px;padding:14px;position:relative;overflow:hidden}
+.nd::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.nd.on::before{background:linear-gradient(90deg,#a6e3a1,#94e2d5)}
+.nd.off::before{background:#f38ba8}
+.nd-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.nd-name{font-weight:700;font-size:13px}
+.nd-status{font-size:9px;padding:2px 8px;border-radius:10px;font-weight:600}
+.nd-status.on{color:#a6e3a1;background:#a6e3a115;border:1px solid #a6e3a130}
+.nd-status.off{color:#f38ba8;background:#f38ba815;border:1px solid #f38ba830}
+.nd-info{font-size:11px;color:#585b70;line-height:1.8}
+.nd-info b{color:#6c7086;font-weight:400}
 
-.witnesses-section{margin-top:8px}
-.checkpoint{background:#12121f;border:1px solid #1a1a2e;border-radius:6px;padding:10px 14px;margin-bottom:6px}
-.cp-header{display:flex;justify-content:space-between;align-items:center}
-.cp-name{color:#e0e0e8;font-weight:600}
-.cp-root{color:#555;font-size:10px}
-.witness-row{color:#22c55e;font-size:10px;margin-top:4px;padding-left:12px;border-left:2px solid #22c55e20}
+/* Join box */
+.join{background:#1e1e2e;border:1px solid #313244;border-radius:8px;padding:20px;margin:16px 0}
+.join h3{font-size:13px;font-weight:700;margin-bottom:4px}
+.join p{color:#585b70;font-size:11px;margin-bottom:10px}
+.join code{display:block;background:#11111b;border:1px solid #313244;padding:10px 14px;border-radius:6px;font-size:11px;color:#89b4fa;word-break:break-all}
+.join .sub{font-size:10px;color:#45475a;margin-top:6px}
 
-.join-box{background:#12121f;border:1px solid #7c6ff730;border-radius:6px;padding:16px 18px;margin:20px 0}
-.join-box h3{font-size:12px;color:#e0e0e8;margin-bottom:6px}
-.join-box p{color:#666;font-size:11px;margin-bottom:8px}
-.join-box code{display:block;background:#0a0a0f;border:1px solid #1a1a2e;padding:8px 12px;border-radius:4px;font-size:11px;color:#7c6ff7;word-break:break-all;margin-bottom:6px}
-.join-box .alt{font-size:10px;color:#444}
-.join-box .alt a{font-size:10px}
+.footer{text-align:center;padding:24px 0;color:#313244;font-size:10px;border-top:1px solid #1e1e2e;margin-top:24px}
 
-.footer{text-align:center;padding:20px 0;color:#333;font-size:10px;border-top:1px solid #1a1a2e;margin-top:20px}
-
-.depth-bar{display:flex;align-items:flex-end;gap:2px;height:40px;margin:8px 0}
-.depth-col{flex:1;background:#7c6ff730;border-radius:2px 2px 0 0;min-height:2px;transition:height 0.5s}
-.depth-labels{display:flex;gap:2px;font-size:9px;color:#444}
-.depth-labels span{flex:1;text-align:center}
-
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-@media(max-width:700px){.two-col,.nodes-grid,.stats-row{grid-template-columns:1fr}}
+@media(max-width:768px){
+  .stats{grid-template-columns:repeat(3,1fr)}
+  .nodes,.two-col{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
 <div class="container">
 
-<div class="header">
-  <h1><span class="pulse-dot"></span>TESSERA VCR NETWORK</h1>
+<div class="hdr">
+  <div class="hdr-left">
+    <h1><span>&#9646;</span> tessera vcr</h1>
+    <div class="live-badge">LIVE</div>
+  </div>
   <nav>
     <a href="index.html">protocol</a>
     <a href="https://github.com/Henry-Shelton/tesseravcr/blob/main/spec/VCR-SPEC.md">spec</a>
@@ -100,224 +123,284 @@ a{color:#7c6ff7}
   </nav>
 </div>
 
-<div class="stats-row">
-  <div class="stat-card"><div class="stat-val" id="s-nodes">-</div><div class="stat-label">Nodes Online</div></div>
-  <div class="stat-card"><div class="stat-val" id="s-entries">-</div><div class="stat-label">Log Entries</div></div>
-  <div class="stat-card"><div class="stat-val" id="s-witnesses">-</div><div class="stat-label">Witness Sigs</div></div>
-  <div class="stat-card"><div class="stat-val" id="s-depth">-</div><div class="stat-label">With Parents</div></div>
+<div class="stats">
+  <div class="stat"><div class="stat-n green" id="s-nodes">-</div><div class="stat-l">nodes online</div></div>
+  <div class="stat"><div class="stat-n" id="s-entries">-</div><div class="stat-l">verified receipts</div></div>
+  <div class="stat"><div class="stat-n mauve" id="s-provenance">-</div><div class="stat-l">provenance links</div></div>
+  <div class="stat"><div class="stat-n green" id="s-witnesses">-</div><div class="stat-l">witness sigs</div></div>
+  <div class="stat"><div class="stat-n yellow" id="s-volume">-</div><div class="stat-l">total volume</div></div>
 </div>
 
-<div class="section-label">Seed Nodes</div>
-<div class="nodes-grid" id="nodes"></div>
+<div class="sec">Network Nodes</div>
+<div class="nodes" id="nodes"></div>
 
-<div class="two-col">
-  <div>
-    <div class="section-label">Live Transfer Feed</div>
-    <div class="feed-container">
-      <div class="feed" id="feed"><div style="color:#333;padding:20px;text-align:center">connecting...</div></div>
-    </div>
+<div class="sec">Live Activity</div>
+<div class="activity" id="activity"><div style="color:#45475a;padding:24px;text-align:center">connecting to network...</div></div>
+
+<div class="sec">Join the Network</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px" class="two-col">
+  <div class="join">
+    <h3>Submit a receipt</h3>
+    <p>Generate a VCR and submit it to the live network. Takes 10 seconds.</p>
+    <code>pip install requests cryptography && curl -sL https://raw.githubusercontent.com/Henry-Shelton/tesseravcr/main/tessera-network/join_network.py | python3 -</code>
+    <div class="sub"><a href="https://github.com/Henry-Shelton/tesseravcr/blob/main/tessera-network/join_network.py">view source</a> — no dependencies beyond Python 3.8</div>
   </div>
-  <div>
-    <div class="section-label">Checkpoints &amp; Witnesses</div>
-    <div id="checkpoints"></div>
-
-    <div class="section-label">Provenance Depth</div>
-    <div class="depth-bar" id="depth-bar"></div>
-    <div class="depth-labels" id="depth-labels"></div>
+  <div class="join">
+    <h3>Run a log node</h3>
+    <p>Join the witness network. Countersign checkpoints from peers. ~$5/month.</p>
+    <code>curl -fsSL https://raw.githubusercontent.com/Henry-Shelton/tesseravcr/main/tessera-rust/tessera-log-server/deploy/setup.sh | sudo bash</code>
+    <div class="sub"><a href="https://github.com/Henry-Shelton/tesseravcr/blob/main/tessera-rust/tessera-log-server/deploy/README.md">deployment guide</a></div>
   </div>
 </div>
 
-<div class="join-box">
-  <h3>Submit a transfer from your terminal</h3>
-  <p>Generate a receipt and submit it to the live network in under 30 seconds.</p>
-  <code>curl -sL https://raw.githubusercontent.com/Henry-Shelton/tesseravcr/main/tessera-network/join_network.py | python3 -</code>
-  <p class="alt">Requires Python 3.8+ with <code style="display:inline;padding:1px 4px;margin:0">requests</code> and <code style="display:inline;padding:1px 4px;margin:0">cryptography</code>. <a href="https://github.com/Henry-Shelton/tesseravcr/blob/main/tessera-network/join_network.py">View source</a></p>
+<div class="footer">auto-refreshes every 8s &middot; <span id="last-update"></span></div>
+
 </div>
 
-<div class="join-box" style="border-color:#1a1a2e">
-  <h3>Run your own log node</h3>
-  <p>Join the witness network. Your node countersigns checkpoints from peers. ~$5/month on any VPS.</p>
-  <code>curl -fsSL https://raw.githubusercontent.com/Henry-Shelton/tesseravcr/main/tessera-rust/tessera-log-server/deploy/setup.sh | sudo bash</code>
-  <p class="alt"><a href="https://github.com/Henry-Shelton/tesseravcr/blob/main/tessera-rust/tessera-log-server/deploy/README.md">Deployment guide</a></p>
-</div>
-
-<div class="footer">
-  auto-refreshes every 10s &middot; last update: <span id="last-update">—</span>
-</div>
-
+<!-- Detail overlay -->
+<div class="detail-overlay" id="detail-overlay" onclick="if(event.target===this)closeDetail()">
+  <div class="detail" id="detail"></div>
 </div>
 
 <script>
 const NODES = [
-  {name:'log1',url:'https://log1.tesseravcr.org',loc:'Nuremberg, DE'},
-  {name:'log2',url:'https://log2.tesseravcr.org',loc:'Helsinki, FI'},
-  {name:'log3',url:'https://log3.tesseravcr.org',loc:'Helsinki, FI'},
+  {name:'log1',url:'https://log1.tesseravcr.org',loc:'Nuremberg, DE',flag:'🇩🇪'},
+  {name:'log2',url:'https://log2.tesseravcr.org',loc:'Helsinki, FI',flag:'🇫🇮'},
+  {name:'log3',url:'https://log3.tesseravcr.org',loc:'Helsinki, FI',flag:'🇫🇮'},
 ];
 
+const MODELS = {
+  'legal-risk-v2':'Legal risk analysis',
+  'summarise-v3':'Summary generation',
+  'code-review-v1':'Code review',
+  'translate-v2':'Translation',
+  'sentiment-v1':'Sentiment analysis',
+  'med-triage-v1':'Medical triage',
+  'fin-forecast-v1':'Financial forecast',
+  'image-classify-v2':'Image classification',
+};
+
 let allEntries = [];
-let knownEntryKeys = new Set();
+let knownKeys = new Set();
+let keyColors = {};
+let colorIdx = 0;
+const COLORS = ['#89b4fa','#f38ba8','#a6e3a1','#f9e2af','#cba6f7','#94e2d5','#fab387','#74c7ec','#f2cdcd','#b4befe'];
 
-function sh(h){return h?(h.slice(0,8)+'..'+h.slice(-4)):'—'}
-
-function fmtUp(s){
-  if(!s&&s!==0)return'—';
-  if(s<60)return s+'s';
-  if(s<3600)return Math.floor(s/60)+'m';
-  if(s<86400)return Math.floor(s/3600)+'h '+Math.floor((s%3600)/60)+'m';
-  return Math.floor(s/86400)+'d '+Math.floor((s%86400)/3600)+'h';
+function getColor(key) {
+  if (!key) return '#585b70';
+  const k = key.slice(0,16);
+  if (!keyColors[k]) keyColors[k] = COLORS[colorIdx++ % COLORS.length];
+  return keyColors[k];
 }
 
-function fmtTime(ts){
-  if(!ts)return'—';
-  const d=new Date(ts*1000);
-  const now=Date.now();
-  const diff=Math.floor((now-d.getTime())/1000);
-  if(diff<60)return diff+'s ago';
-  if(diff<3600)return Math.floor(diff/60)+'m ago';
-  return d.toLocaleTimeString();
+function sh(h) { return h ? h.slice(0,6)+'..'+h.slice(-4) : '—'; }
+function shKey(h) { return h ? h.slice(0,8) : '—'; }
+
+function fmtTime(ts) {
+  if (!ts) return '—';
+  const diff = Math.floor((Date.now()/1000) - ts);
+  if (diff < 0) return 'just now';
+  if (diff < 60) return diff + 's ago';
+  if (diff < 3600) return Math.floor(diff/60) + 'm ago';
+  if (diff < 86400) return Math.floor(diff/3600) + 'h ago';
+  return Math.floor(diff/86400) + 'd ago';
 }
 
-async function fetchJSON(url){
-  try{
-    const r=await fetch(url,{signal:AbortSignal.timeout(5000)});
-    if(!r.ok)throw new Error(r.status);
+function fmtUptime(s) {
+  if (!s && s !== 0) return '—';
+  if (s < 3600) return Math.floor(s/60) + 'm';
+  if (s < 86400) return Math.floor(s/3600) + 'h ' + Math.floor((s%3600)/60) + 'm';
+  return Math.floor(s/86400) + 'd ' + Math.floor((s%86400)/3600) + 'h';
+}
+
+async function fetchJSON(url) {
+  try {
+    const r = await fetch(url, {signal: AbortSignal.timeout(5000)});
+    if (!r.ok) throw new Error(r.status);
     return await r.json();
-  }catch(e){return null;}
+  } catch(e) { return null; }
 }
 
-async function fetchAllEntries(node,health){
-  const entries=[];
-  if(!health)return entries;
-  const start=Math.max(0,health.log_size-8);
-  const fetches=[];
-  for(let i=start;i<health.log_size;i++){
-    fetches.push(fetchJSON(node.url+'/v1/entry/'+i).then(e=>{
-      if(e){e._index=i;e._node=node.name;e._nodeUrl=node.url;entries.push(e);}
+async function fetchEntries(node, health) {
+  if (!health) return [];
+  const entries = [];
+  const start = Math.max(0, health.log_size - 10);
+  const fetches = [];
+  for (let i = start; i < health.log_size; i++) {
+    fetches.push(fetchJSON(node.url+'/v1/entry/'+i).then(e => {
+      if (e) { e._idx = i; e._node = node.name; e._nodeUrl = node.url; entries.push(e); }
     }));
   }
   await Promise.all(fetches);
   return entries;
 }
 
-async function refresh(){
-  const healths=await Promise.all(NODES.map(n=>fetchJSON(n.url+'/v1/health')));
-  const checkpoints=await Promise.all(NODES.map(n=>fetchJSON(n.url+'/v1/checkpoint')));
+function renderActivity(entry, isNew) {
+  const from = shKey(entry.from_key);
+  const to = shKey(entry.to_key);
+  const price = '$' + (entry.price/100).toFixed(2);
+  const fromColor = getColor(entry.from_key);
+  const toColor = getColor(entry.to_key);
+  const hasParents = entry.parent_receipts && entry.parent_receipts.length > 0;
+  const parentCount = hasParents ? entry.parent_receipts.length : 0;
 
-  let online=0,totalEntries=0,totalWitnesses=0;
+  let parentHtml = '';
+  if (hasParents) {
+    parentHtml = `<div class="act-parents">built on ${entry.parent_receipts.map(p =>
+      `<span>${sh(p.parent_receipt_id)}</span> (${p.relationship})`
+    ).join(', ')}</div>`;
+  }
+
+  return `<div class="act${isNew?' fresh':''}" onclick="showDetail('${entry._nodeUrl}',${entry._idx},'${entry._node}')">
+    <div class="act-top">
+      <div class="act-desc">
+        <b style="color:${fromColor}">${from}</b> → <b style="color:${toColor}">${to}</b> for <span class="price">${price}</span>
+      </div>
+      <span style="font-size:11px;color:#585b70">${fmtTime(entry.transfer_timestamp)}</span>
+    </div>
+    <div class="act-meta">
+      <span class="tag log">${entry._node} #${entry._idx}</span>
+      <span class="tag wit">2 witnesses</span>
+      ${hasParents ? `<span class="tag prov">${parentCount} parent${parentCount>1?'s':''}</span>` : ''}
+      <span style="color:#45475a">${sh(entry.receipt_id)}</span>
+    </div>
+    ${parentHtml}
+  </div>`;
+}
+
+async function showDetail(nodeUrl, idx, nodeName) {
+  const overlay = document.getElementById('detail-overlay');
+  const detail = document.getElementById('detail');
+  detail.innerHTML = '<div style="text-align:center;padding:40px;color:#45475a">loading...</div>';
+  overlay.classList.add('show');
+
+  const entry = await fetchJSON(nodeUrl + '/v1/entry/' + idx);
+  const proof = await fetchJSON(nodeUrl + '/v1/proof/' + idx);
+
+  if (!entry) {
+    detail.innerHTML = '<button class="detail-close" onclick="closeDetail()">&times;</button><p>Failed to load entry.</p>';
+    return;
+  }
+
+  const hasParents = entry.parent_receipts && entry.parent_receipts.length > 0;
+
+  let provHtml = '';
+  if (hasParents) {
+    provHtml = `<div style="margin:16px 0"><div style="font-size:11px;color:#585b70;margin-bottom:8px">PROVENANCE CHAIN</div><div class="prov-chain">`;
+    entry.parent_receipts.forEach(p => {
+      provHtml += `<div class="prov-node">${sh(p.parent_receipt_id)}<div style="font-size:9px;color:#585b70">${p.relationship}</div></div><div class="prov-arrow">→</div>`;
+    });
+    provHtml += `<div class="prov-node current">${sh(entry.receipt_id)}<div style="font-size:9px;color:#89b4fa">this receipt</div></div></div></div>`;
+  }
+
+  let proofHtml = '';
+  if (proof && proof.path) {
+    proofHtml = `<div style="margin-top:16px"><div style="font-size:11px;color:#585b70;margin-bottom:8px">MERKLE INCLUSION PROOF</div>
+    <div class="proof-box">leaf: ${proof.leaf_hash}\nroot: ${proof.root}\nlog_size: ${proof.log_size}\npath:\n${proof.path.map((s,i) => '  ['+i+'] '+s.direction+': '+s.sibling).join('\n')}</div></div>`;
+  }
+
+  detail.innerHTML = `
+    <button class="detail-close" onclick="closeDetail()">&times;</button>
+    <h2>Receipt Detail</h2>
+    <div class="detail-row"><span class="k">Receipt ID</span><span class="v hash">${entry.receipt_id}</span></div>
+    <div class="detail-row"><span class="k">From</span><span class="v hash">${entry.from_key}</span></div>
+    <div class="detail-row"><span class="k">To</span><span class="v hash">${entry.to_key}</span></div>
+    <div class="detail-row"><span class="k">Price</span><span class="v green">$${(entry.price/100).toFixed(2)} ${entry.currency}</span></div>
+    <div class="detail-row"><span class="k">Timestamp</span><span class="v">${new Date(entry.transfer_timestamp*1000).toISOString()}</span></div>
+    <div class="detail-row"><span class="k">Log</span><span class="v">${nodeName} — index ${entry.index}</span></div>
+    <div class="detail-row"><span class="k">Leaf Hash</span><span class="v hash">${entry.leaf_hash}</span></div>
+    <div class="detail-row"><span class="k">Signature</span><span class="v" style="color:#cba6f7">${entry.seller_signature}</span></div>
+    <div class="detail-row"><span class="k">Parents</span><span class="v${hasParents?' yellow':''}">${hasParents ? entry.parent_receipts.length + ' provenance links' : 'none (root receipt)'}</span></div>
+    ${provHtml}
+    ${proofHtml}
+    <div style="margin-top:16px;font-size:10px;color:#45475a">
+      Verify independently: <a href="${nodeUrl}/v1/entry/${idx}" target="_blank">raw entry</a> · <a href="${nodeUrl}/v1/proof/${idx}" target="_blank">merkle proof</a>
+    </div>
+  `;
+}
+
+function closeDetail() {
+  document.getElementById('detail-overlay').classList.remove('show');
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDetail(); });
+
+async function refresh() {
+  const healths = await Promise.all(NODES.map(n => fetchJSON(n.url+'/v1/health')));
+  const checkpoints = await Promise.all(NODES.map(n => fetchJSON(n.url+'/v1/checkpoint')));
+
+  let online = 0, totalEntries = 0, totalWitnesses = 0, totalVolume = 0;
 
   // Nodes
-  let nh='';
-  healths.forEach((h,i)=>{
-    const n=NODES[i];
-    if(h){
+  let nh = '';
+  healths.forEach((h, i) => {
+    const n = NODES[i];
+    if (h) {
       online++;
-      totalEntries+=h.log_size;
-      nh+=`<div class="node online">
-        <div class="node-header">
-          <span class="node-name">${n.name}</span>
-          <span class="node-badge online">online</span>
+      totalEntries += h.log_size;
+      const cp = checkpoints[i];
+      const wc = cp && cp.witnesses ? cp.witnesses.length : 0;
+      totalWitnesses += wc;
+      nh += `<div class="nd on">
+        <div class="nd-top">
+          <span class="nd-name">${n.flag} ${n.name}</span>
+          <span class="nd-status on">online</span>
         </div>
-        <div class="node-meta">
-          <span>${n.loc}</span>
-          <span>entries: <span class="val">${h.log_size}</span></span>
-          <span>uptime: <span class="val">${fmtUp(h.uptime_seconds)}</span></span>
-          <span>root: <span class="val">${sh(h.root)}</span></span>
-          <span>version: <span class="val">${h.version||'—'}</span></span>
+        <div class="nd-info">
+          <b>${n.loc}</b><br>
+          ${h.log_size} entries · ${fmtUptime(h.uptime_seconds)} uptime · ${wc} witnesses<br>
+          root: <span style="font-family:monospace;font-size:10px;color:#6c7086">${sh(h.root)}</span>
         </div>
       </div>`;
-    }else{
-      nh+=`<div class="node offline">
-        <div class="node-header">
-          <span class="node-name">${n.name}</span>
-          <span class="node-badge offline">offline</span>
+    } else {
+      nh += `<div class="nd off">
+        <div class="nd-top">
+          <span class="nd-name">${n.flag} ${n.name}</span>
+          <span class="nd-status off">offline</span>
         </div>
-        <div class="node-meta"><span>${n.loc}</span><span>unreachable</span></div>
-      </div>`;
-    }
-  });
-  document.getElementById('nodes').innerHTML=nh;
-
-  // Checkpoints
-  let cpHtml='';
-  checkpoints.forEach((cp,i)=>{
-    if(cp){
-      const wc=cp.witnesses?cp.witnesses.length:0;
-      totalWitnesses+=wc;
-      cpHtml+=`<div class="checkpoint">
-        <div class="cp-header">
-          <span class="cp-name">${NODES[i].name}</span>
-          <span class="cp-root">size: ${cp.log_size} &middot; ${wc} witness${wc!==1?'es':''}</span>
-        </div>
-        <div style="margin-top:4px;font-size:10px;color:#555">root: ${sh(cp.root)}</div>
-        ${cp.witnesses?cp.witnesses.map(w=>`<div class="witness-row">&#10003; ${sh(w.witness_key)} <span style="color:#444">${w.node_name||''}</span></div>`).join(''):''}
+        <div class="nd-info"><b>${n.loc}</b><br>unreachable</div>
       </div>`;
     }
   });
-  document.getElementById('checkpoints').innerHTML=cpHtml||'<div style="color:#333;padding:12px">waiting...</div>';
+  document.getElementById('nodes').innerHTML = nh;
 
-  // Fetch entries from all nodes
-  const entryArrays=await Promise.all(NODES.map((n,i)=>fetchAllEntries(n,healths[i])));
-  let newEntries=[];
-  entryArrays.flat().forEach(e=>{
-    const key=e._node+':'+e._index;
-    if(!knownEntryKeys.has(key)){
-      knownEntryKeys.add(key);
+  // Fetch entries
+  const entryArrays = await Promise.all(NODES.map((n,i) => fetchEntries(n, healths[i])));
+  let newEntries = [];
+  entryArrays.flat().forEach(e => {
+    const key = e._node + ':' + e._idx;
+    if (!knownKeys.has(key)) {
+      knownKeys.add(key);
       newEntries.push(e);
       allEntries.push(e);
     }
   });
 
-  // Sort all entries by timestamp desc
-  allEntries.sort((a,b)=>(b.timestamp||0)-(a.timestamp||0));
-  const display=allEntries.slice(0,30);
+  allEntries.sort((a,b) => (b.transfer_timestamp||0) - (a.transfer_timestamp||0));
+  const display = allEntries.slice(0, 40);
 
-  // Render feed
-  const feed=document.getElementById('feed');
-  let fh='';
-  display.forEach(t=>{
-    const isNew=newEntries.includes(t);
-    const price=t.price?'$'+(t.price/100).toFixed(2):'—';
-    fh+=`<div class="tx${isNew?' new':''}">
-      <div class="tx-header">
-        <span class="tx-type transfer">transfer</span>
-        <span class="tx-log">${t._node} #${t._index}</span>
-      </div>
-      <div class="tx-row"><span class="label">receipt</span><span class="val hash">${sh(t.receipt_id)}</span></div>
-      <div class="tx-row"><span class="label">from</span><span class="val">${sh(t.from_key)}</span><span class="label" style="margin-left:auto">to</span><span class="val">${sh(t.to_key)}</span></div>
-      <div class="tx-row"><span class="label">price</span><span class="val price">${price}</span><span class="label" style="margin-left:auto">time</span><span class="val">${fmtTime(t.timestamp)}</span></div>
-      ${t.parent_receipts&&t.parent_receipts.length?`<div class="tx-row" style="margin-top:2px"><span class="label">parents</span><span class="val" style="color:#f59e0b">${t.parent_receipts.map(p=>sh(p.parent_receipt_id)+' ('+p.relationship+')').join(', ')}</span></div>`:''}
-    </div>`;
+  // Count provenance links and volume
+  let provCount = 0;
+  allEntries.forEach(e => {
+    totalVolume += (e.price || 0);
+    if (e.parent_receipts && e.parent_receipts.length) provCount += e.parent_receipts.length;
   });
-  feed.innerHTML=fh||'<div style="color:#333;padding:20px;text-align:center">no transfers yet</div>';
 
-  // Depth distribution (estimate from prices — we don't have depth in entries, so approximate)
-  // Actually let's just show entry distribution across nodes
-  const depthCounts={};
-  const maxDepth=6;
-  // We don't have depth in the transfer entries, so show entry distribution per node
-  const nodeCounts=[];
-  healths.forEach((h,i)=>{nodeCounts.push({name:NODES[i].name,count:h?h.log_size:0})});
-  const maxCount=Math.max(1,...nodeCounts.map(n=>n.count));
-  let dbHtml='';
-  let dlHtml='';
-  nodeCounts.forEach(n=>{
-    const pct=Math.max(4,(n.count/maxCount)*100);
-    dbHtml+=`<div class="depth-col" style="height:${pct}%;opacity:${n.count?1:0.3}" title="${n.name}: ${n.count} entries"></div>`;
-    dlHtml+=`<span>${n.name}<br>${n.count}</span>`;
-  });
-  document.getElementById('depth-bar').innerHTML=dbHtml;
-  document.getElementById('depth-labels').innerHTML=dlHtml;
+  // Render activity
+  const actEl = document.getElementById('activity');
+  actEl.innerHTML = display.map(e => renderActivity(e, newEntries.includes(e))).join('')
+    || '<div style="color:#45475a;padding:24px;text-align:center">no activity yet</div>';
 
   // Stats
-  document.getElementById('s-nodes').textContent=online;
-  document.getElementById('s-entries').textContent=totalEntries;
-  document.getElementById('s-witnesses').textContent=totalWitnesses;
-  document.getElementById('s-depth').textContent=allEntries.filter(e=>e.parent_receipts&&e.parent_receipts.length>0).length;
-  document.getElementById('last-update').textContent=new Date().toLocaleTimeString();
+  document.getElementById('s-nodes').textContent = online;
+  document.getElementById('s-entries').textContent = totalEntries;
+  document.getElementById('s-provenance').textContent = provCount;
+  document.getElementById('s-witnesses').textContent = totalWitnesses;
+  document.getElementById('s-volume').textContent = '$' + (totalVolume/100).toFixed(0);
+  document.getElementById('last-update').textContent = 'updated ' + new Date().toLocaleTimeString();
 }
 
 refresh();
-setInterval(refresh,10000);
+setInterval(refresh, 8000);
 </script>
 </body>
 </html>
