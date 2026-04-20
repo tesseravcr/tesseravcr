@@ -3,461 +3,404 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tessera VCR — Live Network</title>
+<title>Tessera VCR — Network Explorer</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0f0f17;color:#cdd6f4;overflow:hidden;height:100vh}
-canvas{display:block;position:fixed;top:0;left:0;z-index:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0f0f17;color:#bac2de;font-size:13px;line-height:1.6}
+a{color:#89b4fa;text-decoration:none}
+a:hover{text-decoration:underline}
+::selection{background:#89b4fa30}
+code,tt{font-family:'SF Mono','Fira Code',monospace;font-size:11px}
 
-/* Overlay UI */
-.ui{position:fixed;z-index:10;pointer-events:none}
-.ui *{pointer-events:auto}
+/* Layout */
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px 60px}
 
-.top-bar{top:0;left:0;right:0;padding:14px 20px;display:flex;justify-content:space-between;align-items:center}
-.top-left{display:flex;align-items:center;gap:12px}
-.logo{font-size:15px;font-weight:700;letter-spacing:.5px}
-.logo span{color:#a6e3a1}
+/* Header */
+.hdr{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid #1e1e2e;margin-bottom:20px}
+.hdr-left{display:flex;align-items:center;gap:10px}
+.hdr h1{font-size:14px;font-weight:700;color:#cdd6f4}
+.hdr h1 span{color:#a6e3a1}
 .live{font-size:9px;background:#a6e3a120;color:#a6e3a1;padding:2px 8px;border-radius:10px;font-weight:600;display:flex;align-items:center;gap:4px}
 .live::before{content:'';width:5px;height:5px;border-radius:50%;background:#a6e3a1;animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.top-right{display:flex;gap:14px;font-size:11px}
-.top-right a{color:#585b70;text-decoration:none;transition:color .2s}
-.top-right a:hover{color:#cdd6f4}
+.hdr nav{display:flex;gap:14px;font-size:12px}
+.hdr nav a{color:#585b70;transition:color .2s}
+.hdr nav a:hover{color:#cdd6f4;text-decoration:none}
+.hdr nav a.active{color:#89b4fa}
 
-.stats-bar{top:50px;left:0;right:0;display:flex;justify-content:center;gap:24px;padding:8px}
-.sb{text-align:center}
-.sb-n{font-size:22px;font-weight:800;line-height:1}
-.sb-n.blue{color:#89b4fa}.sb-n.green{color:#a6e3a1}.sb-n.mauve{color:#cba6f7}.sb-n.yellow{color:#f9e2af}.sb-n.peach{color:#fab387}
-.sb-l{font-size:8px;color:#45475a;text-transform:uppercase;letter-spacing:1.5px;margin-top:2px}
+/* Search */
+.search-row{margin-bottom:20px}
+.search{width:100%;padding:10px 14px 10px 36px;background:#1e1e2e;border:1px solid #313244;border-radius:8px;color:#cdd6f4;font-size:13px;font-family:inherit;outline:none;transition:border-color .2s}
+.search:focus{border-color:#89b4fa40}
+.search-wrap{position:relative}
+.search-wrap::before{content:'⌕';position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#45475a;font-size:16px}
+.search-hint{font-size:10px;color:#45475a;margin-top:4px;padding-left:4px}
 
-/* Legend */
-.legend{bottom:20px;left:20px;background:#1e1e2e;border:1px solid #313244;border-radius:8px;padding:12px 16px;font-size:11px}
-.legend-item{display:flex;align-items:center;gap:8px;margin:4px 0;color:#585b70}
-.legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
-.legend-line{width:20px;height:2px;flex-shrink:0;border-radius:1px}
+/* Stats row */
+.stats{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:20px}
+.stat{background:#1e1e2e;border:1px solid #313244;border-radius:8px;padding:14px 16px;text-align:center}
+.stat-n{font-size:24px;font-weight:800;line-height:1.2}
+.stat-n.blue{color:#89b4fa}.stat-n.green{color:#a6e3a1}.stat-n.mauve{color:#cba6f7}.stat-n.yellow{color:#f9e2af}.stat-n.peach{color:#fab387}.stat-n.teal{color:#94e2d5}
+.stat-l{font-size:9px;color:#585b70;text-transform:uppercase;letter-spacing:1.2px;margin-top:2px}
 
-/* Feed */
-.feed-panel{top:90px;right:16px;width:320px;max-height:calc(100vh - 120px);overflow-y:auto;scrollbar-width:thin;scrollbar-color:#1e1e2e transparent}
-.feed-panel::-webkit-scrollbar{width:3px}
-.feed-panel::-webkit-scrollbar-thumb{background:#313244;border-radius:2px}
-.feed-toggle{background:#1e1e2e;border:1px solid #313244;border-radius:8px;padding:8px 12px;font-size:11px;color:#585b70;cursor:pointer;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
-.feed-toggle:hover{border-color:#45475a}
-.feed-list{display:flex;flex-direction:column;gap:4px}
-.fi{background:#1e1e2ef0;border:1px solid #313244;border-radius:6px;padding:8px 12px;font-size:11px;cursor:pointer;transition:border-color .2s;backdrop-filter:blur(8px)}
-.fi:hover{border-color:#45475a}
-.fi.fresh{border-left:2px solid #89b4fa;animation:fadeIn .4s}
-@keyframes fadeIn{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:translateX(0)}}
-.fi-top{display:flex;justify-content:space-between;margin-bottom:2px}
-.fi-desc{color:#cdd6f4}.fi-desc b{font-weight:600}
-.fi-time{color:#45475a;font-size:10px}
-.fi-meta{color:#45475a;font-size:10px;display:flex;gap:8px}
-.fi-tag{padding:0 4px;border-radius:3px}
-.fi-tag.prov{color:#f9e2af;background:#f9e2af10}
-.fi-tag.wit{color:#a6e3a1;background:#a6e3a110}
+/* Grid layout */
+.grid{display:grid;grid-template-columns:1fr 320px;gap:16px}
+.main-col{min-width:0}
 
-/* Detail panel */
-.detail-overlay{display:none;position:fixed;inset:0;background:#0f0f17e0;z-index:200;justify-content:center;align-items:center}
-.detail-overlay.show{display:flex}
-.detail{background:#1e1e2e;border:1px solid #313244;border-radius:12px;padding:24px;max-width:580px;width:90%;max-height:80vh;overflow-y:auto}
+/* Sections */
+.section{background:#1e1e2e;border:1px solid #313244;border-radius:8px;margin-bottom:16px;overflow:hidden}
+.section-hdr{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid #31324480}
+.section-title{font-size:12px;font-weight:700;color:#cdd6f4;text-transform:uppercase;letter-spacing:.5px}
+.section-sub{font-size:10px;color:#45475a}
+
+/* Receipt table */
+.rtable{width:100%;border-collapse:collapse}
+.rtable th{text-align:left;padding:8px 12px;font-size:10px;color:#45475a;text-transform:uppercase;letter-spacing:.8px;border-bottom:1px solid #313244;font-weight:600}
+.rtable td{padding:8px 12px;border-bottom:1px solid #31324430;font-size:12px;vertical-align:middle}
+.rtable tr{transition:background .15s;cursor:pointer}
+.rtable tr:hover{background:#31324440}
+.rtable tr.fresh{animation:freshRow .6s}
+@keyframes freshRow{from{background:#89b4fa15}to{background:transparent}}
+.mono{font-family:'SF Mono','Fira Code',monospace;font-size:10px;color:#6c7086}
+.hash{color:#89b4fa;cursor:pointer}.hash:hover{text-decoration:underline}
+.price{color:#a6e3a1;font-weight:600;font-size:11px}
+.agent-tag{display:inline-block;padding:1px 6px;border-radius:3px;font-size:10px;font-family:'SF Mono',monospace}
+.prov-badge{display:inline-block;padding:1px 5px;border-radius:3px;font-size:9px;color:#f9e2af;background:#f9e2af10;margin-left:4px}
+.wit-badge{display:inline-block;padding:1px 5px;border-radius:3px;font-size:9px;color:#a6e3a1;background:#a6e3a110;margin-left:4px}
+.log-badge{display:inline-block;padding:1px 5px;border-radius:3px;font-size:9px;color:#94e2d5;background:#94e2d510}
+.time{color:#585b70;font-size:11px;white-space:nowrap}
+
+/* Log server cards */
+.log-cards{display:flex;flex-direction:column;gap:8px;padding:12px}
+.log-card{background:#11111b;border:1px solid #313244;border-radius:6px;padding:10px 12px}
+.log-card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.log-name{font-weight:700;font-size:12px;color:#94e2d5}
+.log-status{font-size:9px;padding:2px 6px;border-radius:8px;font-weight:600}
+.log-status.up{background:#a6e3a120;color:#a6e3a1}
+.log-status.down{background:#f38ba820;color:#f38ba8}
+.log-meta{font-size:10px;color:#585b70;line-height:1.7}
+.log-meta b{color:#6c7086;font-weight:600}
+.log-bar{height:3px;background:#313244;border-radius:2px;margin-top:6px;overflow:hidden}
+.log-bar-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,#94e2d5,#89b4fa);transition:width .6s}
+
+/* Agent leaderboard */
+.agent-list{padding:8px 12px}
+.agent-row{display:flex;justify-content:space-between;align-items:center;padding:7px 8px;border-radius:4px;cursor:pointer;transition:background .15s}
+.agent-row:hover{background:#31324440}
+.agent-id{font-family:'SF Mono',monospace;font-size:10px}
+.agent-stats{display:flex;gap:10px;font-size:10px;color:#585b70}
+.agent-stats b{font-weight:600}
+
+/* Detail overlay */
+.overlay{display:none;position:fixed;inset:0;background:#0f0f17e0;z-index:200;justify-content:center;align-items:start;padding:60px 20px;overflow-y:auto}
+.overlay.show{display:flex}
+.detail{background:#1e1e2e;border:1px solid #313244;border-radius:10px;padding:24px;max-width:640px;width:100%}
 .detail-close{float:right;background:none;border:none;color:#585b70;font-size:18px;cursor:pointer;padding:4px 8px}
 .detail-close:hover{color:#cdd6f4}
-.detail h2{font-size:14px;font-weight:700;margin-bottom:14px}
-.dr{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #31324440;font-size:11px}
-.dr .k{color:#45475a;min-width:110px}
-.dr .v{font-family:monospace;font-size:10px;word-break:break-all;text-align:right;color:#6c7086}
-.dr .v.h{color:#89b4fa}.dr .v.g{color:#a6e3a1}.dr .v.y{color:#f9e2af}
-.prov-chain{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:12px 0}
-.prov-n{background:#313244;padding:5px 8px;border-radius:5px;font-size:10px;font-family:monospace}
+.detail h2{font-size:14px;font-weight:700;margin-bottom:16px;color:#cdd6f4}
+.dr{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #31324430;font-size:12px}
+.dr .k{color:#585b70;min-width:120px;flex-shrink:0}
+.dr .v{font-family:'SF Mono',monospace;font-size:10px;word-break:break-all;text-align:right;color:#6c7086}
+.dr .v.h{color:#89b4fa}.dr .v.g{color:#a6e3a1}.dr .v.y{color:#f9e2af}.dr .v.m{color:#cba6f7}
+.proof-box{background:#11111b;border:1px solid #313244;border-radius:6px;padding:10px;margin-top:10px;font-family:'SF Mono',monospace;font-size:9px;color:#585b70;max-height:120px;overflow-y:auto;white-space:pre;line-height:1.6}
+.prov-chain{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:10px 0}
+.prov-n{background:#313244;padding:4px 8px;border-radius:4px;font-size:10px;font-family:monospace}
 .prov-n.cur{border:1px solid #89b4fa;color:#89b4fa}
-.prov-a{color:#45475a}
-.proof-box{background:#11111b;border:1px solid #313244;border-radius:6px;padding:10px;margin-top:10px;font-family:monospace;font-size:9px;color:#45475a;max-height:100px;overflow-y:auto;white-space:pre}
+.prov-a{color:#45475a;font-size:12px}
 
-/* Join bar */
-.join-bar{bottom:20px;right:16px;width:320px}
-.jb{background:#1e1e2ef0;border:1px solid #313244;border-radius:8px;padding:10px 14px;margin-bottom:6px;font-size:11px;backdrop-filter:blur(8px)}
-.jb h4{font-size:11px;font-weight:600;margin-bottom:2px}
-.jb p{color:#45475a;font-size:10px;margin-bottom:4px}
-.jb code{font-size:9px;color:#89b4fa;word-break:break-all}
-.jb a{color:#585b70;font-size:9px}
+/* Join */
+.join{background:#1e1e2e;border:1px solid #313244;border-radius:8px;padding:12px 14px;margin-bottom:16px}
+.join h4{font-size:11px;font-weight:700;color:#cdd6f4;margin-bottom:2px}
+.join p{font-size:10px;color:#585b70;margin-bottom:6px}
+.join code{display:block;font-size:9px;color:#89b4fa;word-break:break-all;background:#11111b;padding:8px;border-radius:4px;line-height:1.5}
 
-@media(max-width:768px){
-  .feed-panel,.join-bar{display:none}
-  .stats-bar{flex-wrap:wrap;gap:12px}
+/* Ego graph */
+.ego-canvas{width:100%;height:200px;background:#11111b;border:1px solid #313244;border-radius:6px;margin-top:12px}
+
+/* Responsive */
+@media(max-width:860px){
+  .stats{grid-template-columns:repeat(3,1fr)}
+  .grid{grid-template-columns:1fr}
+  .rtable th:nth-child(4),.rtable td:nth-child(4){display:none}
+}
+@media(max-width:520px){
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .rtable th:nth-child(3),.rtable td:nth-child(3){display:none}
 }
 </style>
 </head>
 <body>
 
-<canvas id="c"></canvas>
+<div class="wrap">
 
-<div class="ui top-bar">
-  <div class="top-left">
-    <div class="logo"><span>&#9646;</span> tessera vcr</div>
-    <div class="live">LIVE NETWORK</div>
+<div class="hdr">
+  <div class="hdr-left">
+    <h1><span>&#9646;</span> tessera vcr</h1>
+    <div class="live">EXPLORER</div>
   </div>
-  <div class="top-right">
+  <nav>
     <a href="index.html">protocol</a>
+    <a href="network.html" class="active">live network</a>
     <a href="https://github.com/Henry-Shelton/tesseravcr/blob/main/spec/VCR-SPEC.md">spec</a>
     <a href="https://github.com/Henry-Shelton/tesseravcr">github</a>
+  </nav>
+</div>
+
+<!-- Search -->
+<div class="search-row">
+  <div class="search-wrap">
+    <input class="search" id="search" type="text" placeholder="Search by receipt ID, agent key, or log entry..." autocomplete="off">
   </div>
+  <div class="search-hint" id="search-hint">Paste a receipt hash, agent public key, or type an entry number</div>
 </div>
 
-<div class="ui stats-bar">
-  <div class="sb"><div class="sb-n green" id="s-nodes">-</div><div class="sb-l">nodes</div></div>
-  <div class="sb"><div class="sb-n blue" id="s-receipts">-</div><div class="sb-l">receipts</div></div>
-  <div class="sb"><div class="sb-n mauve" id="s-agents">-</div><div class="sb-l">agents</div></div>
-  <div class="sb"><div class="sb-n yellow" id="s-links">-</div><div class="sb-l">provenance</div></div>
-  <div class="sb"><div class="sb-n green" id="s-witnesses">-</div><div class="sb-l">witnesses</div></div>
-  <div class="sb"><div class="sb-n peach" id="s-volume">-</div><div class="sb-l">volume</div></div>
+<!-- Stats -->
+<div class="stats">
+  <div class="stat"><div class="stat-n teal" id="s-nodes">-</div><div class="stat-l">Log nodes</div></div>
+  <div class="stat"><div class="stat-n blue" id="s-receipts">-</div><div class="stat-l">Receipts</div></div>
+  <div class="stat"><div class="stat-n mauve" id="s-agents">-</div><div class="stat-l">Agents</div></div>
+  <div class="stat"><div class="stat-n yellow" id="s-prov">-</div><div class="stat-l">Provenance</div></div>
+  <div class="stat"><div class="stat-n green" id="s-witnesses">-</div><div class="stat-l">Witnesses</div></div>
+  <div class="stat"><div class="stat-n peach" id="s-volume">-</div><div class="stat-l">Volume</div></div>
 </div>
 
-<div class="ui legend">
-  <div style="font-size:10px;font-weight:600;margin-bottom:6px;color:#6c7086">NETWORK GRAPH</div>
-  <div class="legend-item"><div class="legend-dot" style="background:#94e2d5;width:14px;height:14px"></div> Log node (infrastructure)</div>
-  <div class="legend-item"><div class="legend-dot" style="background:#89b4fa"></div> Agent (operator)</div>
-  <div class="legend-item"><div class="legend-line" style="background:#89b4fa50"></div> Transfer</div>
-  <div class="legend-item"><div class="legend-line" style="background:#f9e2af50"></div> Provenance link</div>
-  <div class="legend-item" style="font-size:10px;color:#45475a;margin-top:4px">thicker line = more transactions</div>
-  <div class="legend-item" style="font-size:10px;color:#45475a">bigger node = more activity</div>
-</div>
+<!-- Main grid -->
+<div class="grid">
 
-<div class="ui feed-panel" id="feed-panel">
-  <div class="feed-toggle" onclick="toggleFeed()">
-    <span>Activity Feed</span>
-    <span id="feed-count" style="color:#89b4fa">0</span>
+  <!-- Left: receipt table -->
+  <div class="main-col">
+    <div class="section">
+      <div class="section-hdr">
+        <span class="section-title">Recent Receipts</span>
+        <span class="section-sub" id="receipt-sub">loading...</span>
+      </div>
+      <table class="rtable">
+        <thead>
+          <tr>
+            <th>Receipt</th>
+            <th>From → To</th>
+            <th>Amount</th>
+            <th>Log</th>
+            <th>Age</th>
+          </tr>
+        </thead>
+        <tbody id="receipt-body"></tbody>
+      </table>
+    </div>
   </div>
-  <div class="feed-list" id="feed"></div>
-</div>
 
-<div class="ui join-bar">
-  <div class="jb">
-    <h4>Join the network</h4>
-    <p>Submit a receipt from your terminal</p>
-    <code>pip install requests cryptography && curl -sL https://raw.githubusercontent.com/Henry-Shelton/tesseravcr/main/tessera-network/join_network.py | python3 -</code>
-    <div style="margin-top:4px"><a href="https://github.com/Henry-Shelton/tesseravcr/blob/main/tessera-network/join_network.py">view source</a></div>
+  <!-- Right sidebar -->
+  <div>
+    <!-- Log servers -->
+    <div class="section">
+      <div class="section-hdr">
+        <span class="section-title">Log Servers</span>
+        <span class="section-sub" id="log-sub">3 nodes</span>
+      </div>
+      <div class="log-cards" id="log-cards"></div>
+    </div>
+
+    <!-- Agent leaderboard -->
+    <div class="section">
+      <div class="section-hdr">
+        <span class="section-title">Agents</span>
+        <span class="section-sub" id="agent-sub">-</span>
+      </div>
+      <div class="agent-list" id="agent-list"></div>
+    </div>
+
+    <!-- Join -->
+    <div class="join">
+      <h4>Join the network</h4>
+      <p>Submit a receipt from your terminal:</p>
+      <code>pip install requests cryptography<br>curl -sL https://raw.githubusercontent.com/Henry-Shelton/tesseravcr/main/tessera-network/join_network.py | python3 -</code>
+      <div style="margin-top:4px;font-size:9px"><a href="https://github.com/Henry-Shelton/tesseravcr/blob/main/tessera-network/join_network.py" style="color:#585b70">view source — 120 lines, no magic</a></div>
+    </div>
   </div>
+
+</div>
 </div>
 
-<div class="detail-overlay" id="detail-overlay" onclick="if(event.target===this)closeDetail()">
+<!-- Detail overlay -->
+<div class="overlay" id="overlay" onclick="if(event.target===this)closeDetail()">
   <div class="detail" id="detail"></div>
 </div>
 
 <script>
-// ── Config ──
 const NODES = [
-  {name:'log1',url:'https://log1.tesseravcr.org',loc:'Nuremberg, DE'},
-  {name:'log2',url:'https://log2.tesseravcr.org',loc:'Helsinki, FI'},
-  {name:'log3',url:'https://log3.tesseravcr.org',loc:'Helsinki, FI'},
+  {name:'log1', url:'https://log1.tesseravcr.org', loc:'Nuremberg, DE', ip:'5.75.187.83'},
+  {name:'log2', url:'https://log2.tesseravcr.org', loc:'Helsinki, FI', ip:'135.181.90.128'},
+  {name:'log3', url:'https://log3.tesseravcr.org', loc:'Helsinki, FI', ip:'135.181.86.144'},
 ];
 
-const AGENT_COLORS = ['#89b4fa','#f38ba8','#a6e3a1','#f9e2af','#cba6f7','#fab387','#74c7ec','#f2cdcd','#b4befe','#94e2d5','#eba0ac','#89dceb'];
-const LOG_COLOR = '#94e2d5';
-
-// ── State ──
-let graphNodes = [];   // {id, type:'log'|'agent', x, y, vx, vy, radius, color, label, activity, meta}
-let graphEdges = [];   // {from, to, type:'transfer'|'provenance', weight, particles:[]}
-let allEntries = [];
-let knownKeys = new Set();
-let agentColorMap = {};
-let colorIdx = 0;
-let canvas, ctx, W, H;
-let mouse = {x:0, y:0, down:false, dragging:null};
-let hoveredNode = null;
-let feedVisible = true;
-
-function getAgentColor(key) {
+const COLORS = ['#89b4fa','#f38ba8','#a6e3a1','#f9e2af','#cba6f7','#fab387','#74c7ec','#f2cdcd','#b4befe','#94e2d5','#eba0ac','#89dceb'];
+let colorMap = {}, colorIdx = 0;
+function agentColor(key) {
   const k = key.slice(0,16);
-  if (!agentColorMap[k]) agentColorMap[k] = AGENT_COLORS[colorIdx++ % AGENT_COLORS.length];
-  return agentColorMap[k];
+  if (!colorMap[k]) colorMap[k] = COLORS[colorIdx++ % COLORS.length];
+  return colorMap[k];
 }
 
-function sh(h) { return h ? h.slice(0,6)+'..'+h.slice(-4) : '—'; }
-function shName(h) { return h ? h.slice(0,8) : '?'; }
+let allEntries = [];
+let knownKeys = new Set();
+let searchTerm = '';
+
+function sh(h) { return h ? h.slice(0,8)+'…'+h.slice(-4) : '—'; }
+function shAgent(h) { return h ? h.slice(0,6)+'..'+h.slice(-4) : '?'; }
 
 function fmtTime(ts) {
   const diff = Math.floor(Date.now()/1000 - ts);
-  if (diff < 0) return 'now';
-  if (diff < 60) return diff + 's';
-  if (diff < 3600) return Math.floor(diff/60) + 'm';
-  if (diff < 86400) return Math.floor(diff/3600) + 'h';
-  return Math.floor(diff/86400) + 'd';
+  if (diff < 0) return 'just now';
+  if (diff < 60) return diff + 's ago';
+  if (diff < 3600) return Math.floor(diff/60) + 'm ago';
+  if (diff < 86400) return Math.floor(diff/3600) + 'h ago';
+  return Math.floor(diff/86400) + 'd ago';
 }
 
-// ── Graph helpers ──
-function findOrCreateNode(id, type, meta) {
-  let n = graphNodes.find(n => n.id === id);
-  if (n) {
-    n.activity++;
-    return n;
-  }
-  const angle = Math.random() * Math.PI * 2;
-  const dist = 100 + Math.random() * 150;
-  n = {
-    id, type,
-    x: W/2 + Math.cos(angle) * dist,
-    y: H/2 + Math.sin(angle) * dist,
-    vx: 0, vy: 0,
-    radius: type === 'log' ? 22 : 8,
-    color: type === 'log' ? LOG_COLOR : getAgentColor(id),
-    label: type === 'log' ? meta.name : shName(id),
-    activity: 1,
-    meta: meta || {},
-  };
-  graphNodes.push(n);
-  return n;
+function fmtUptime(secs) {
+  if (secs < 3600) return Math.floor(secs/60) + 'm';
+  if (secs < 86400) return Math.floor(secs/3600) + 'h ' + Math.floor((secs%3600)/60) + 'm';
+  return Math.floor(secs/86400) + 'd ' + Math.floor((secs%86400)/3600) + 'h';
 }
 
-function findOrCreateEdge(fromId, toId, type) {
-  let e = graphEdges.find(e => (e.from === fromId && e.to === toId) || (e.from === toId && e.to === fromId));
-  if (e) {
-    e.weight++;
-    // Add particle
-    e.particles.push({t: 0, speed: 0.005 + Math.random()*0.005, color: type === 'provenance' ? '#f9e2af' : '#89b4fa'});
-    return e;
-  }
-  e = {from: fromId, to: toId, type, weight: 1, particles: [{t:0, speed:0.005+Math.random()*0.005, color: type==='provenance'?'#f9e2af':'#89b4fa'}]};
-  graphEdges.push(e);
-  return e;
-}
-
-// ── Physics ──
-function simulate() {
-  const k = 0.0008;   // spring
-  const rep = 8000;    // repulsion
-  const damp = 0.92;
-  const center = 0.001;
-
-  // Repulsion between all nodes
-  for (let i = 0; i < graphNodes.length; i++) {
-    for (let j = i+1; j < graphNodes.length; j++) {
-      const a = graphNodes[i], b = graphNodes[j];
-      let dx = a.x - b.x, dy = a.y - b.y;
-      let dist = Math.sqrt(dx*dx + dy*dy) || 1;
-      let force = rep / (dist * dist);
-      let fx = (dx/dist) * force, fy = (dy/dist) * force;
-      a.vx += fx; a.vy += fy;
-      b.vx -= fx; b.vy -= fy;
-    }
-  }
-
-  // Spring attraction along edges
-  for (const e of graphEdges) {
-    const a = graphNodes.find(n => n.id === e.from);
-    const b = graphNodes.find(n => n.id === e.to);
-    if (!a || !b) continue;
-    let dx = b.x - a.x, dy = b.y - a.y;
-    let dist = Math.sqrt(dx*dx + dy*dy) || 1;
-    let target = 120 + 40 / Math.max(1, e.weight);
-    let force = (dist - target) * k * Math.min(e.weight, 5);
-    a.vx += (dx/dist)*force; a.vy += (dy/dist)*force;
-    b.vx -= (dx/dist)*force; b.vy -= (dy/dist)*force;
-  }
-
-  // Center gravity
-  for (const n of graphNodes) {
-    n.vx += (W/2 - n.x) * center;
-    n.vy += (H/2 - n.y) * center;
-  }
-
-  // Integrate
-  for (const n of graphNodes) {
-    if (mouse.dragging === n) continue;
-    n.vx *= damp;
-    n.vy *= damp;
-    n.x += n.vx;
-    n.y += n.vy;
-    n.x = Math.max(40, Math.min(W-40, n.x));
-    n.y = Math.max(60, Math.min(H-40, n.y));
-  }
-
-  // Update particles
-  for (const e of graphEdges) {
-    for (let i = e.particles.length - 1; i >= 0; i--) {
-      e.particles[i].t += e.particles[i].speed;
-      if (e.particles[i].t > 1) e.particles.splice(i, 1);
-    }
-  }
-}
-
-// ── Render ──
-function draw() {
-  ctx.clearRect(0, 0, W, H);
-
-  // Subtle grid
-  ctx.strokeStyle = '#181825';
-  ctx.lineWidth = 1;
-  for (let x = 0; x < W; x += 60) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
-  for (let y = 0; y < H; y += 60) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
-
-  // Edges
-  for (const e of graphEdges) {
-    const a = graphNodes.find(n => n.id === e.from);
-    const b = graphNodes.find(n => n.id === e.to);
-    if (!a || !b) continue;
-
-    const baseColor = e.type === 'provenance' ? '#f9e2af' : '#89b4fa';
-    const alpha = Math.min(0.15 + e.weight * 0.06, 0.5);
-    ctx.strokeStyle = baseColor + Math.floor(alpha*255).toString(16).padStart(2,'0');
-    ctx.lineWidth = Math.min(1 + e.weight * 0.5, 5);
-    ctx.beginPath();
-    ctx.moveTo(a.x, a.y);
-    ctx.lineTo(b.x, b.y);
-    ctx.stroke();
-
-    // Particles (money/data flowing)
-    for (const p of e.particles) {
-      const px = a.x + (b.x - a.x) * p.t;
-      const py = a.y + (b.y - a.y) * p.t;
-      const size = 3 * (1 - Math.abs(p.t - 0.5) * 2);
-      ctx.fillStyle = p.color;
-      ctx.globalAlpha = 0.8;
-      ctx.beginPath();
-      ctx.arc(px, py, Math.max(1.5, size), 0, Math.PI*2);
-      ctx.fill();
-      ctx.globalAlpha = 1;
-    }
-  }
-
-  // Nodes
-  for (const n of graphNodes) {
-    const r = n.type === 'log' ? 22 : Math.min(8 + n.activity * 0.8, 20);
-    const isHovered = hoveredNode === n;
-
-    // Glow
-    if (n.activity > 2 || isHovered) {
-      const grad = ctx.createRadialGradient(n.x, n.y, r, n.x, n.y, r * 3);
-      grad.addColorStop(0, n.color + '20');
-      grad.addColorStop(1, 'transparent');
-      ctx.fillStyle = grad;
-      ctx.beginPath();
-      ctx.arc(n.x, n.y, r * 3, 0, Math.PI*2);
-      ctx.fill();
-    }
-
-    // Node circle
-    ctx.fillStyle = n.color + (isHovered ? 'ff' : '40');
-    ctx.strokeStyle = n.color;
-    ctx.lineWidth = isHovered ? 2.5 : 1.5;
-    ctx.beginPath();
-    ctx.arc(n.x, n.y, r, 0, Math.PI*2);
-    ctx.fill();
-    ctx.stroke();
-
-    // Label
-    ctx.fillStyle = isHovered ? '#cdd6f4' : '#6c7086';
-    ctx.font = n.type === 'log' ? 'bold 11px -apple-system,sans-serif' : '10px -apple-system,sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText(n.label, n.x, n.y + r + 14);
-
-    // Activity count for agents
-    if (n.type === 'agent' && n.activity > 1) {
-      ctx.fillStyle = '#45475a';
-      ctx.font = '9px -apple-system,sans-serif';
-      ctx.fillText(n.activity + ' txns', n.x, n.y + r + 24);
-    }
-
-    // Log node extra info
-    if (n.type === 'log' && n.meta.entries !== undefined) {
-      ctx.fillStyle = '#45475a';
-      ctx.font = '9px -apple-system,sans-serif';
-      ctx.fillText(n.meta.entries + ' entries', n.x, n.y + r + 24);
-      ctx.fillText(n.meta.loc || '', n.x, n.y + r + 34);
-    }
-
-    // Inner icon for log nodes
-    if (n.type === 'log') {
-      ctx.fillStyle = n.color;
-      ctx.font = 'bold 10px monospace';
-      ctx.fillText(n.label.toUpperCase().slice(0,2), n.x, n.y + 4);
-    }
-  }
-
-  // Tooltip for hovered
-  if (hoveredNode) {
-    const n = hoveredNode;
-    const tx = n.x + 30;
-    const ty = n.y - 20;
-    ctx.fillStyle = '#1e1e2ef0';
-    ctx.strokeStyle = '#313244';
-    ctx.lineWidth = 1;
-    const lines = n.type === 'log'
-      ? [n.meta.name + ' — ' + n.meta.loc, n.meta.entries + ' entries, ' + n.meta.uptime]
-      : [n.id.slice(0,32)+'...', n.activity + ' transactions'];
-    const tw = Math.max(...lines.map(l => ctx.measureText(l).width)) + 20;
-    const th = lines.length * 16 + 12;
-    ctx.beginPath();
-    ctx.roundRect(tx, ty, tw, th, 6);
-    ctx.fill();
-    ctx.stroke();
-    ctx.fillStyle = '#cdd6f4';
-    ctx.font = '10px -apple-system,sans-serif';
-    ctx.textAlign = 'left';
-    lines.forEach((l, i) => {
-      ctx.fillStyle = i === 0 ? '#cdd6f4' : '#585b70';
-      ctx.fillText(l, tx + 10, ty + 16 + i * 16);
-    });
-    ctx.textAlign = 'center';
-  }
-}
-
-function loop() {
-  simulate();
-  draw();
-  requestAnimationFrame(loop);
-}
-
-// ── Mouse interaction ──
-function getNodeAt(x, y) {
-  for (let i = graphNodes.length - 1; i >= 0; i--) {
-    const n = graphNodes[i];
-    const r = n.type === 'log' ? 22 : Math.min(8 + n.activity * 0.8, 20);
-    const dx = x - n.x, dy = y - n.y;
-    if (dx*dx + dy*dy < (r+8)*(r+8)) return n;
-  }
-  return null;
-}
-
-// ── Data fetching ──
 async function fetchJSON(url) {
   try {
-    const r = await fetch(url, {signal: AbortSignal.timeout(5000)});
+    const r = await fetch(url, {signal: AbortSignal.timeout(6000)});
     if (!r.ok) throw new Error();
     return await r.json();
-  } catch(e) { return null; }
+  } catch { return null; }
 }
 
+// ── Search ──
+const searchInput = document.getElementById('search');
+const searchHint = document.getElementById('search-hint');
+searchInput.addEventListener('input', () => {
+  searchTerm = searchInput.value.trim().toLowerCase();
+  renderReceipts();
+  renderAgents();
+  if (searchTerm.length > 0) {
+    const matches = filteredEntries().length;
+    searchHint.textContent = matches + ' matching receipt' + (matches===1?'':'s');
+  } else {
+    searchHint.textContent = 'Paste a receipt hash, agent public key, or type an entry number';
+  }
+});
+
+function filteredEntries() {
+  if (!searchTerm) return allEntries;
+  return allEntries.filter(e =>
+    (e.receipt_id && e.receipt_id.toLowerCase().includes(searchTerm)) ||
+    (e.from_key && e.from_key.toLowerCase().includes(searchTerm)) ||
+    (e.to_key && e.to_key.toLowerCase().includes(searchTerm)) ||
+    (e._node + '#' + e._idx).includes(searchTerm) ||
+    String(e._idx) === searchTerm
+  );
+}
+
+// ── Render receipt table ──
+function renderReceipts() {
+  const tbody = document.getElementById('receipt-body');
+  const entries = filteredEntries().sort((a,b) => (b.transfer_timestamp||0) - (a.transfer_timestamp||0)).slice(0, 40);
+
+  tbody.innerHTML = entries.map(e => {
+    const fc = agentColor(e.from_key);
+    const tc = agentColor(e.to_key);
+    const hasP = e.parent_receipts && e.parent_receipts.length;
+    return `<tr onclick="showDetail('${e._nodeUrl}',${e._idx},'${e._node}')">
+      <td><span class="hash mono">${sh(e.receipt_id)}</span>${hasP?`<span class="prov-badge">${e.parent_receipts.length}p</span>`:''}</td>
+      <td><span class="agent-tag" style="color:${fc};background:${fc}10">${shAgent(e.from_key)}</span> <span style="color:#45475a">→</span> <span class="agent-tag" style="color:${tc};background:${tc}10">${shAgent(e.to_key)}</span></td>
+      <td><span class="price">$${(e.price/100).toFixed(2)}</span></td>
+      <td><span class="log-badge">${e._node}#${e._idx}</span></td>
+      <td><span class="time">${fmtTime(e.transfer_timestamp)}</span></td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('receipt-sub').textContent = allEntries.length + ' total across ' + NODES.length + ' logs';
+}
+
+// ── Render log server cards ──
+function renderLogCards(healths, checkpoints) {
+  const container = document.getElementById('log-cards');
+  const maxEntries = Math.max(1, ...healths.filter(Boolean).map(h => h.log_size));
+  let online = 0;
+
+  container.innerHTML = NODES.map((n, i) => {
+    const h = healths[i];
+    const cp = checkpoints[i];
+    if (!h) return `<div class="log-card">
+      <div class="log-card-top"><span class="log-name">${n.name}</span><span class="log-status down">offline</span></div>
+      <div class="log-meta">${n.loc}</div>
+    </div>`;
+
+    online++;
+    const wc = cp && cp.witnesses ? cp.witnesses.length : 0;
+    const pct = Math.round(h.log_size / maxEntries * 100);
+    return `<div class="log-card">
+      <div class="log-card-top"><span class="log-name">${n.name}</span><span class="log-status up">online</span></div>
+      <div class="log-meta">
+        <b>${h.log_size}</b> entries · <b>${wc}</b> witnesses · ${n.loc}<br>
+        Uptime <b>${fmtUptime(h.uptime_seconds)}</b> · Root <span style="font-family:monospace;font-size:9px;color:#45475a">${h.root ? h.root.slice(0,12)+'…' : '—'}</span>
+      </div>
+      <div class="log-bar"><div class="log-bar-fill" style="width:${pct}%"></div></div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('log-sub').textContent = online + '/' + NODES.length + ' online';
+}
+
+// ── Render agent leaderboard ──
+function renderAgents() {
+  const agents = {};
+  const entries = searchTerm ? filteredEntries() : allEntries;
+  entries.forEach(e => {
+    [e.from_key, e.to_key].forEach(k => {
+      if (!agents[k]) agents[k] = {key: k, sent: 0, recv: 0, vol: 0, provenance: 0};
+    });
+    agents[e.from_key].sent++;
+    agents[e.from_key].vol += (e.price || 0);
+    agents[e.to_key].recv++;
+    agents[e.to_key].vol += (e.price || 0);
+    if (e.parent_receipts) agents[e.from_key].provenance += e.parent_receipts.length;
+  });
+
+  const sorted = Object.values(agents).sort((a,b) => (b.sent+b.recv) - (a.sent+a.recv)).slice(0, 12);
+  const container = document.getElementById('agent-list');
+
+  container.innerHTML = sorted.map(a => {
+    const c = agentColor(a.key);
+    const total = a.sent + a.recv;
+    return `<div class="agent-row" onclick="showAgentDetail('${a.key}')">
+      <span class="agent-id" style="color:${c}">${shAgent(a.key)}</span>
+      <span class="agent-stats">
+        <span><b style="color:#89b4fa">${a.sent}</b> sent</span>
+        <span><b style="color:#a6e3a1">${a.recv}</b> recv</span>
+        ${a.provenance?`<span><b style="color:#f9e2af">${a.provenance}</b>p</span>`:''}
+        <span style="color:#45475a">$${(a.vol/100).toFixed(0)}</span>
+      </span>
+    </div>`;
+  }).join('');
+
+  document.getElementById('agent-sub').textContent = Object.keys(agents).length + ' active';
+}
+
+// ── Fetch data ──
 async function refresh() {
   const healths = await Promise.all(NODES.map(n => fetchJSON(n.url+'/v1/health')));
   const checkpoints = await Promise.all(NODES.map(n => fetchJSON(n.url+'/v1/checkpoint')));
 
-  let online = 0, totalEntries = 0, totalWitnesses = 0, totalVolume = 0, provLinks = 0;
+  let totalEntries = 0, totalWitnesses = 0, provLinks = 0;
 
-  // Create/update log nodes
-  healths.forEach((h, i) => {
-    const n = NODES[i];
-    if (h) {
-      online++;
-      totalEntries += h.log_size;
-      const cp = checkpoints[i];
-      const wc = cp && cp.witnesses ? cp.witnesses.length : 0;
-      totalWitnesses += wc;
-      const node = findOrCreateNode('log:'+n.name, 'log', {
-        name: n.name, loc: n.loc,
-        entries: h.log_size,
-        uptime: fmtTime(Date.now()/1000 - h.uptime_seconds) + ' uptime',
-        root: h.root,
-      });
-      node.meta.entries = h.log_size;
-      node.meta.uptime = fmtTime(Date.now()/1000 - h.uptime_seconds) + ' uptime';
-    }
-  });
+  renderLogCards(healths, checkpoints);
 
-  // Fetch entries
   for (let ni = 0; ni < NODES.length; ni++) {
     const h = healths[ni];
     if (!h) continue;
+    totalEntries += h.log_size;
+    const cp = checkpoints[ni];
+    totalWitnesses += (cp && cp.witnesses ? cp.witnesses.length : 0);
+
     const node = NODES[ni];
-    const start = Math.max(0, h.log_size - 12);
+    const start = Math.max(0, h.log_size - 20);
     const fetches = [];
     for (let i = start; i < h.log_size; i++) {
       fetches.push(fetchJSON(node.url+'/v1/entry/'+i).then(e => {
@@ -465,194 +408,200 @@ async function refresh() {
       }));
     }
     const entries = (await Promise.all(fetches)).filter(Boolean);
-    let newOnes = [];
     entries.forEach(e => {
       const key = e._node + ':' + e._idx;
       if (!knownKeys.has(key)) {
         knownKeys.add(key);
         allEntries.push(e);
-        newOnes.push(e);
-
-        // Create agent nodes and edges
-        const fromNode = findOrCreateNode(e.from_key, 'agent', {});
-        const toNode = findOrCreateNode(e.to_key, 'agent', {});
-
-        // Transfer edge between agents
-        findOrCreateEdge(e.from_key, e.to_key, 'transfer');
-
-        // Edges from agents to the log they used
-        findOrCreateEdge(e.from_key, 'log:'+e._node, 'transfer');
-
-        // Provenance edges
-        if (e.parent_receipts && e.parent_receipts.length) {
-          for (const p of e.parent_receipts) {
-            // Find the agent who created the parent receipt
-            const parentEntry = allEntries.find(pe => pe.receipt_id === p.parent_receipt_id);
-            if (parentEntry) {
-              findOrCreateEdge(parentEntry.from_key, e.from_key, 'provenance');
-            }
-            provLinks++;
-          }
-        }
-
-        totalVolume += (e.price || 0);
+        if (e.parent_receipts) provLinks += e.parent_receipts.length;
       }
     });
-
-    // Update feed
-    if (newOnes.length) updateFeed(newOnes);
   }
 
-  // Compute total volume from all entries
-  let vol = 0;
-  allEntries.forEach(e => vol += (e.price || 0));
+  // Count provenance from all entries
+  let totalProv = 0, totalVol = 0;
   const uniqueAgents = new Set();
-  allEntries.forEach(e => { uniqueAgents.add(e.from_key); uniqueAgents.add(e.to_key); });
+  allEntries.forEach(e => {
+    uniqueAgents.add(e.from_key);
+    uniqueAgents.add(e.to_key);
+    totalVol += (e.price || 0);
+    if (e.parent_receipts) totalProv += e.parent_receipts.length;
+  });
 
-  // Stats
-  document.getElementById('s-nodes').textContent = online;
+  document.getElementById('s-nodes').textContent = healths.filter(Boolean).length + '/' + NODES.length;
   document.getElementById('s-receipts').textContent = totalEntries;
   document.getElementById('s-agents').textContent = uniqueAgents.size;
-  document.getElementById('s-links').textContent = provLinks;
+  document.getElementById('s-prov').textContent = totalProv;
   document.getElementById('s-witnesses').textContent = totalWitnesses;
-  document.getElementById('s-volume').textContent = '$' + (vol/100).toFixed(0);
-  document.getElementById('feed-count').textContent = allEntries.length;
+  document.getElementById('s-volume').textContent = '$' + (totalVol/100).toFixed(0);
+
+  renderReceipts();
+  renderAgents();
 }
 
-function updateFeed(newEntries) {
-  const feed = document.getElementById('feed');
-  const sorted = [...allEntries].sort((a,b) => (b.transfer_timestamp||0) - (a.transfer_timestamp||0)).slice(0, 25);
-
-  feed.innerHTML = sorted.map(e => {
-    const isNew = newEntries.includes(e);
-    const from = shName(e.from_key);
-    const to = shName(e.to_key);
-    const price = '$'+(e.price/100).toFixed(2);
-    const hasParents = e.parent_receipts && e.parent_receipts.length;
-    const fromColor = getAgentColor(e.from_key);
-    const toColor = getAgentColor(e.to_key);
-    return `<div class="fi${isNew?' fresh':''}" onclick="showDetail('${e._nodeUrl}',${e._idx},'${e._node}')">
-      <div class="fi-top">
-        <span class="fi-desc"><b style="color:${fromColor}">${from}</b> → <b style="color:${toColor}">${to}</b> <span style="color:#a6e3a1">${price}</span></span>
-        <span class="fi-time">${fmtTime(e.transfer_timestamp)}</span>
-      </div>
-      <div class="fi-meta">
-        <span class="fi-tag">${e._node}#${e._idx}</span>
-        <span class="fi-tag wit">2w</span>
-        ${hasParents?`<span class="fi-tag prov">${e.parent_receipts.length}p</span>`:''}
-        <span style="color:#31324480">${sh(e.receipt_id)}</span>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function toggleFeed() {
-  feedVisible = !feedVisible;
-  document.getElementById('feed').style.display = feedVisible ? 'flex' : 'none';
-}
-
+// ── Detail: single receipt ──
 async function showDetail(nodeUrl, idx, nodeName) {
-  const overlay = document.getElementById('detail-overlay');
+  const overlay = document.getElementById('overlay');
   const detail = document.getElementById('detail');
-  detail.innerHTML = '<div style="text-align:center;padding:40px;color:#45475a">loading...</div>';
+  detail.innerHTML = '<button class="detail-close" onclick="closeDetail()">&times;</button><div style="text-align:center;padding:40px;color:#45475a">Loading receipt…</div>';
   overlay.classList.add('show');
 
-  const entry = await fetchJSON(nodeUrl + '/v1/entry/' + idx);
-  const proof = await fetchJSON(nodeUrl + '/v1/proof/' + idx);
-  if (!entry) { detail.innerHTML = '<button class="detail-close" onclick="closeDetail()">&times;</button><p>Failed to load.</p>'; return; }
+  const [entry, proof] = await Promise.all([
+    fetchJSON(nodeUrl + '/v1/entry/' + idx),
+    fetchJSON(nodeUrl + '/v1/proof/' + idx),
+  ]);
+  if (!entry) { detail.innerHTML = '<button class="detail-close" onclick="closeDetail()">&times;</button><p style="padding:20px;color:#f38ba8">Failed to load receipt.</p>'; return; }
 
   const hasP = entry.parent_receipts && entry.parent_receipts.length;
+  const fc = agentColor(entry.from_key);
+  const tc = agentColor(entry.to_key);
+
   let provHtml = '';
   if (hasP) {
-    provHtml = '<div style="margin:12px 0"><div style="font-size:10px;color:#45475a;margin-bottom:6px">PROVENANCE CHAIN</div><div class="prov-chain">';
+    provHtml = '<div style="margin:14px 0"><div style="font-size:10px;color:#585b70;margin-bottom:6px;font-weight:600">PROVENANCE CHAIN</div><div class="prov-chain">';
     entry.parent_receipts.forEach(p => {
-      provHtml += `<div class="prov-n">${sh(p.parent_receipt_id)}<div style="font-size:9px;color:#45475a">${p.relationship}</div></div><div class="prov-a">→</div>`;
+      provHtml += `<div class="prov-n">${sh(p.parent_receipt_id)}<div style="font-size:9px;color:#585b70">${p.relationship}</div></div><div class="prov-a">→</div>`;
     });
-    provHtml += `<div class="prov-n cur">${sh(entry.receipt_id)}<div style="font-size:9px;color:#89b4fa">this</div></div></div></div>`;
+    provHtml += `<div class="prov-n cur">${sh(entry.receipt_id)}<div style="font-size:9px;color:#89b4fa">current</div></div></div></div>`;
   }
 
   let proofHtml = '';
   if (proof && proof.path) {
-    proofHtml = `<div style="margin-top:12px"><div style="font-size:10px;color:#45475a;margin-bottom:6px">MERKLE PROOF</div>
-    <div class="proof-box">leaf: ${proof.leaf_hash}\nroot: ${proof.root}\nsize: ${proof.log_size}\n${proof.path.map((s,i)=>'['+i+'] '+s.direction+': '+s.sibling).join('\n')}</div></div>`;
+    proofHtml = `<div style="margin-top:14px"><div style="font-size:10px;color:#585b70;margin-bottom:6px;font-weight:600">MERKLE INCLUSION PROOF</div>
+    <div class="proof-box">leaf:  ${proof.leaf_hash}\nroot:  ${proof.root}\nsize:  ${proof.log_size}\n\n${proof.path.map((s,i)=>'['+i+'] '+s.direction.padEnd(6)+s.sibling).join('\n')}</div></div>`;
   }
 
   detail.innerHTML = `
     <button class="detail-close" onclick="closeDetail()">&times;</button>
-    <h2>Verified Compute Receipt</h2>
+    <h2>Receipt #${idx} on ${nodeName}</h2>
     <div class="dr"><span class="k">Receipt ID</span><span class="v h">${entry.receipt_id}</span></div>
-    <div class="dr"><span class="k">From (seller)</span><span class="v h">${entry.from_key}</span></div>
-    <div class="dr"><span class="k">To (buyer)</span><span class="v h">${entry.to_key}</span></div>
+    <div class="dr"><span class="k">Provider (from)</span><span class="v h" style="color:${fc}">${entry.from_key}</span></div>
+    <div class="dr"><span class="k">Consumer (to)</span><span class="v h" style="color:${tc}">${entry.to_key}</span></div>
     <div class="dr"><span class="k">Price</span><span class="v g">$${(entry.price/100).toFixed(2)} ${entry.currency}</span></div>
     <div class="dr"><span class="k">Timestamp</span><span class="v">${new Date(entry.transfer_timestamp*1000).toISOString()}</span></div>
-    <div class="dr"><span class="k">Log</span><span class="v">${nodeName} #${entry.index}</span></div>
-    <div class="dr"><span class="k">Leaf Hash</span><span class="v h">${entry.leaf_hash}</span></div>
-    <div class="dr"><span class="k">Signature</span><span class="v" style="color:#cba6f7">${sh(entry.seller_signature)}</span></div>
-    <div class="dr"><span class="k">Parents</span><span class="v${hasP?' y':''}">${hasP?entry.parent_receipts.length+' provenance links':'root (no parents)'}</span></div>
+    <div class="dr"><span class="k">Log entry</span><span class="v">${nodeName} #${entry.index}</span></div>
+    <div class="dr"><span class="k">Leaf hash</span><span class="v h">${entry.leaf_hash || '—'}</span></div>
+    <div class="dr"><span class="k">Signature</span><span class="v m">${entry.seller_signature ? sh(entry.seller_signature) : '—'}</span></div>
+    <div class="dr"><span class="k">Provenance</span><span class="v${hasP?' y':''}">${hasP ? entry.parent_receipts.length+' parent'+(entry.parent_receipts.length>1?'s':'') : 'root (no parents)'}</span></div>
     ${provHtml}
     ${proofHtml}
-    <div style="margin-top:14px;font-size:10px;color:#45475a">
-      Verify: <a href="${nodeUrl}/v1/entry/${idx}" target="_blank" style="color:#585b70">raw</a> · <a href="${nodeUrl}/v1/proof/${idx}" target="_blank" style="color:#585b70">proof</a>
+    <div style="margin-top:14px;font-size:10px;display:flex;gap:12px">
+      <a href="${nodeUrl}/v1/entry/${idx}" target="_blank" style="color:#585b70">raw json</a>
+      <a href="${nodeUrl}/v1/proof/${idx}" target="_blank" style="color:#585b70">merkle proof</a>
+      <a href="${nodeUrl}/v1/receipt/${entry.receipt_id}" target="_blank" style="color:#585b70">by receipt id</a>
     </div>`;
 }
 
-function closeDetail() { document.getElementById('detail-overlay').classList.remove('show'); }
+// ── Detail: agent ──
+function showAgentDetail(key) {
+  const overlay = document.getElementById('overlay');
+  const detail = document.getElementById('detail');
+  overlay.classList.add('show');
+
+  const agentEntries = allEntries.filter(e => e.from_key === key || e.to_key === key)
+    .sort((a,b) => (b.transfer_timestamp||0) - (a.transfer_timestamp||0));
+
+  const sent = agentEntries.filter(e => e.from_key === key);
+  const recv = agentEntries.filter(e => e.to_key === key);
+  const vol = agentEntries.reduce((s,e) => s + (e.price||0), 0);
+  const peers = new Set();
+  agentEntries.forEach(e => {
+    if (e.from_key === key) peers.add(e.to_key);
+    if (e.to_key === key) peers.add(e.from_key);
+  });
+  const provCount = sent.reduce((s,e) => s + (e.parent_receipts ? e.parent_receipts.length : 0), 0);
+  const c = agentColor(key);
+
+  const recentHtml = agentEntries.slice(0,10).map(e => {
+    const isSender = e.from_key === key;
+    const peer = isSender ? e.to_key : e.from_key;
+    const pc = agentColor(peer);
+    return `<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #31324430;font-size:11px;cursor:pointer" onclick="showDetail('${e._nodeUrl}',${e._idx},'${e._node}')">
+      <span>${isSender?'→':'←'} <span style="color:${pc};font-family:monospace;font-size:10px">${shAgent(peer)}</span></span>
+      <span style="display:flex;gap:8px"><span class="price">$${(e.price/100).toFixed(2)}</span><span class="time">${fmtTime(e.transfer_timestamp)}</span></span>
+    </div>`;
+  }).join('');
+
+  // Draw ego graph
+  const egoId = 'ego-' + Date.now();
+
+  detail.innerHTML = `
+    <button class="detail-close" onclick="closeDetail()">&times;</button>
+    <h2 style="display:flex;align-items:center;gap:8px"><span style="width:10px;height:10px;border-radius:50%;background:${c};display:inline-block"></span> Agent ${shAgent(key)}</h2>
+    <div style="font-family:monospace;font-size:10px;color:#585b70;margin-bottom:14px;word-break:break-all">${key}</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px">
+      <div style="text-align:center"><div style="font-size:18px;font-weight:800;color:#89b4fa">${sent.length}</div><div style="font-size:9px;color:#585b70">SENT</div></div>
+      <div style="text-align:center"><div style="font-size:18px;font-weight:800;color:#a6e3a1">${recv.length}</div><div style="font-size:9px;color:#585b70">RECV</div></div>
+      <div style="text-align:center"><div style="font-size:18px;font-weight:800;color:#f9e2af">${provCount}</div><div style="font-size:9px;color:#585b70">PROV</div></div>
+      <div style="text-align:center"><div style="font-size:18px;font-weight:800;color:#fab387">$${(vol/100).toFixed(0)}</div><div style="font-size:9px;color:#585b70">VOLUME</div></div>
+    </div>
+    <div style="font-size:10px;color:#585b70;margin-bottom:4px">${peers.size} connected peer${peers.size===1?'':'s'}</div>
+    <canvas class="ego-canvas" id="${egoId}"></canvas>
+    <div style="font-size:10px;font-weight:600;color:#585b70;margin:14px 0 6px;text-transform:uppercase;letter-spacing:.5px">Recent transactions</div>
+    ${recentHtml || '<div style="color:#45475a;font-size:11px;padding:8px 0">No transactions yet</div>'}`;
+
+  requestAnimationFrame(() => drawEgoGraph(egoId, key, peers));
+}
+
+function drawEgoGraph(canvasId, centerKey, peers) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.offsetWidth;
+  const H = canvas.offsetHeight;
+  canvas.width = W * devicePixelRatio;
+  canvas.height = H * devicePixelRatio;
+  ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+
+  const cx = W/2, cy = H/2;
+  const cc = agentColor(centerKey);
+  const peerArr = [...peers];
+
+  // Edges
+  ctx.strokeStyle = '#31324480';
+  ctx.lineWidth = 1;
+  peerArr.forEach((p, i) => {
+    const angle = (i / peerArr.length) * Math.PI * 2 - Math.PI/2;
+    const r = Math.min(W, H) * 0.35;
+    const px = cx + Math.cos(angle) * r;
+    const py = cy + Math.sin(angle) * r;
+    ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(px, py); ctx.stroke();
+  });
+
+  // Peer nodes
+  peerArr.forEach((p, i) => {
+    const angle = (i / peerArr.length) * Math.PI * 2 - Math.PI/2;
+    const r = Math.min(W, H) * 0.35;
+    const px = cx + Math.cos(angle) * r;
+    const py = cy + Math.sin(angle) * r;
+    const pc = agentColor(p);
+    ctx.fillStyle = pc + '30';
+    ctx.strokeStyle = pc;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.arc(px, py, 6, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#585b70';
+    ctx.font = '9px -apple-system,sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(shAgent(p), px, py + 16);
+  });
+
+  // Center node
+  ctx.fillStyle = cc + '40';
+  ctx.strokeStyle = cc;
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.arc(cx, cy, 12, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = cc;
+  ctx.font = 'bold 10px -apple-system,sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(shAgent(centerKey), cx, cy + 24);
+}
+
+function closeDetail() { document.getElementById('overlay').classList.remove('show'); }
 document.addEventListener('keydown', e => { if (e.key==='Escape') closeDetail(); });
 
 // ── Init ──
-function init() {
-  canvas = document.getElementById('c');
-  ctx = canvas.getContext('2d');
-
-  function resize() {
-    W = window.innerWidth;
-    H = window.innerHeight;
-    canvas.width = W * devicePixelRatio;
-    canvas.height = H * devicePixelRatio;
-    canvas.style.width = W + 'px';
-    canvas.style.height = H + 'px';
-    ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
-  }
-  resize();
-  window.addEventListener('resize', resize);
-
-  // Mouse
-  canvas.addEventListener('mousemove', e => {
-    mouse.x = e.clientX; mouse.y = e.clientY;
-    if (mouse.dragging) {
-      mouse.dragging.x = e.clientX;
-      mouse.dragging.y = e.clientY;
-      mouse.dragging.vx = 0;
-      mouse.dragging.vy = 0;
-    }
-    hoveredNode = getNodeAt(e.clientX, e.clientY);
-    canvas.style.cursor = hoveredNode ? 'grab' : 'default';
-  });
-  canvas.addEventListener('mousedown', e => {
-    const n = getNodeAt(e.clientX, e.clientY);
-    if (n) { mouse.dragging = n; canvas.style.cursor = 'grabbing'; }
-  });
-  canvas.addEventListener('mouseup', () => {
-    mouse.dragging = null;
-    canvas.style.cursor = hoveredNode ? 'grab' : 'default';
-  });
-
-  // Place log nodes in a triangle
-  const cx = W/2, cy = H/2;
-  NODES.forEach((n, i) => {
-    const angle = -Math.PI/2 + (i * Math.PI * 2 / 3);
-    findOrCreateNode('log:'+n.name, 'log', {name:n.name, loc:n.loc, entries:0, uptime:'—'});
-    const node = graphNodes[graphNodes.length-1];
-    node.x = cx + Math.cos(angle) * 180;
-    node.y = cy + Math.sin(angle) * 180;
-  });
-
-  refresh();
-  setInterval(refresh, 8000);
-  loop();
-}
-
-init();
+refresh();
+setInterval(refresh, 10000);
 </script>
 </body>
 </html>
