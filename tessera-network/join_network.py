@@ -101,7 +101,7 @@ def main():
 
     print(f"  Task: {desc}")
     print(f"  Model: {model_name}")
-    print(f"  Price: ${price/100:.2f}")
+    print(f"  Price: {price} units")
     print()
 
     timestamp = int(time.time())
