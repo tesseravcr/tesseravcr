@@ -93,6 +93,8 @@ async fn main() {
         .route("/v1/entry/:index", get(api::entry))
         .route("/v1/receipt/:receipt_id", get(api::receipt))
         .route("/v1/checkpoint", get(api::checkpoint))
+        .route("/v1/announce", post(api::announce))
+        .route("/v1/providers", get(api::providers))
         .route("/v1/internal/witness", post(api::witness))
         .with_state(state)
         .layer(CorsLayer::permissive())

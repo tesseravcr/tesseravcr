@@ -3,6 +3,7 @@ use std::time::{SystemTime, UNIX_EPOCH};
 
 use ed25519_dalek::{Signer, SigningKey, VerifyingKey, Verifier};
 use rusqlite::{params, Connection};
+use serde_json;
 
 use crate::witness::WitnessSignature;
 use tessera::merkle;
@@ -47,6 +48,16 @@ pub struct EntryRow {
     pub raw_entry: Vec<u8>,
     pub seller_sig: Vec<u8>,
     pub parent_receipts: Vec<ParentRefRow>,
+}
+
+#[derive(Debug, Clone)]
+pub struct ProviderRow {
+    pub pubkey: String,
+    pub endpoint: String,
+    pub models: Vec<String>,
+    pub price_per_1k_tokens: u64,
+    pub currency: String,
+    pub last_seen: u64,
 }
 
 #[derive(Debug)]
@@ -129,6 +140,16 @@ CREATE TABLE IF NOT EXISTS parent_receipts (
 
 CREATE INDEX IF NOT EXISTS idx_parent_by_receipt ON parent_receipts(receipt_id);
 CREATE INDEX IF NOT EXISTS idx_parent_by_parent ON parent_receipts(parent_receipt_id);
+
+CREATE TABLE IF NOT EXISTS providers (
+    pubkey TEXT PRIMARY KEY,
+    endpoint TEXT NOT NULL,
+    models TEXT NOT NULL,
+    price_per_1k_tokens INTEGER NOT NULL DEFAULT 1,
+    currency TEXT NOT NULL DEFAULT 'USD-cents',
+    last_seen INTEGER NOT NULL,
+    signature TEXT NOT NULL
+);
 "#;
 
 fn now_unix() -> u64 {
@@ -427,6 +448,83 @@ impl Store {
             },
         ).optional()?;
         Ok(result)
+    }
+
+    pub fn store_provider(
+        &self,
+        pubkey: &str,
+        endpoint: &str,
+        models: &str,
+        price: u64,
+        currency: &str,
+        timestamp: u64,
+        signature: &str,
+    ) -> Result<(), StoreError> {
+        self.conn.execute(
+            "INSERT INTO providers (pubkey, endpoint, models, price_per_1k_tokens, currency, last_seen, signature)
+             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)
+             ON CONFLICT(pubkey) DO UPDATE SET endpoint = ?2, models = ?3, price_per_1k_tokens = ?4, currency = ?5, last_seen = ?6, signature = ?7",
+            params![
+                pubkey,
+                endpoint,
+                models,
+                price as i64,
+                currency,
+                timestamp as i64,
+                signature,
+            ],
+        )?;
+        Ok(())
+    }
+
+    pub fn get_providers(&self, model_filter: Option<&str>) -> Result<Vec<ProviderRow>, StoreError> {
+        let cutoff = now_unix().saturating_sub(3600);
+        let mut providers = Vec::new();
+
+        if let Some(model) = model_filter {
+            let pattern = format!("%{}%", model);
+            let mut stmt = self.conn.prepare(
+                "SELECT pubkey, endpoint, models, price_per_1k_tokens, currency, last_seen
+                 FROM providers WHERE last_seen >= ?1 AND models LIKE ?2",
+            )?;
+            let rows = stmt.query_map(params![cutoff as i64, pattern], |row| {
+                Ok((
+                    row.get::<_, String>(0)?,
+                    row.get::<_, String>(1)?,
+                    row.get::<_, String>(2)?,
+                    row.get::<_, i64>(3)? as u64,
+                    row.get::<_, String>(4)?,
+                    row.get::<_, i64>(5)? as u64,
+                ))
+            })?;
+            for row in rows {
+                let (pubkey, endpoint, models_json, price, currency, last_seen) = row?;
+                let models: Vec<String> = serde_json::from_str(&models_json).unwrap_or_default();
+                providers.push(ProviderRow { pubkey, endpoint, models, price_per_1k_tokens: price, currency, last_seen });
+            }
+        } else {
+            let mut stmt = self.conn.prepare(
+                "SELECT pubkey, endpoint, models, price_per_1k_tokens, currency, last_seen
+                 FROM providers WHERE last_seen >= ?1",
+            )?;
+            let rows = stmt.query_map(params![cutoff as i64], |row| {
+                Ok((
+                    row.get::<_, String>(0)?,
+                    row.get::<_, String>(1)?,
+                    row.get::<_, String>(2)?,
+                    row.get::<_, i64>(3)? as u64,
+                    row.get::<_, String>(4)?,
+                    row.get::<_, i64>(5)? as u64,
+                ))
+            })?;
+            for row in rows {
+                let (pubkey, endpoint, models_json, price, currency, last_seen) = row?;
+                let models: Vec<String> = serde_json::from_str(&models_json).unwrap_or_default();
+                providers.push(ProviderRow { pubkey, endpoint, models, price_per_1k_tokens: price, currency, last_seen });
+            }
+        }
+
+        Ok(providers)
     }
 }
 

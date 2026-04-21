@@ -1,11 +1,12 @@
 use std::sync::{Arc, Mutex};
 use std::time::Instant;
 
-use axum::extract::{Path, State};
+use axum::extract::{Path, Query, State};
 use axum::Json;
-use ed25519_dalek::SigningKey;
+use ed25519_dalek::{SigningKey, VerifyingKey, Verifier};
 use serde::Deserialize;
 use serde_json::{json, Value};
+use sha2::{Digest, Sha256};
 
 use crate::error::AppError;
 use crate::store::{Store, StoreError};
@@ -300,6 +301,115 @@ pub async fn checkpoint(
         "timestamp": cp.timestamp,
         "operator_signature": hex::encode(cp.operator_signature),
     })))
+}
+
+// POST /v1/announce
+
+#[derive(Deserialize)]
+pub struct AnnounceRequest {
+    pub pubkey: String,
+    pub endpoint: String,
+    pub models: Vec<String>,
+    #[serde(default = "default_price")]
+    pub price_per_1k_tokens: u64,
+    #[serde(default = "default_currency")]
+    pub currency: String,
+    pub timestamp: u64,
+    pub signature: String,
+}
+
+fn default_price() -> u64 { 1 }
+fn default_currency() -> String { "USD-cents".to_string() }
+
+pub async fn announce(
+    State(state): State<Arc<AppState>>,
+    Json(req): Json<AnnounceRequest>,
+) -> Result<Json<Value>, AppError> {
+    // Decode and validate pubkey (32 bytes)
+    let pubkey_bytes = hex32(&req.pubkey)?;
+    let vk_bytes: [u8; 32] = pubkey_bytes
+        .try_into()
+        .map_err(|_| AppError::BadRequest("invalid pubkey length".to_string()))?;
+    let vk = VerifyingKey::from_bytes(&vk_bytes)
+        .map_err(|_| AppError::BadRequest("invalid ed25519 pubkey".to_string()))?;
+
+    // Decode signature (64 bytes)
+    let sig_bytes = hex64_sig(&req.signature)?;
+    let sig_arr: [u8; 64] = sig_bytes
+        .try_into()
+        .map_err(|_| AppError::BadRequest("invalid signature length".to_string()))?;
+    let sig = ed25519_dalek::Signature::from_bytes(&sig_arr);
+
+    // Build the message: SHA-256(pubkey_hex || endpoint || sorted_models_json || timestamp_be8)
+    let mut sorted_models = req.models.clone();
+    sorted_models.sort();
+    let sorted_models_json = serde_json::to_string(&sorted_models)
+        .map_err(|e| AppError::Internal(format!("json encode error: {}", e)))?;
+
+    let mut hasher = Sha256::new();
+    hasher.update(req.pubkey.as_bytes());
+    hasher.update(req.endpoint.as_bytes());
+    hasher.update(sorted_models_json.as_bytes());
+    hasher.update(&req.timestamp.to_be_bytes());
+    let hash = hasher.finalize();
+
+    // Verify signature
+    vk.verify(&hash, &sig)
+        .map_err(|_| AppError::BadRequest("invalid signature".to_string()))?;
+
+    // Store in DB
+    let models_json = serde_json::to_string(&req.models)
+        .map_err(|e| AppError::Internal(format!("json encode error: {}", e)))?;
+
+    {
+        let store = state.store.lock().unwrap();
+        store
+            .store_provider(
+                &req.pubkey,
+                &req.endpoint,
+                &models_json,
+                req.price_per_1k_tokens,
+                &req.currency,
+                req.timestamp,
+                &req.signature,
+            )
+            .map_err(store_err)?;
+    }
+
+    Ok(Json(json!({"status": "announced"})))
+}
+
+// GET /v1/providers
+
+#[derive(Deserialize)]
+pub struct ProvidersQuery {
+    pub model: Option<String>,
+}
+
+pub async fn providers(
+    State(state): State<Arc<AppState>>,
+    Query(query): Query<ProvidersQuery>,
+) -> Result<Json<Value>, AppError> {
+    let store = state.store.lock().unwrap();
+    let rows = store
+        .get_providers(query.model.as_deref())
+        .map_err(store_err)?;
+
+    let result: Vec<Value> = rows
+        .iter()
+        .map(|r| {
+            json!({
+                "pubkey": r.pubkey,
+                "endpoint": r.endpoint,
+                "models": r.models,
+                "price_per_1k_tokens": r.price_per_1k_tokens,
+                "currency": r.currency,
+                "last_seen": r.last_seen,
+            })
+        })
+        .collect();
+
+    Ok(Json(json!(result)))
 }
 
 // GET /v1/health
