@@ -6,175 +6,121 @@
 <title>Tessera VCR — Network Explorer</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0f0f17;color:#bac2de;font-size:13px;line-height:1.6}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0a0a0f;color:#a6adc8;font-size:13px;line-height:1.6}
 a{color:#89b4fa;text-decoration:none}
 a:hover{text-decoration:underline}
-::selection{background:#89b4fa30}
-code,tt{font-family:'SF Mono','Fira Code',monospace;font-size:11px}
-
-/* Layout */
-.wrap{max-width:1080px;margin:0 auto;padding:0 20px 60px}
+.wrap{max-width:1100px;margin:0 auto;padding:0 20px 60px}
 
 /* Header */
-.hdr{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid #1e1e2e;margin-bottom:20px}
+.hdr{display:flex;justify-content:space-between;align-items:center;padding:14px 0;margin-bottom:16px;border-bottom:1px solid #1a1a1f}
 .hdr-left{display:flex;align-items:center;gap:10px}
-.hdr h1{font-size:14px;font-weight:700;color:#cdd6f4}
-.hdr h1 span{color:#a6e3a1}
-.live{font-size:9px;background:#a6e3a120;color:#a6e3a1;padding:2px 8px;border-radius:10px;font-weight:600;display:flex;align-items:center;gap:4px}
-.live::before{content:'';width:5px;height:5px;border-radius:50%;background:#a6e3a1;animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.hdr nav{display:flex;gap:14px;font-size:12px}
-.hdr nav a{color:#585b70;transition:color .2s}
-.hdr nav a:hover{color:#cdd6f4;text-decoration:none}
-.hdr nav a.active{color:#89b4fa}
+.logo{font-size:14px;font-weight:700;color:#cdd6f4}
+.logo span{color:#a6e3a1}
+.live{font-size:9px;background:#a6e3a120;color:#a6e3a1;padding:2px 8px;border-radius:10px;font-weight:600}
+nav{display:flex;gap:12px;font-size:12px}
+nav a{color:#45475a;transition:color .2s}
+nav a:hover{color:#89b4fa;text-decoration:none}
 
-/* Search */
-.search-row{margin-bottom:20px}
-.search{width:100%;padding:10px 14px 10px 36px;background:#1e1e2e;border:1px solid #313244;border-radius:8px;color:#cdd6f4;font-size:13px;font-family:inherit;outline:none;transition:border-color .2s}
-.search:focus{border-color:#89b4fa40}
-.search-wrap{position:relative}
-.search-wrap::before{content:'⌕';position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#45475a;font-size:16px}
-.search-hint{font-size:10px;color:#45475a;margin-top:4px;padding-left:4px}
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:20px}
+.stat{background:#1a1a1f;border:1px solid #2a2a34;border-radius:6px;padding:12px;text-align:center}
+.stat-n{font-size:22px;font-weight:800;line-height:1}
+.stat-n.blue{color:#89b4fa}.stat-n.green{color:#a6e3a1}.stat-n.yellow{color:#f9e2af}.stat-n.teal{color:#94e2d5}
+.stat-l{font-size:9px;color:#45475a;text-transform:uppercase;letter-spacing:1px;margin-top:3px}
 
-/* Stats row */
-.stats{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:20px}
-.stat{background:#1e1e2e;border:1px solid #313244;border-radius:8px;padding:14px 16px;text-align:center}
-.stat-n{font-size:24px;font-weight:800;line-height:1.2}
-.stat-n.blue{color:#89b4fa}.stat-n.green{color:#a6e3a1}.stat-n.mauve{color:#cba6f7}.stat-n.yellow{color:#f9e2af}.stat-n.peach{color:#fab387}.stat-n.teal{color:#94e2d5}
-.stat-l{font-size:9px;color:#585b70;text-transform:uppercase;letter-spacing:1.2px;margin-top:2px}
+/* Grid */
+.grid{display:grid;grid-template-columns:1fr 300px;gap:16px}
 
-/* Grid layout */
-.grid{display:grid;grid-template-columns:1fr 320px;gap:16px}
-.main-col{min-width:0}
+/* Section */
+.sec{background:#1a1a1f;border:1px solid #2a2a34;border-radius:6px;margin-bottom:16px;overflow:hidden}
+.sec-hdr{padding:10px 14px;border-bottom:1px solid #2a2a34;display:flex;justify-content:space-between;align-items:center}
+.sec-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#585b70}
+.sec-sub{font-size:10px;color:#45475a}
 
-/* Sections */
-.section{background:#1e1e2e;border:1px solid #313244;border-radius:8px;margin-bottom:16px;overflow:hidden}
-.section-hdr{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid #31324480}
-.section-title{font-size:12px;font-weight:700;color:#cdd6f4;text-transform:uppercase;letter-spacing:.5px}
-.section-sub{font-size:10px;color:#45475a}
+/* Table */
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{text-align:left;padding:8px 12px;font-size:10px;color:#45475a;text-transform:uppercase;letter-spacing:.8px;border-bottom:1px solid #2a2a34;font-weight:600}
+.tbl td{padding:8px 12px;border-bottom:1px solid #2a2a3440;font-size:12px;vertical-align:middle}
+.tbl tr{transition:background .15s}
+.tbl tbody tr:hover{background:#2a2a3430;cursor:pointer}
+.mono{font-family:'SF Mono',Consolas,monospace;font-size:10px;color:#6c7086}
+.hash{color:#89b4fa}
+.price{color:#a6e3a1;font-weight:600}
+.badge{display:inline-block;padding:1px 5px;border-radius:3px;font-size:9px;margin-left:3px}
+.badge.prov{color:#f9e2af;background:#f9e2af10}
+.badge.log{color:#94e2d5;background:#94e2d510}
+.time{color:#45475a;font-size:11px}
 
-/* Receipt table */
-.rtable{width:100%;border-collapse:collapse}
-.rtable th{text-align:left;padding:8px 12px;font-size:10px;color:#45475a;text-transform:uppercase;letter-spacing:.8px;border-bottom:1px solid #313244;font-weight:600}
-.rtable td{padding:8px 12px;border-bottom:1px solid #31324430;font-size:12px;vertical-align:middle}
-.rtable tr{transition:background .15s;cursor:pointer}
-.rtable tr:hover{background:#31324440}
-.rtable tr.fresh{animation:freshRow .6s}
-@keyframes freshRow{from{background:#89b4fa15}to{background:transparent}}
-.mono{font-family:'SF Mono','Fira Code',monospace;font-size:10px;color:#6c7086}
-.hash{color:#89b4fa;cursor:pointer}.hash:hover{text-decoration:underline}
-.price{color:#a6e3a1;font-weight:600;font-size:11px}
-.agent-tag{display:inline-block;padding:1px 6px;border-radius:3px;font-size:10px;font-family:'SF Mono',monospace}
-.prov-badge{display:inline-block;padding:1px 5px;border-radius:3px;font-size:9px;color:#f9e2af;background:#f9e2af10;margin-left:4px}
-.wit-badge{display:inline-block;padding:1px 5px;border-radius:3px;font-size:9px;color:#a6e3a1;background:#a6e3a110;margin-left:4px}
-.log-badge{display:inline-block;padding:1px 5px;border-radius:3px;font-size:9px;color:#94e2d5;background:#94e2d510}
-.time{color:#585b70;font-size:11px;white-space:nowrap}
+/* Agent tag */
+.agent{display:inline-block;padding:1px 6px;border-radius:3px;font-size:10px;font-family:'SF Mono',monospace}
 
-/* Log server cards */
-.log-cards{display:flex;flex-direction:column;gap:8px;padding:12px}
-.log-card{background:#11111b;border:1px solid #313244;border-radius:6px;padding:10px 12px}
-.log-card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+/* Log cards */
+.log-cards{display:flex;flex-direction:column;gap:8px;padding:10px}
+.log-card{background:#11111a;border:1px solid #2a2a34;border-radius:4px;padding:10px}
+.log-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
 .log-name{font-weight:700;font-size:12px;color:#94e2d5}
 .log-status{font-size:9px;padding:2px 6px;border-radius:8px;font-weight:600}
 .log-status.up{background:#a6e3a120;color:#a6e3a1}
 .log-status.down{background:#f38ba820;color:#f38ba8}
-.log-meta{font-size:10px;color:#585b70;line-height:1.7}
+.log-meta{font-size:10px;color:#585b70;line-height:1.6}
 .log-meta b{color:#6c7086;font-weight:600}
-.log-bar{height:3px;background:#313244;border-radius:2px;margin-top:6px;overflow:hidden}
-.log-bar-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,#94e2d5,#89b4fa);transition:width .6s}
 
-/* Agent leaderboard */
-.agent-list{padding:8px 12px}
-.agent-row{display:flex;justify-content:space-between;align-items:center;padding:7px 8px;border-radius:4px;cursor:pointer;transition:background .15s}
-.agent-row:hover{background:#31324440}
-.agent-id{font-family:'SF Mono',monospace;font-size:10px}
-.agent-stats{display:flex;gap:10px;font-size:10px;color:#585b70}
-.agent-stats b{font-weight:600}
+/* Verify button */
+.verify-btn{background:#89b4fa15;color:#89b4fa;border:1px solid #89b4fa30;padding:4px 10px;border-radius:4px;font-size:10px;cursor:pointer;font-family:inherit;font-weight:600;transition:all .2s}
+.verify-btn:hover{background:#89b4fa25;border-color:#89b4fa}
 
-/* Detail overlay */
-.overlay{display:none;position:fixed;inset:0;background:#0f0f17e0;z-index:200;justify-content:center;align-items:start;padding:60px 20px;overflow-y:auto}
+/* Overlay */
+.overlay{display:none;position:fixed;inset:0;background:#0a0a0fe0;z-index:200;justify-content:center;align-items:start;padding:40px 20px;overflow-y:auto}
 .overlay.show{display:flex}
-.detail{background:#1e1e2e;border:1px solid #313244;border-radius:10px;padding:24px;max-width:640px;width:100%}
-.detail-close{float:right;background:none;border:none;color:#585b70;font-size:18px;cursor:pointer;padding:4px 8px}
+.detail{background:#1a1a1f;border:1px solid #2a2a34;border-radius:8px;padding:20px;max-width:640px;width:100%}
+.detail-close{float:right;background:none;border:none;color:#45475a;font-size:18px;cursor:pointer;padding:4px 8px}
 .detail-close:hover{color:#cdd6f4}
-.detail h2{font-size:14px;font-weight:700;margin-bottom:16px;color:#cdd6f4}
-.dr{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #31324430;font-size:12px}
-.dr .k{color:#585b70;min-width:120px;flex-shrink:0}
+.detail h2{font-size:14px;font-weight:700;margin-bottom:14px;color:#cdd6f4}
+.dr{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #2a2a3430;font-size:11px}
+.dr .k{color:#45475a;min-width:100px}
 .dr .v{font-family:'SF Mono',monospace;font-size:10px;word-break:break-all;text-align:right;color:#6c7086}
-.dr .v.h{color:#89b4fa}.dr .v.g{color:#a6e3a1}.dr .v.y{color:#f9e2af}.dr .v.m{color:#cba6f7}
-.proof-box{background:#11111b;border:1px solid #313244;border-radius:6px;padding:10px;margin-top:10px;font-family:'SF Mono',monospace;font-size:9px;color:#585b70;max-height:120px;overflow-y:auto;white-space:pre;line-height:1.6}
-.prov-chain{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:10px 0}
-.prov-n{background:#313244;padding:4px 8px;border-radius:4px;font-size:10px;font-family:monospace}
-.prov-n.cur{border:1px solid #89b4fa;color:#89b4fa}
-.prov-a{color:#45475a;font-size:12px}
+.dr .v.h{color:#89b4fa}.dr .v.g{color:#a6e3a1}
+.proof-box{background:#11111a;border:1px solid #2a2a34;border-radius:4px;padding:10px;margin-top:10px;font-family:'SF Mono',monospace;font-size:9px;color:#45475a;max-height:100px;overflow-y:auto;white-space:pre;line-height:1.5}
 
-/* Join */
-.join{background:#1e1e2e;border:1px solid #313244;border-radius:8px;padding:12px 14px;margin-bottom:16px}
-.join h4{font-size:11px;font-weight:700;color:#cdd6f4;margin-bottom:2px}
-.join p{font-size:10px;color:#585b70;margin-bottom:6px}
-.join code{display:block;font-size:9px;color:#89b4fa;word-break:break-all;background:#11111b;padding:8px;border-radius:4px;line-height:1.5}
-
-/* Ego graph */
-.ego-canvas{width:100%;height:200px;background:#11111b;border:1px solid #313244;border-radius:6px;margin-top:12px}
-
-/* Responsive */
 @media(max-width:860px){
-  .stats{grid-template-columns:repeat(3,1fr)}
   .grid{grid-template-columns:1fr}
-  .rtable th:nth-child(4),.rtable td:nth-child(4){display:none}
-}
-@media(max-width:520px){
-  .stats{grid-template-columns:repeat(2,1fr)}
-  .rtable th:nth-child(3),.rtable td:nth-child(3){display:none}
 }
 </style>
 </head>
 <body>
-
 <div class="wrap">
 
 <div class="hdr">
   <div class="hdr-left">
-    <h1><span>&#9646;</span> tessera vcr</h1>
+    <div class="logo"><span>▮</span> tessera vcr</div>
     <div class="live">EXPLORER</div>
   </div>
   <nav>
-    <a href="index.html">protocol</a>
-    <a href="network.html" class="active">live network</a>
+    <a href="index.html">home</a>
     <a href="https://github.com/Henry-Shelton/tesseravcr/blob/main/spec/VCR-SPEC.md">spec</a>
     <a href="https://github.com/Henry-Shelton/tesseravcr">github</a>
   </nav>
 </div>
 
-<!-- Search -->
-<div class="search-row">
-  <div class="search-wrap">
-    <input class="search" id="search" type="text" placeholder="Search by receipt ID, agent key, or log entry..." autocomplete="off">
-  </div>
-  <div class="search-hint" id="search-hint">Paste a receipt hash, agent public key, or type an entry number</div>
-</div>
-
 <!-- Stats -->
 <div class="stats">
   <div class="stat"><div class="stat-n teal" id="s-nodes">-</div><div class="stat-l">Log nodes</div></div>
-  <div class="stat"><div class="stat-n blue" id="s-receipts">-</div><div class="stat-l">Receipts</div></div>
-  <div class="stat"><div class="stat-n mauve" id="s-agents">-</div><div class="stat-l">Agents</div></div>
+  <div class="stat"><div class="stat-n blue" id="s-entries">-</div><div class="stat-l">Receipts</div></div>
   <div class="stat"><div class="stat-n yellow" id="s-prov">-</div><div class="stat-l">Provenance</div></div>
   <div class="stat"><div class="stat-n green" id="s-witnesses">-</div><div class="stat-l">Witnesses</div></div>
-  <div class="stat"><div class="stat-n peach" id="s-volume">-</div><div class="stat-l">Volume</div></div>
 </div>
 
 <!-- Main grid -->
 <div class="grid">
 
-  <!-- Left: receipt table -->
-  <div class="main-col">
-    <div class="section">
-      <div class="section-hdr">
-        <span class="section-title">Recent Receipts</span>
-        <span class="section-sub" id="receipt-sub">loading...</span>
+  <!-- Left: receipts -->
+  <div>
+    <div class="sec">
+      <div class="sec-hdr">
+        <span class="sec-title">Recent receipts</span>
+        <span class="sec-sub" id="receipt-sub">loading...</span>
       </div>
-      <table class="rtable">
+      <table class="tbl">
         <thead>
           <tr>
             <th>Receipt</th>
@@ -182,6 +128,7 @@ code,tt{font-family:'SF Mono','Fira Code',monospace;font-size:11px}
             <th>Amount</th>
             <th>Log</th>
             <th>Age</th>
+            <th></th>
           </tr>
         </thead>
         <tbody id="receipt-body"></tbody>
@@ -189,32 +136,15 @@ code,tt{font-family:'SF Mono','Fira Code',monospace;font-size:11px}
     </div>
   </div>
 
-  <!-- Right sidebar -->
+  <!-- Right: sidebar -->
   <div>
     <!-- Log servers -->
-    <div class="section">
-      <div class="section-hdr">
-        <span class="section-title">Log Servers</span>
-        <span class="section-sub" id="log-sub">3 nodes</span>
+    <div class="sec">
+      <div class="sec-hdr">
+        <span class="sec-title">Log servers</span>
+        <span class="sec-sub" id="log-sub">3 nodes</span>
       </div>
       <div class="log-cards" id="log-cards"></div>
-    </div>
-
-    <!-- Agent leaderboard -->
-    <div class="section">
-      <div class="section-hdr">
-        <span class="section-title">Agents</span>
-        <span class="section-sub" id="agent-sub">-</span>
-      </div>
-      <div class="agent-list" id="agent-list"></div>
-    </div>
-
-    <!-- Join -->
-    <div class="join">
-      <h4>Join the network</h4>
-      <p>Submit a receipt from your terminal:</p>
-      <code>pip install requests cryptography<br>curl -sL https://raw.githubusercontent.com/Henry-Shelton/tesseravcr/main/tessera-network/join_network.py | python3 -</code>
-      <div style="margin-top:4px;font-size:9px"><a href="https://github.com/Henry-Shelton/tesseravcr/blob/main/tessera-network/join_network.py" style="color:#585b70">view source — 120 lines, no magic</a></div>
     </div>
   </div>
 
@@ -228,12 +158,12 @@ code,tt{font-family:'SF Mono','Fira Code',monospace;font-size:11px}
 
 <script>
 const NODES = [
-  {name:'log1', url:'https://log1.tesseravcr.org', loc:'Nuremberg, DE', ip:'5.75.187.83'},
-  {name:'log2', url:'https://log2.tesseravcr.org', loc:'Helsinki, FI', ip:'135.181.90.128'},
-  {name:'log3', url:'https://log3.tesseravcr.org', loc:'Helsinki, FI', ip:'135.181.86.144'},
+  {name:'log1',url:'https://log1.tesseravcr.org',loc:'Nuremberg, DE'},
+  {name:'log2',url:'https://log2.tesseravcr.org',loc:'Helsinki, FI'},
+  {name:'log3',url:'https://log3.tesseravcr.org',loc:'Helsinki, FI'},
 ];
 
-const COLORS = ['#89b4fa','#f38ba8','#a6e3a1','#f9e2af','#cba6f7','#fab387','#74c7ec','#f2cdcd','#b4befe','#94e2d5','#eba0ac','#89dceb'];
+const COLORS = ['#89b4fa','#f38ba8','#a6e3a1','#f9e2af','#cba6f7','#fab387'];
 let colorMap = {}, colorIdx = 0;
 function agentColor(key) {
   const k = key.slice(0,16);
@@ -243,24 +173,23 @@ function agentColor(key) {
 
 let allEntries = [];
 let knownKeys = new Set();
-let searchTerm = '';
 
 function sh(h) { return h ? h.slice(0,8)+'…'+h.slice(-4) : '—'; }
-function shAgent(h) { return h ? h.slice(0,6)+'..'+h.slice(-4) : '?'; }
+function shAgent(h) { return h ? h.slice(0,6)+'..'+h.slice(-3) : '?'; }
 
 function fmtTime(ts) {
   const diff = Math.floor(Date.now()/1000 - ts);
-  if (diff < 0) return 'just now';
-  if (diff < 60) return diff + 's ago';
-  if (diff < 3600) return Math.floor(diff/60) + 'm ago';
-  if (diff < 86400) return Math.floor(diff/3600) + 'h ago';
-  return Math.floor(diff/86400) + 'd ago';
+  if (diff < 0) return 'now';
+  if (diff < 60) return diff + 's';
+  if (diff < 3600) return Math.floor(diff/60) + 'm';
+  if (diff < 86400) return Math.floor(diff/3600) + 'h';
+  return Math.floor(diff/86400) + 'd';
 }
 
 function fmtUptime(secs) {
   if (secs < 3600) return Math.floor(secs/60) + 'm';
-  if (secs < 86400) return Math.floor(secs/3600) + 'h ' + Math.floor((secs%3600)/60) + 'm';
-  return Math.floor(secs/86400) + 'd ' + Math.floor((secs%86400)/3600) + 'h';
+  if (secs < 86400) return Math.floor(secs/3600) + 'h';
+  return Math.floor(secs/86400) + 'd';
 }
 
 async function fetchJSON(url) {
@@ -271,119 +200,56 @@ async function fetchJSON(url) {
   } catch { return null; }
 }
 
-// ── Search ──
-const searchInput = document.getElementById('search');
-const searchHint = document.getElementById('search-hint');
-searchInput.addEventListener('input', () => {
-  searchTerm = searchInput.value.trim().toLowerCase();
-  renderReceipts();
-  renderAgents();
-  if (searchTerm.length > 0) {
-    const matches = filteredEntries().length;
-    searchHint.textContent = matches + ' matching receipt' + (matches===1?'':'s');
-  } else {
-    searchHint.textContent = 'Paste a receipt hash, agent public key, or type an entry number';
-  }
-});
-
-function filteredEntries() {
-  if (!searchTerm) return allEntries;
-  return allEntries.filter(e =>
-    (e.receipt_id && e.receipt_id.toLowerCase().includes(searchTerm)) ||
-    (e.from_key && e.from_key.toLowerCase().includes(searchTerm)) ||
-    (e.to_key && e.to_key.toLowerCase().includes(searchTerm)) ||
-    (e._node + '#' + e._idx).includes(searchTerm) ||
-    String(e._idx) === searchTerm
-  );
-}
-
-// ── Render receipt table ──
+// Render receipts
 function renderReceipts() {
   const tbody = document.getElementById('receipt-body');
-  const entries = filteredEntries().sort((a,b) => (b.transfer_timestamp||0) - (a.transfer_timestamp||0)).slice(0, 40);
+  const sorted = [...allEntries].sort((a,b) => (b.transfer_timestamp||0) - (a.transfer_timestamp||0)).slice(0, 30);
 
-  tbody.innerHTML = entries.map(e => {
+  tbody.innerHTML = sorted.map(e => {
     const fc = agentColor(e.from_key);
     const tc = agentColor(e.to_key);
     const hasP = e.parent_receipts && e.parent_receipts.length;
     return `<tr onclick="showDetail('${e._nodeUrl}',${e._idx},'${e._node}')">
-      <td><span class="hash mono">${sh(e.receipt_id)}</span>${hasP?`<span class="prov-badge">${e.parent_receipts.length}p</span>`:''}</td>
-      <td><span class="agent-tag" style="color:${fc};background:${fc}10">${shAgent(e.from_key)}</span> <span style="color:#45475a">→</span> <span class="agent-tag" style="color:${tc};background:${tc}10">${shAgent(e.to_key)}</span></td>
+      <td><span class="mono hash">${sh(e.receipt_id)}</span>${hasP?`<span class="badge prov">${e.parent_receipts.length}p</span>`:''}</td>
+      <td><span class="agent" style="color:${fc};background:${fc}15">${shAgent(e.from_key)}</span> → <span class="agent" style="color:${tc};background:${tc}15">${shAgent(e.to_key)}</span></td>
       <td><span class="price">$${(e.price/100).toFixed(2)}</span></td>
-      <td><span class="log-badge">${e._node}#${e._idx}</span></td>
+      <td><span class="badge log">${e._node}#${e._idx}</span></td>
       <td><span class="time">${fmtTime(e.transfer_timestamp)}</span></td>
+      <td><button class="verify-btn" onclick="event.stopPropagation();verifyReceipt('${e._nodeUrl}',${e._idx})">Verify</button></td>
     </tr>`;
   }).join('');
 
-  document.getElementById('receipt-sub').textContent = allEntries.length + ' total across ' + NODES.length + ' logs';
+  document.getElementById('receipt-sub').textContent = allEntries.length + ' total';
 }
 
-// ── Render log server cards ──
+// Render log cards
 function renderLogCards(healths, checkpoints) {
   const container = document.getElementById('log-cards');
-  const maxEntries = Math.max(1, ...healths.filter(Boolean).map(h => h.log_size));
   let online = 0;
 
   container.innerHTML = NODES.map((n, i) => {
     const h = healths[i];
     const cp = checkpoints[i];
     if (!h) return `<div class="log-card">
-      <div class="log-card-top"><span class="log-name">${n.name}</span><span class="log-status down">offline</span></div>
+      <div class="log-top"><span class="log-name">${n.name}</span><span class="log-status down">offline</span></div>
       <div class="log-meta">${n.loc}</div>
     </div>`;
 
     online++;
     const wc = cp && cp.witnesses ? cp.witnesses.length : 0;
-    const pct = Math.round(h.log_size / maxEntries * 100);
     return `<div class="log-card">
-      <div class="log-card-top"><span class="log-name">${n.name}</span><span class="log-status up">online</span></div>
+      <div class="log-top"><span class="log-name">${n.name}</span><span class="log-status up">online</span></div>
       <div class="log-meta">
-        <b>${h.log_size}</b> entries · <b>${wc}</b> witnesses · ${n.loc}<br>
-        Uptime <b>${fmtUptime(h.uptime_seconds)}</b> · Root <span style="font-family:monospace;font-size:9px;color:#45475a">${h.root ? h.root.slice(0,12)+'…' : '—'}</span>
+        <b>${h.log_size}</b> entries · <b>${wc}</b> witnesses<br>
+        ${n.loc} · ${fmtUptime(h.uptime_seconds)} uptime
       </div>
-      <div class="log-bar"><div class="log-bar-fill" style="width:${pct}%"></div></div>
     </div>`;
   }).join('');
 
   document.getElementById('log-sub').textContent = online + '/' + NODES.length + ' online';
 }
 
-// ── Render agent leaderboard ──
-function renderAgents() {
-  const agents = {};
-  const entries = searchTerm ? filteredEntries() : allEntries;
-  entries.forEach(e => {
-    [e.from_key, e.to_key].forEach(k => {
-      if (!agents[k]) agents[k] = {key: k, sent: 0, recv: 0, vol: 0, provenance: 0};
-    });
-    agents[e.from_key].sent++;
-    agents[e.from_key].vol += (e.price || 0);
-    agents[e.to_key].recv++;
-    agents[e.to_key].vol += (e.price || 0);
-    if (e.parent_receipts) agents[e.from_key].provenance += e.parent_receipts.length;
-  });
-
-  const sorted = Object.values(agents).sort((a,b) => (b.sent+b.recv) - (a.sent+a.recv)).slice(0, 12);
-  const container = document.getElementById('agent-list');
-
-  container.innerHTML = sorted.map(a => {
-    const c = agentColor(a.key);
-    const total = a.sent + a.recv;
-    return `<div class="agent-row" onclick="showAgentDetail('${a.key}')">
-      <span class="agent-id" style="color:${c}">${shAgent(a.key)}</span>
-      <span class="agent-stats">
-        <span><b style="color:#89b4fa">${a.sent}</b> sent</span>
-        <span><b style="color:#a6e3a1">${a.recv}</b> recv</span>
-        ${a.provenance?`<span><b style="color:#f9e2af">${a.provenance}</b>p</span>`:''}
-        <span style="color:#45475a">$${(a.vol/100).toFixed(0)}</span>
-      </span>
-    </div>`;
-  }).join('');
-
-  document.getElementById('agent-sub').textContent = Object.keys(agents).length + ' active';
-}
-
-// ── Fetch data ──
+// Fetch data
 async function refresh() {
   const healths = await Promise.all(NODES.map(n => fetchJSON(n.url+'/v1/health')));
   const checkpoints = await Promise.all(NODES.map(n => fetchJSON(n.url+'/v1/checkpoint')));
@@ -418,188 +284,71 @@ async function refresh() {
     });
   }
 
-  // Count provenance from all entries
-  let totalProv = 0, totalVol = 0;
-  const uniqueAgents = new Set();
+  let totalProv = 0;
   allEntries.forEach(e => {
-    uniqueAgents.add(e.from_key);
-    uniqueAgents.add(e.to_key);
-    totalVol += (e.price || 0);
     if (e.parent_receipts) totalProv += e.parent_receipts.length;
   });
 
-  document.getElementById('s-nodes').textContent = healths.filter(Boolean).length + '/' + NODES.length;
-  document.getElementById('s-receipts').textContent = totalEntries;
-  document.getElementById('s-agents').textContent = uniqueAgents.size;
+  document.getElementById('s-nodes').textContent = healths.filter(Boolean).length;
+  document.getElementById('s-entries').textContent = totalEntries;
   document.getElementById('s-prov').textContent = totalProv;
   document.getElementById('s-witnesses').textContent = totalWitnesses;
-  document.getElementById('s-volume').textContent = '$' + (totalVol/100).toFixed(0);
 
   renderReceipts();
-  renderAgents();
 }
 
-// ── Detail: single receipt ──
+// Show detail
 async function showDetail(nodeUrl, idx, nodeName) {
   const overlay = document.getElementById('overlay');
   const detail = document.getElementById('detail');
-  detail.innerHTML = '<button class="detail-close" onclick="closeDetail()">&times;</button><div style="text-align:center;padding:40px;color:#45475a">Loading receipt…</div>';
+  detail.innerHTML = '<button class="detail-close" onclick="closeDetail()">&times;</button><div style="text-align:center;padding:30px;color:#45475a">Loading…</div>';
   overlay.classList.add('show');
 
   const [entry, proof] = await Promise.all([
     fetchJSON(nodeUrl + '/v1/entry/' + idx),
     fetchJSON(nodeUrl + '/v1/proof/' + idx),
   ]);
-  if (!entry) { detail.innerHTML = '<button class="detail-close" onclick="closeDetail()">&times;</button><p style="padding:20px;color:#f38ba8">Failed to load receipt.</p>'; return; }
+  if (!entry) {
+    detail.innerHTML = '<button class="detail-close" onclick="closeDetail()">&times;</button><p style="padding:20px;color:#f38ba8">Failed to load.</p>';
+    return;
+  }
 
   const hasP = entry.parent_receipts && entry.parent_receipts.length;
   const fc = agentColor(entry.from_key);
   const tc = agentColor(entry.to_key);
 
-  let provHtml = '';
-  if (hasP) {
-    provHtml = '<div style="margin:14px 0"><div style="font-size:10px;color:#585b70;margin-bottom:6px;font-weight:600">PROVENANCE CHAIN</div><div class="prov-chain">';
-    entry.parent_receipts.forEach(p => {
-      provHtml += `<div class="prov-n">${sh(p.parent_receipt_id)}<div style="font-size:9px;color:#585b70">${p.relationship}</div></div><div class="prov-a">→</div>`;
-    });
-    provHtml += `<div class="prov-n cur">${sh(entry.receipt_id)}<div style="font-size:9px;color:#89b4fa">current</div></div></div></div>`;
-  }
-
   let proofHtml = '';
   if (proof && proof.path) {
-    proofHtml = `<div style="margin-top:14px"><div style="font-size:10px;color:#585b70;margin-bottom:6px;font-weight:600">MERKLE INCLUSION PROOF</div>
-    <div class="proof-box">leaf:  ${proof.leaf_hash}\nroot:  ${proof.root}\nsize:  ${proof.log_size}\n\n${proof.path.map((s,i)=>'['+i+'] '+s.direction.padEnd(6)+s.sibling).join('\n')}</div></div>`;
+    proofHtml = `<div style="margin-top:12px"><div style="font-size:10px;color:#585b70;margin-bottom:4px;font-weight:600">MERKLE PROOF</div>
+    <div class="proof-box">leaf: ${proof.leaf_hash}\nroot: ${proof.root}\nsize: ${proof.log_size}\n\n${proof.path.map((s,i)=>'['+i+'] '+s.direction.padEnd(6)+s.sibling).join('\n')}</div></div>`;
   }
 
   detail.innerHTML = `
     <button class="detail-close" onclick="closeDetail()">&times;</button>
-    <h2>Receipt #${idx} on ${nodeName}</h2>
+    <h2>Receipt ${nodeName}#${idx}</h2>
     <div class="dr"><span class="k">Receipt ID</span><span class="v h">${entry.receipt_id}</span></div>
-    <div class="dr"><span class="k">Provider (from)</span><span class="v h" style="color:${fc}">${entry.from_key}</span></div>
-    <div class="dr"><span class="k">Consumer (to)</span><span class="v h" style="color:${tc}">${entry.to_key}</span></div>
+    <div class="dr"><span class="k">Provider</span><span class="v h" style="color:${fc}">${entry.from_key}</span></div>
+    <div class="dr"><span class="k">Consumer</span><span class="v h" style="color:${tc}">${entry.to_key}</span></div>
     <div class="dr"><span class="k">Price</span><span class="v g">$${(entry.price/100).toFixed(2)} ${entry.currency}</span></div>
     <div class="dr"><span class="k">Timestamp</span><span class="v">${new Date(entry.transfer_timestamp*1000).toISOString()}</span></div>
-    <div class="dr"><span class="k">Log entry</span><span class="v">${nodeName} #${entry.index}</span></div>
     <div class="dr"><span class="k">Leaf hash</span><span class="v h">${entry.leaf_hash || '—'}</span></div>
-    <div class="dr"><span class="k">Signature</span><span class="v m">${entry.seller_signature ? sh(entry.seller_signature) : '—'}</span></div>
-    <div class="dr"><span class="k">Provenance</span><span class="v${hasP?' y':''}">${hasP ? entry.parent_receipts.length+' parent'+(entry.parent_receipts.length>1?'s':'') : 'root (no parents)'}</span></div>
-    ${provHtml}
+    <div class="dr"><span class="k">Signature</span><span class="v">${entry.seller_signature ? sh(entry.seller_signature) : '—'}</span></div>
+    <div class="dr"><span class="k">Parents</span><span class="v">${hasP ? entry.parent_receipts.length : '0'}</span></div>
     ${proofHtml}
-    <div style="margin-top:14px;font-size:10px;display:flex;gap:12px">
-      <a href="${nodeUrl}/v1/entry/${idx}" target="_blank" style="color:#585b70">raw json</a>
-      <a href="${nodeUrl}/v1/proof/${idx}" target="_blank" style="color:#585b70">merkle proof</a>
-      <a href="${nodeUrl}/v1/receipt/${entry.receipt_id}" target="_blank" style="color:#585b70">by receipt id</a>
+    <div style="margin-top:12px;font-size:10px">
+      <a href="${nodeUrl}/v1/entry/${idx}" target="_blank" style="color:#585b70">raw json</a> ·
+      <a href="${nodeUrl}/v1/proof/${idx}" target="_blank" style="color:#585b70">proof</a>
     </div>`;
 }
 
-// ── Detail: agent ──
-function showAgentDetail(key) {
-  const overlay = document.getElementById('overlay');
-  const detail = document.getElementById('detail');
-  overlay.classList.add('show');
-
-  const agentEntries = allEntries.filter(e => e.from_key === key || e.to_key === key)
-    .sort((a,b) => (b.transfer_timestamp||0) - (a.transfer_timestamp||0));
-
-  const sent = agentEntries.filter(e => e.from_key === key);
-  const recv = agentEntries.filter(e => e.to_key === key);
-  const vol = agentEntries.reduce((s,e) => s + (e.price||0), 0);
-  const peers = new Set();
-  agentEntries.forEach(e => {
-    if (e.from_key === key) peers.add(e.to_key);
-    if (e.to_key === key) peers.add(e.from_key);
-  });
-  const provCount = sent.reduce((s,e) => s + (e.parent_receipts ? e.parent_receipts.length : 0), 0);
-  const c = agentColor(key);
-
-  const recentHtml = agentEntries.slice(0,10).map(e => {
-    const isSender = e.from_key === key;
-    const peer = isSender ? e.to_key : e.from_key;
-    const pc = agentColor(peer);
-    return `<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #31324430;font-size:11px;cursor:pointer" onclick="showDetail('${e._nodeUrl}',${e._idx},'${e._node}')">
-      <span>${isSender?'→':'←'} <span style="color:${pc};font-family:monospace;font-size:10px">${shAgent(peer)}</span></span>
-      <span style="display:flex;gap:8px"><span class="price">$${(e.price/100).toFixed(2)}</span><span class="time">${fmtTime(e.transfer_timestamp)}</span></span>
-    </div>`;
-  }).join('');
-
-  // Draw ego graph
-  const egoId = 'ego-' + Date.now();
-
-  detail.innerHTML = `
-    <button class="detail-close" onclick="closeDetail()">&times;</button>
-    <h2 style="display:flex;align-items:center;gap:8px"><span style="width:10px;height:10px;border-radius:50%;background:${c};display:inline-block"></span> Agent ${shAgent(key)}</h2>
-    <div style="font-family:monospace;font-size:10px;color:#585b70;margin-bottom:14px;word-break:break-all">${key}</div>
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px">
-      <div style="text-align:center"><div style="font-size:18px;font-weight:800;color:#89b4fa">${sent.length}</div><div style="font-size:9px;color:#585b70">SENT</div></div>
-      <div style="text-align:center"><div style="font-size:18px;font-weight:800;color:#a6e3a1">${recv.length}</div><div style="font-size:9px;color:#585b70">RECV</div></div>
-      <div style="text-align:center"><div style="font-size:18px;font-weight:800;color:#f9e2af">${provCount}</div><div style="font-size:9px;color:#585b70">PROV</div></div>
-      <div style="text-align:center"><div style="font-size:18px;font-weight:800;color:#fab387">$${(vol/100).toFixed(0)}</div><div style="font-size:9px;color:#585b70">VOLUME</div></div>
-    </div>
-    <div style="font-size:10px;color:#585b70;margin-bottom:4px">${peers.size} connected peer${peers.size===1?'':'s'}</div>
-    <canvas class="ego-canvas" id="${egoId}"></canvas>
-    <div style="font-size:10px;font-weight:600;color:#585b70;margin:14px 0 6px;text-transform:uppercase;letter-spacing:.5px">Recent transactions</div>
-    ${recentHtml || '<div style="color:#45475a;font-size:11px;padding:8px 0">No transactions yet</div>'}`;
-
-  requestAnimationFrame(() => drawEgoGraph(egoId, key, peers));
-}
-
-function drawEgoGraph(canvasId, centerKey, peers) {
-  const canvas = document.getElementById(canvasId);
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  const W = canvas.offsetWidth;
-  const H = canvas.offsetHeight;
-  canvas.width = W * devicePixelRatio;
-  canvas.height = H * devicePixelRatio;
-  ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
-
-  const cx = W/2, cy = H/2;
-  const cc = agentColor(centerKey);
-  const peerArr = [...peers];
-
-  // Edges
-  ctx.strokeStyle = '#31324480';
-  ctx.lineWidth = 1;
-  peerArr.forEach((p, i) => {
-    const angle = (i / peerArr.length) * Math.PI * 2 - Math.PI/2;
-    const r = Math.min(W, H) * 0.35;
-    const px = cx + Math.cos(angle) * r;
-    const py = cy + Math.sin(angle) * r;
-    ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(px, py); ctx.stroke();
-  });
-
-  // Peer nodes
-  peerArr.forEach((p, i) => {
-    const angle = (i / peerArr.length) * Math.PI * 2 - Math.PI/2;
-    const r = Math.min(W, H) * 0.35;
-    const px = cx + Math.cos(angle) * r;
-    const py = cy + Math.sin(angle) * r;
-    const pc = agentColor(p);
-    ctx.fillStyle = pc + '30';
-    ctx.strokeStyle = pc;
-    ctx.lineWidth = 1.5;
-    ctx.beginPath(); ctx.arc(px, py, 6, 0, Math.PI*2); ctx.fill(); ctx.stroke();
-    ctx.fillStyle = '#585b70';
-    ctx.font = '9px -apple-system,sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText(shAgent(p), px, py + 16);
-  });
-
-  // Center node
-  ctx.fillStyle = cc + '40';
-  ctx.strokeStyle = cc;
-  ctx.lineWidth = 2;
-  ctx.beginPath(); ctx.arc(cx, cy, 12, 0, Math.PI*2); ctx.fill(); ctx.stroke();
-  ctx.fillStyle = cc;
-  ctx.font = 'bold 10px -apple-system,sans-serif';
-  ctx.textAlign = 'center';
-  ctx.fillText(shAgent(centerKey), cx, cy + 24);
+// Verify receipt (inline)
+async function verifyReceipt(nodeUrl, idx) {
+  alert(`Verification demo:\n\n1. Fetch entry from ${nodeUrl}/v1/entry/${idx}\n2. Recompute SHA-256(canonical_bytes) → receipt_id\n3. Verify Ed25519 signature over receipt_id\n4. Fetch Merkle proof from /v1/proof/${idx}\n5. Verify proof path reconstructs root\n6. Check witness signatures on checkpoint\n\n→ See index.html for live demo`);
 }
 
 function closeDetail() { document.getElementById('overlay').classList.remove('show'); }
 document.addEventListener('keydown', e => { if (e.key==='Escape') closeDetail(); });
 
-// ── Init ──
 refresh();
 setInterval(refresh, 10000);
 </script>
