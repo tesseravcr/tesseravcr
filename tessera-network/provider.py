@@ -255,22 +255,32 @@ def announce(model: str, port: int):
     provider_pub = PUBLIC_KEY.public_bytes_raw()
     timestamp = int(time.time())
 
-    # Build announcement message
-    message = json.dumps({
-        "pubkey": PUBKEY_HEX,
-        "endpoint": f"http://localhost:{port}",
-        "models": [model],
-        "price_per_1k_tokens": PRICE_PER_1K_TOKENS,
-        "timestamp": timestamp,
-    }, separators=(",", ":"), sort_keys=True).encode()
+    # Get public endpoint (or use localhost for local testing)
+    # In production, this should be the public IP or domain
+    import socket
+    try:
+        hostname = socket.gethostname()
+        local_ip = socket.gethostbyname(hostname)
+        endpoint = f"http://{local_ip}:{port}"
+    except:
+        endpoint = f"http://localhost:{port}"
+
+    # Build message for signing: pubkey_hex || endpoint || sorted_models_json || timestamp_be8
+    # This matches the server's expectation
+    models_list = [model]
+    sorted_models = sorted(models_list)
+    sorted_models_json = json.dumps(sorted_models, separators=(",", ":"))
+
+    message = PUBKEY_HEX.encode() + endpoint.encode() + sorted_models_json.encode() + struct.pack(">Q", timestamp)
 
     signature = sign_bytes(PRIVATE_KEY, sha256(message))
 
     payload = {
         "pubkey": PUBKEY_HEX,
-        "endpoint": f"http://localhost:{port}",
-        "models": [model],
+        "endpoint": endpoint,
+        "models": models_list,
         "price_per_1k_tokens": PRICE_PER_1K_TOKENS,
+        "currency": "USD-cents",
         "timestamp": timestamp,
         "signature": signature,
     }
