@@ -1,3 +1,11 @@
+# Local planning docs - don't upload
+CHANGELOG.md
+next.md
+NEXT.md
+deploy-checklist.md
+deploy-plan.md
+hn.txt
+
 # Rust
 target/
 Cargo.lock
@@ -17,6 +25,12 @@ venv/
 *.key
 *.pub
 !*.pub.example
+
+# OS
+.DS_Store
+
+# Logs
+*.log
 
 # OS
 .DS_Store

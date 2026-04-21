@@ -89,7 +89,9 @@ def discover(model=None, log_servers=None):
         try:
             resp = requests.get(f"{url}/v1/providers", params=params, timeout=10)
             if resp.status_code == 200:
-                return resp.json().get("providers", [])
+                providers = resp.json()
+                if isinstance(providers, list) and len(providers) > 0:
+                    return providers
         except Exception:
             continue
 
