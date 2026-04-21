@@ -6,111 +6,121 @@
 <title>Tessera VCR — Network Explorer</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0a0a0f;color:#a6adc8;font-size:13px;line-height:1.6}
-a{color:#89b4fa;text-decoration:none}
-a:hover{text-decoration:underline}
-.wrap{max-width:1100px;margin:0 auto;padding:0 20px 60px}
+body{font-family:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',sans-serif;background:#f6f9fc;color:#425466;font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:#635bff;text-decoration:none}
+a:hover{color:#0a2540}
 
-/* Header */
-.hdr{display:flex;justify-content:space-between;align-items:center;padding:14px 0;margin-bottom:16px;border-bottom:1px solid #1a1a1f}
-.hdr-left{display:flex;align-items:center;gap:10px}
-.logo{font-size:14px;font-weight:700;color:#cdd6f4}
-.logo span{color:#a6e3a1}
-.live{font-size:9px;background:#a6e3a120;color:#a6e3a1;padding:2px 8px;border-radius:10px;font-weight:600}
-nav{display:flex;gap:12px;font-size:12px}
-nav a{color:#45475a;transition:color .2s}
-nav a:hover{color:#89b4fa;text-decoration:none}
+.wrap{max-width:1100px;margin:0 auto;padding:0 24px}
+
+/* Nav */
+.nav{background:#fff;border-bottom:1px solid #e3e8ee;padding:0 24px}
+.nav-inner{max-width:1100px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;padding:14px 0}
+.nav-logo{font-size:15px;font-weight:700;color:#0a2540}
+.nav-logo span{color:#635bff}
+.nav-links{display:flex;gap:20px;font-size:13px;font-weight:500}
+.nav-links a{color:#425466;transition:color .15s}
+.nav-links a:hover{color:#0a2540}
+.nav-links a.active{color:#635bff}
 
 /* Stats */
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:20px}
-.stat{background:#1a1a1f;border:1px solid #2a2a34;border-radius:6px;padding:12px;text-align:center}
-.stat-n{font-size:22px;font-weight:800;line-height:1}
-.stat-n.blue{color:#89b4fa}.stat-n.green{color:#a6e3a1}.stat-n.yellow{color:#f9e2af}.stat-n.teal{color:#94e2d5}
-.stat-l{font-size:9px;color:#45475a;text-transform:uppercase;letter-spacing:1px;margin-top:3px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:24px 0}
+.stat{background:#fff;border:1px solid #e3e8ee;border-radius:8px;padding:16px 20px;text-align:center}
+.stat-n{font-size:28px;font-weight:800;color:#0a2540;line-height:1}
+.stat-l{font-size:11px;color:#8898aa;text-transform:uppercase;letter-spacing:1px;margin-top:4px;font-weight:600}
 
 /* Grid */
-.grid{display:grid;grid-template-columns:1fr 300px;gap:16px}
+.grid{display:grid;grid-template-columns:1fr 320px;gap:16px;margin-bottom:40px}
 
 /* Section */
-.sec{background:#1a1a1f;border:1px solid #2a2a34;border-radius:6px;margin-bottom:16px;overflow:hidden}
-.sec-hdr{padding:10px 14px;border-bottom:1px solid #2a2a34;display:flex;justify-content:space-between;align-items:center}
-.sec-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#585b70}
-.sec-sub{font-size:10px;color:#45475a}
+.sec{background:#fff;border:1px solid #e3e8ee;border-radius:8px;overflow:hidden}
+.sec-hdr{padding:14px 20px;border-bottom:1px solid #e3e8ee;display:flex;justify-content:space-between;align-items:center}
+.sec-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#0a2540}
+.sec-sub{font-size:11px;color:#8898aa}
 
 /* Table */
 .tbl{width:100%;border-collapse:collapse}
-.tbl th{text-align:left;padding:8px 12px;font-size:10px;color:#45475a;text-transform:uppercase;letter-spacing:.8px;border-bottom:1px solid #2a2a34;font-weight:600}
-.tbl td{padding:8px 12px;border-bottom:1px solid #2a2a3440;font-size:12px;vertical-align:middle}
-.tbl tr{transition:background .15s}
-.tbl tbody tr:hover{background:#2a2a3430;cursor:pointer}
-.mono{font-family:'SF Mono',Consolas,monospace;font-size:10px;color:#6c7086}
-.hash{color:#89b4fa}
-.price{color:#a6e3a1;font-weight:600}
-.badge{display:inline-block;padding:1px 5px;border-radius:3px;font-size:9px;margin-left:3px}
-.badge.prov{color:#f9e2af;background:#f9e2af10}
-.badge.log{color:#94e2d5;background:#94e2d510}
-.time{color:#45475a;font-size:11px}
-
-/* Agent tag */
-.agent{display:inline-block;padding:1px 6px;border-radius:3px;font-size:10px;font-family:'SF Mono',monospace}
+.tbl th{text-align:left;padding:10px 16px;font-size:11px;color:#8898aa;text-transform:uppercase;letter-spacing:.8px;border-bottom:1px solid #e3e8ee;font-weight:600}
+.tbl td{padding:10px 16px;border-bottom:1px solid #f6f9fc;font-size:13px}
+.tbl tbody tr{transition:background .1s;cursor:pointer}
+.tbl tbody tr:hover{background:#f6f9fc}
+.mono{font-family:'SF Mono',Consolas,monospace;font-size:11px}
+.hash{color:#635bff}
+.price{color:#30d158;font-weight:700;font-size:12px}
+.badge{display:inline-block;padding:2px 6px;border-radius:4px;font-size:10px;font-weight:600}
+.badge-prov{color:#8b5cf6;background:#8b5cf610}
+.badge-log{color:#0891b2;background:#0891b210}
+.time{color:#8898aa;font-size:12px}
+.agent{font-family:'SF Mono',monospace;font-size:11px;padding:2px 6px;border-radius:4px}
+.verify-btn{background:#635bff10;color:#635bff;border:1px solid #635bff30;padding:4px 10px;border-radius:5px;font-size:10px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s}
+.verify-btn:hover{background:#635bff;color:#fff}
 
 /* Log cards */
-.log-cards{display:flex;flex-direction:column;gap:8px;padding:10px}
-.log-card{background:#11111a;border:1px solid #2a2a34;border-radius:4px;padding:10px}
-.log-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
-.log-name{font-weight:700;font-size:12px;color:#94e2d5}
-.log-status{font-size:9px;padding:2px 6px;border-radius:8px;font-weight:600}
-.log-status.up{background:#a6e3a120;color:#a6e3a1}
-.log-status.down{background:#f38ba820;color:#f38ba8}
-.log-meta{font-size:10px;color:#585b70;line-height:1.6}
-.log-meta b{color:#6c7086;font-weight:600}
+.logs{display:flex;flex-direction:column;gap:10px;padding:14px}
+.log-card{border:1px solid #e3e8ee;border-radius:6px;padding:12px 14px}
+.log-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.log-name{font-weight:700;font-size:13px;color:#0a2540}
+.log-status{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:700}
+.log-status.up{background:#d4edda;color:#155724}
+.log-status.down{background:#f8d7da;color:#721c24}
+.log-meta{font-size:12px;color:#8898aa;line-height:1.7}
+.log-meta b{color:#425466}
+.log-bar{height:3px;background:#e3e8ee;border-radius:2px;margin-top:8px;overflow:hidden}
+.log-bar-fill{height:100%;background:linear-gradient(90deg,#635bff,#80e9ff);border-radius:2px;transition:width .5s}
 
-/* Verify button */
-.verify-btn{background:#89b4fa15;color:#89b4fa;border:1px solid #89b4fa30;padding:4px 10px;border-radius:4px;font-size:10px;cursor:pointer;font-family:inherit;font-weight:600;transition:all .2s}
-.verify-btn:hover{background:#89b4fa25;border-color:#89b4fa}
+/* Join card */
+.join-card{background:#0a2540;border-radius:8px;padding:16px 18px;margin-top:12px}
+.join-card h4{font-size:13px;font-weight:700;color:#fff;margin-bottom:4px}
+.join-card p{font-size:11px;color:#8898aa;margin-bottom:8px}
+.join-card code{display:block;font-size:10px;color:#80e9ff;background:#ffffff10;padding:8px 10px;border-radius:4px;word-break:break-all;line-height:1.5}
+.join-card .note{font-size:10px;color:#8898aa;margin-top:6px}
+.join-card .note a{color:#80e9ff}
 
 /* Overlay */
-.overlay{display:none;position:fixed;inset:0;background:#0a0a0fe0;z-index:200;justify-content:center;align-items:start;padding:40px 20px;overflow-y:auto}
+.overlay{display:none;position:fixed;inset:0;background:rgba(10,37,64,.5);z-index:200;justify-content:center;align-items:start;padding:60px 20px;overflow-y:auto;backdrop-filter:blur(4px)}
 .overlay.show{display:flex}
-.detail{background:#1a1a1f;border:1px solid #2a2a34;border-radius:8px;padding:20px;max-width:640px;width:100%}
-.detail-close{float:right;background:none;border:none;color:#45475a;font-size:18px;cursor:pointer;padding:4px 8px}
-.detail-close:hover{color:#cdd6f4}
-.detail h2{font-size:14px;font-weight:700;margin-bottom:14px;color:#cdd6f4}
-.dr{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #2a2a3430;font-size:11px}
-.dr .k{color:#45475a;min-width:100px}
-.dr .v{font-family:'SF Mono',monospace;font-size:10px;word-break:break-all;text-align:right;color:#6c7086}
-.dr .v.h{color:#89b4fa}.dr .v.g{color:#a6e3a1}
-.proof-box{background:#11111a;border:1px solid #2a2a34;border-radius:4px;padding:10px;margin-top:10px;font-family:'SF Mono',monospace;font-size:9px;color:#45475a;max-height:100px;overflow-y:auto;white-space:pre;line-height:1.5}
+.detail{background:#fff;border-radius:12px;padding:28px;max-width:640px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.15)}
+.detail-close{float:right;background:none;border:none;color:#8898aa;font-size:20px;cursor:pointer;padding:4px 8px;line-height:1}
+.detail-close:hover{color:#0a2540}
+.detail h2{font-size:16px;font-weight:700;color:#0a2540;margin-bottom:16px}
+.dr{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f6f9fc;font-size:13px}
+.dr .k{color:#8898aa;min-width:100px}
+.dr .v{font-family:'SF Mono',monospace;font-size:11px;word-break:break-all;text-align:right;color:#425466}
+.dr .v.h{color:#635bff}
+.dr .v.g{color:#30d158}
+.proof-box{background:#0a2540;border-radius:6px;padding:12px;margin-top:12px;font-family:'SF Mono',monospace;font-size:10px;color:#adbdcc;max-height:120px;overflow-y:auto;white-space:pre;line-height:1.6}
 
 @media(max-width:860px){
+  .stats{grid-template-columns:repeat(2,1fr)}
   .grid{grid-template-columns:1fr}
+  .tbl th:nth-child(4),.tbl td:nth-child(4){display:none}
 }
 </style>
 </head>
 <body>
-<div class="wrap">
 
-<div class="hdr">
-  <div class="hdr-left">
-    <div class="logo"><span>▮</span> tessera vcr</div>
-    <div class="live">EXPLORER</div>
+<div class="nav">
+<div class="nav-inner">
+  <div class="nav-logo"><span>▮</span> Tessera VCR</div>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="network.html" class="active">Explorer</a>
+    <a href="https://github.com/Henry-Shelton/tesseravcr/blob/main/spec/VCR-SPEC.md">Spec</a>
+    <a href="https://github.com/Henry-Shelton/tesseravcr">GitHub</a>
   </div>
-  <nav>
-    <a href="index.html">home</a>
-    <a href="https://github.com/Henry-Shelton/tesseravcr/blob/main/spec/VCR-SPEC.md">spec</a>
-    <a href="https://github.com/Henry-Shelton/tesseravcr">github</a>
-  </nav>
 </div>
+</div>
+
+<div class="wrap">
 
 <!-- Stats -->
 <div class="stats">
-  <div class="stat"><div class="stat-n teal" id="s-nodes">-</div><div class="stat-l">Log nodes</div></div>
-  <div class="stat"><div class="stat-n blue" id="s-entries">-</div><div class="stat-l">Receipts</div></div>
-  <div class="stat"><div class="stat-n yellow" id="s-prov">-</div><div class="stat-l">Provenance</div></div>
-  <div class="stat"><div class="stat-n green" id="s-witnesses">-</div><div class="stat-l">Witnesses</div></div>
+  <div class="stat"><div class="stat-n" id="s-nodes">-</div><div class="stat-l">Log nodes</div></div>
+  <div class="stat"><div class="stat-n" id="s-entries">-</div><div class="stat-l">Total receipts</div></div>
+  <div class="stat"><div class="stat-n" id="s-agents">-</div><div class="stat-l">Active agents</div></div>
+  <div class="stat"><div class="stat-n" id="s-witnesses">-</div><div class="stat-l">Witnesses</div></div>
 </div>
 
-<!-- Main grid -->
+<!-- Grid -->
 <div class="grid">
 
   <!-- Left: receipts -->
@@ -121,16 +131,7 @@ nav a:hover{color:#89b4fa;text-decoration:none}
         <span class="sec-sub" id="receipt-sub">loading...</span>
       </div>
       <table class="tbl">
-        <thead>
-          <tr>
-            <th>Receipt</th>
-            <th>From → To</th>
-            <th>Amount</th>
-            <th>Log</th>
-            <th>Age</th>
-            <th></th>
-          </tr>
-        </thead>
+        <thead><tr><th>Receipt</th><th>From → To</th><th>Amount</th><th>Log</th><th>Age</th><th></th></tr></thead>
         <tbody id="receipt-body"></tbody>
       </table>
     </div>
@@ -138,219 +139,150 @@ nav a:hover{color:#89b4fa;text-decoration:none}
 
   <!-- Right: sidebar -->
   <div>
-    <!-- Log servers -->
     <div class="sec">
       <div class="sec-hdr">
         <span class="sec-title">Log servers</span>
-        <span class="sec-sub" id="log-sub">3 nodes</span>
+        <span class="sec-sub" id="log-sub">—</span>
       </div>
-      <div class="log-cards" id="log-cards"></div>
+      <div class="logs" id="log-cards"></div>
+    </div>
+
+    <div class="join-card">
+      <h4>Join the network</h4>
+      <p>One command — generates keypair, submits receipt, gets proof.</p>
+      <code>pip install requests cryptography && curl -sL https://raw.githubusercontent.com/Henry-Shelton/tesseravcr/main/tessera-network/join_network.py | python3 -</code>
+      <div class="note"><a href="https://github.com/Henry-Shelton/tesseravcr/blob/main/tessera-network/join_network.py">View source</a> — 120 lines</div>
     </div>
   </div>
 
 </div>
 </div>
 
-<!-- Detail overlay -->
+<!-- Overlay -->
 <div class="overlay" id="overlay" onclick="if(event.target===this)closeDetail()">
   <div class="detail" id="detail"></div>
 </div>
 
 <script>
-const NODES = [
+const NODES=[
   {name:'log1',url:'https://log1.tesseravcr.org',loc:'Nuremberg, DE'},
   {name:'log2',url:'https://log2.tesseravcr.org',loc:'Helsinki, FI'},
   {name:'log3',url:'https://log3.tesseravcr.org',loc:'Helsinki, FI'},
 ];
+const COLORS=['#635bff','#f97316','#30d158','#8b5cf6','#0891b2','#ec4899'];
+let colorMap={},colorIdx=0;
+function agentColor(k){const s=k.slice(0,16);if(!colorMap[s])colorMap[s]=COLORS[colorIdx++%COLORS.length];return colorMap[s]}
+let allEntries=[],knownKeys=new Set();
 
-const COLORS = ['#89b4fa','#f38ba8','#a6e3a1','#f9e2af','#cba6f7','#fab387'];
-let colorMap = {}, colorIdx = 0;
-function agentColor(key) {
-  const k = key.slice(0,16);
-  if (!colorMap[k]) colorMap[k] = COLORS[colorIdx++ % COLORS.length];
-  return colorMap[k];
-}
+function sh(h){return h?h.slice(0,8)+'…'+h.slice(-4):'—'}
+function shA(h){return h?h.slice(0,6)+'..'+h.slice(-3):'?'}
+function fmtTime(ts){const d=Math.floor(Date.now()/1000-ts);if(d<60)return d+'s';if(d<3600)return Math.floor(d/60)+'m';if(d<86400)return Math.floor(d/3600)+'h';return Math.floor(d/86400)+'d'}
+function fmtUptime(s){if(s<3600)return Math.floor(s/60)+'m';if(s<86400)return Math.floor(s/3600)+'h';return Math.floor(s/86400)+'d'}
+async function fetchJSON(u){try{const r=await fetch(u,{signal:AbortSignal.timeout(6000)});if(!r.ok)throw 0;return r.json()}catch{return null}}
 
-let allEntries = [];
-let knownKeys = new Set();
-
-function sh(h) { return h ? h.slice(0,8)+'…'+h.slice(-4) : '—'; }
-function shAgent(h) { return h ? h.slice(0,6)+'..'+h.slice(-3) : '?'; }
-
-function fmtTime(ts) {
-  const diff = Math.floor(Date.now()/1000 - ts);
-  if (diff < 0) return 'now';
-  if (diff < 60) return diff + 's';
-  if (diff < 3600) return Math.floor(diff/60) + 'm';
-  if (diff < 86400) return Math.floor(diff/3600) + 'h';
-  return Math.floor(diff/86400) + 'd';
-}
-
-function fmtUptime(secs) {
-  if (secs < 3600) return Math.floor(secs/60) + 'm';
-  if (secs < 86400) return Math.floor(secs/3600) + 'h';
-  return Math.floor(secs/86400) + 'd';
-}
-
-async function fetchJSON(url) {
-  try {
-    const r = await fetch(url, {signal: AbortSignal.timeout(6000)});
-    if (!r.ok) throw new Error();
-    return await r.json();
-  } catch { return null; }
-}
-
-// Render receipts
-function renderReceipts() {
-  const tbody = document.getElementById('receipt-body');
-  const sorted = [...allEntries].sort((a,b) => (b.transfer_timestamp||0) - (a.transfer_timestamp||0)).slice(0, 30);
-
-  tbody.innerHTML = sorted.map(e => {
-    const fc = agentColor(e.from_key);
-    const tc = agentColor(e.to_key);
-    const hasP = e.parent_receipts && e.parent_receipts.length;
+function renderReceipts(){
+  const tbody=document.getElementById('receipt-body');
+  const sorted=[...allEntries].sort((a,b)=>(b.transfer_timestamp||0)-(a.transfer_timestamp||0)).slice(0,25);
+  tbody.innerHTML=sorted.map(e=>{
+    const fc=agentColor(e.from_key),tc=agentColor(e.to_key);
+    const hasP=e.parent_receipts&&e.parent_receipts.length;
     return `<tr onclick="showDetail('${e._nodeUrl}',${e._idx},'${e._node}')">
-      <td><span class="mono hash">${sh(e.receipt_id)}</span>${hasP?`<span class="badge prov">${e.parent_receipts.length}p</span>`:''}</td>
-      <td><span class="agent" style="color:${fc};background:${fc}15">${shAgent(e.from_key)}</span> → <span class="agent" style="color:${tc};background:${tc}15">${shAgent(e.to_key)}</span></td>
+      <td><span class="mono hash">${sh(e.receipt_id)}</span>${hasP?`<span class="badge badge-prov">${e.parent_receipts.length}p</span>`:''}</td>
+      <td><span class="agent" style="color:${fc};background:${fc}10">${shA(e.from_key)}</span> → <span class="agent" style="color:${tc};background:${tc}10">${shA(e.to_key)}</span></td>
       <td><span class="price">$${(e.price/100).toFixed(2)}</span></td>
-      <td><span class="badge log">${e._node}#${e._idx}</span></td>
+      <td><span class="badge badge-log">${e._node}#${e._idx}</span></td>
       <td><span class="time">${fmtTime(e.transfer_timestamp)}</span></td>
-      <td><button class="verify-btn" onclick="event.stopPropagation();verifyReceipt('${e._nodeUrl}',${e._idx})">Verify</button></td>
-    </tr>`;
-  }).join('');
-
-  document.getElementById('receipt-sub').textContent = allEntries.length + ' total';
+      <td><button class="verify-btn" onclick="event.stopPropagation();showDetail('${e._nodeUrl}',${e._idx},'${e._node}')">Verify</button></td>
+    </tr>`}).join('');
+  document.getElementById('receipt-sub').textContent=allEntries.length+' loaded';
 }
 
-// Render log cards
-function renderLogCards(healths, checkpoints) {
-  const container = document.getElementById('log-cards');
-  let online = 0;
-
-  container.innerHTML = NODES.map((n, i) => {
-    const h = healths[i];
-    const cp = checkpoints[i];
-    if (!h) return `<div class="log-card">
-      <div class="log-top"><span class="log-name">${n.name}</span><span class="log-status down">offline</span></div>
-      <div class="log-meta">${n.loc}</div>
-    </div>`;
-
-    online++;
-    const wc = cp && cp.witnesses ? cp.witnesses.length : 0;
+function renderLogs(healths,checkpoints){
+  const c=document.getElementById('log-cards');
+  let on=0;
+  const max=Math.max(1,...healths.filter(Boolean).map(h=>h.log_size));
+  c.innerHTML=NODES.map((n,i)=>{
+    const h=healths[i],cp=checkpoints[i];
+    if(!h)return `<div class="log-card"><div class="log-top"><span class="log-name">${n.name}</span><span class="log-status down">offline</span></div><div class="log-meta">${n.loc}</div></div>`;
+    on++;
+    const wc=cp&&cp.witnesses?cp.witnesses.length:0;
+    const pct=Math.round(h.log_size/max*100);
     return `<div class="log-card">
       <div class="log-top"><span class="log-name">${n.name}</span><span class="log-status up">online</span></div>
-      <div class="log-meta">
-        <b>${h.log_size}</b> entries · <b>${wc}</b> witnesses<br>
-        ${n.loc} · ${fmtUptime(h.uptime_seconds)} uptime
-      </div>
-    </div>`;
-  }).join('');
-
-  document.getElementById('log-sub').textContent = online + '/' + NODES.length + ' online';
+      <div class="log-meta"><b>${h.log_size}</b> entries · <b>${wc}</b> witnesses · ${n.loc}<br>Uptime <b>${fmtUptime(h.uptime_seconds)}</b></div>
+      <div class="log-bar"><div class="log-bar-fill" style="width:${pct}%"></div></div>
+    </div>`}).join('');
+  document.getElementById('log-sub').textContent=on+'/'+NODES.length+' online';
 }
 
-// Fetch data
-async function refresh() {
-  const healths = await Promise.all(NODES.map(n => fetchJSON(n.url+'/v1/health')));
-  const checkpoints = await Promise.all(NODES.map(n => fetchJSON(n.url+'/v1/checkpoint')));
+async function refresh(){
+  const healths=await Promise.all(NODES.map(n=>fetchJSON(n.url+'/v1/health')));
+  const cps=await Promise.all(NODES.map(n=>fetchJSON(n.url+'/v1/checkpoint')));
+  let total=0,witnesses=0;
+  healths.forEach(h=>{if(h)total+=h.log_size});
+  cps.forEach(c=>{if(c&&c.witnesses)witnesses+=c.witnesses.length});
+  renderLogs(healths,cps);
 
-  let totalEntries = 0, totalWitnesses = 0, provLinks = 0;
-
-  renderLogCards(healths, checkpoints);
-
-  for (let ni = 0; ni < NODES.length; ni++) {
-    const h = healths[ni];
-    if (!h) continue;
-    totalEntries += h.log_size;
-    const cp = checkpoints[ni];
-    totalWitnesses += (cp && cp.witnesses ? cp.witnesses.length : 0);
-
-    const node = NODES[ni];
-    const start = Math.max(0, h.log_size - 20);
-    const fetches = [];
-    for (let i = start; i < h.log_size; i++) {
-      fetches.push(fetchJSON(node.url+'/v1/entry/'+i).then(e => {
-        if (e) { e._idx = i; e._node = node.name; e._nodeUrl = node.url; return e; }
-      }));
-    }
-    const entries = (await Promise.all(fetches)).filter(Boolean);
-    entries.forEach(e => {
-      const key = e._node + ':' + e._idx;
-      if (!knownKeys.has(key)) {
-        knownKeys.add(key);
-        allEntries.push(e);
-        if (e.parent_receipts) provLinks += e.parent_receipts.length;
-      }
+  for(let ni=0;ni<NODES.length;ni++){
+    const h=healths[ni];if(!h)continue;
+    const node=NODES[ni];
+    const start=Math.max(0,h.log_size-20);
+    const fetches=[];
+    for(let i=start;i<h.log_size;i++)fetches.push(fetchJSON(node.url+'/v1/entry/'+i).then(e=>{if(e){e._idx=i;e._node=node.name;e._nodeUrl=node.url;return e}}).catch(()=>null));
+    (await Promise.all(fetches)).filter(Boolean).forEach(e=>{
+      const key=e._node+':'+e._idx;
+      if(!knownKeys.has(key)){knownKeys.add(key);allEntries.push(e)}
     });
   }
 
-  let totalProv = 0;
-  allEntries.forEach(e => {
-    if (e.parent_receipts) totalProv += e.parent_receipts.length;
-  });
-
-  document.getElementById('s-nodes').textContent = healths.filter(Boolean).length;
-  document.getElementById('s-entries').textContent = totalEntries;
-  document.getElementById('s-prov').textContent = totalProv;
-  document.getElementById('s-witnesses').textContent = totalWitnesses;
-
+  const agents=new Set();
+  allEntries.forEach(e=>{agents.add(e.from_key);agents.add(e.to_key)});
+  document.getElementById('s-nodes').textContent=healths.filter(Boolean).length;
+  document.getElementById('s-entries').textContent=total;
+  document.getElementById('s-agents').textContent=agents.size;
+  document.getElementById('s-witnesses').textContent=witnesses;
   renderReceipts();
 }
 
-// Show detail
-async function showDetail(nodeUrl, idx, nodeName) {
-  const overlay = document.getElementById('overlay');
-  const detail = document.getElementById('detail');
-  detail.innerHTML = '<button class="detail-close" onclick="closeDetail()">&times;</button><div style="text-align:center;padding:30px;color:#45475a">Loading…</div>';
+async function showDetail(nodeUrl,idx,nodeName){
+  const overlay=document.getElementById('overlay');
+  const detail=document.getElementById('detail');
+  detail.innerHTML='<button class="detail-close" onclick="closeDetail()">&times;</button><div style="text-align:center;padding:40px;color:#8898aa">Loading…</div>';
   overlay.classList.add('show');
 
-  const [entry, proof] = await Promise.all([
-    fetchJSON(nodeUrl + '/v1/entry/' + idx),
-    fetchJSON(nodeUrl + '/v1/proof/' + idx),
-  ]);
-  if (!entry) {
-    detail.innerHTML = '<button class="detail-close" onclick="closeDetail()">&times;</button><p style="padding:20px;color:#f38ba8">Failed to load.</p>';
-    return;
-  }
+  const[entry,proof]=await Promise.all([fetchJSON(nodeUrl+'/v1/entry/'+idx),fetchJSON(nodeUrl+'/v1/proof/'+idx)]);
+  if(!entry){detail.innerHTML='<button class="detail-close" onclick="closeDetail()">&times;</button><p style="padding:20px;color:#e53e3e">Failed to load.</p>';return}
 
-  const hasP = entry.parent_receipts && entry.parent_receipts.length;
-  const fc = agentColor(entry.from_key);
-  const tc = agentColor(entry.to_key);
-
-  let proofHtml = '';
-  if (proof && proof.path) {
-    proofHtml = `<div style="margin-top:12px"><div style="font-size:10px;color:#585b70;margin-bottom:4px;font-weight:600">MERKLE PROOF</div>
+  const hasP=entry.parent_receipts&&entry.parent_receipts.length;
+  let proofHtml='';
+  if(proof&&proof.path){
+    proofHtml=`<div style="margin-top:16px"><div style="font-size:11px;color:#8898aa;margin-bottom:6px;font-weight:600">MERKLE INCLUSION PROOF</div>
     <div class="proof-box">leaf: ${proof.leaf_hash}\nroot: ${proof.root}\nsize: ${proof.log_size}\n\n${proof.path.map((s,i)=>'['+i+'] '+s.direction.padEnd(6)+s.sibling).join('\n')}</div></div>`;
   }
 
-  detail.innerHTML = `
+  detail.innerHTML=`
     <button class="detail-close" onclick="closeDetail()">&times;</button>
     <h2>Receipt ${nodeName}#${idx}</h2>
     <div class="dr"><span class="k">Receipt ID</span><span class="v h">${entry.receipt_id}</span></div>
-    <div class="dr"><span class="k">Provider</span><span class="v h" style="color:${fc}">${entry.from_key}</span></div>
-    <div class="dr"><span class="k">Consumer</span><span class="v h" style="color:${tc}">${entry.to_key}</span></div>
+    <div class="dr"><span class="k">Provider</span><span class="v h">${entry.from_key}</span></div>
+    <div class="dr"><span class="k">Consumer</span><span class="v h">${entry.to_key}</span></div>
     <div class="dr"><span class="k">Price</span><span class="v g">$${(entry.price/100).toFixed(2)} ${entry.currency}</span></div>
     <div class="dr"><span class="k">Timestamp</span><span class="v">${new Date(entry.transfer_timestamp*1000).toISOString()}</span></div>
-    <div class="dr"><span class="k">Leaf hash</span><span class="v h">${entry.leaf_hash || '—'}</span></div>
-    <div class="dr"><span class="k">Signature</span><span class="v">${entry.seller_signature ? sh(entry.seller_signature) : '—'}</span></div>
-    <div class="dr"><span class="k">Parents</span><span class="v">${hasP ? entry.parent_receipts.length : '0'}</span></div>
+    <div class="dr"><span class="k">Leaf hash</span><span class="v h">${entry.leaf_hash||'—'}</span></div>
+    <div class="dr"><span class="k">Signature</span><span class="v">${entry.seller_signature?sh(entry.seller_signature):'—'}</span></div>
+    <div class="dr"><span class="k">Provenance</span><span class="v">${hasP?entry.parent_receipts.length+' parent(s)':'root'}</span></div>
     ${proofHtml}
-    <div style="margin-top:12px;font-size:10px">
-      <a href="${nodeUrl}/v1/entry/${idx}" target="_blank" style="color:#585b70">raw json</a> ·
-      <a href="${nodeUrl}/v1/proof/${idx}" target="_blank" style="color:#585b70">proof</a>
+    <div style="margin-top:14px;font-size:12px;display:flex;gap:12px">
+      <a href="${nodeUrl}/v1/entry/${idx}" target="_blank">Raw JSON</a>
+      <a href="${nodeUrl}/v1/proof/${idx}" target="_blank">Merkle proof</a>
     </div>`;
 }
 
-// Verify receipt (inline)
-async function verifyReceipt(nodeUrl, idx) {
-  alert(`Verification demo:\n\n1. Fetch entry from ${nodeUrl}/v1/entry/${idx}\n2. Recompute SHA-256(canonical_bytes) → receipt_id\n3. Verify Ed25519 signature over receipt_id\n4. Fetch Merkle proof from /v1/proof/${idx}\n5. Verify proof path reconstructs root\n6. Check witness signatures on checkpoint\n\n→ See index.html for live demo`);
-}
-
-function closeDetail() { document.getElementById('overlay').classList.remove('show'); }
-document.addEventListener('keydown', e => { if (e.key==='Escape') closeDetail(); });
+function closeDetail(){document.getElementById('overlay').classList.remove('show')}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDetail()});
 
 refresh();
-setInterval(refresh, 10000);
+setInterval(refresh,12000);
 </script>
 </body>
 </html>

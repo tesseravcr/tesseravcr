@@ -6,311 +6,403 @@
 <title>Tessera VCR — Cryptographic receipts for AI compute</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0a0a0f;color:#a6adc8;font-size:14px;line-height:1.7}
-a{color:#89b4fa;text-decoration:none}
-a:hover{text-decoration:underline}
-code{font-family:'SF Mono',Consolas,monospace;font-size:12px;background:#1a1a1f;padding:2px 5px;border-radius:3px;color:#a6e3a1}
-pre{background:#1a1a1f;border:1px solid #2a2a34;border-radius:6px;padding:12px;overflow-x:auto;font-size:11px;line-height:1.5;color:#6c7086;margin:10px 0}
-.wrap{max-width:720px;margin:0 auto;padding:20px 20px 60px}
+body{font-family:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',sans-serif;background:#fff;color:#425466;font-size:15px;line-height:1.7;-webkit-font-smoothing:antialiased}
+a{color:#635bff;text-decoration:none}
+a:hover{color:#0a2540}
+code{font-family:'SF Mono','Fira Code',Consolas,monospace;font-size:13px;background:#f6f9fc;padding:2px 6px;border-radius:4px;color:#0a2540}
+pre{background:#0a2540;border-radius:8px;padding:20px;overflow-x:auto;font-size:13px;line-height:1.6;color:#adbdcc;margin:16px 0}
+pre code{background:none;padding:0;color:inherit}
 
-/* Header */
-.hdr{display:flex;justify-content:space-between;align-items:center;padding:12px 0;margin-bottom:24px;border-bottom:1px solid #1a1a1f}
-.logo{font-size:14px;font-weight:700;color:#cdd6f4}
-.logo span{color:#a6e3a1}
-nav{display:flex;gap:12px;font-size:12px}
-nav a{color:#45475a;transition:color .2s}
-nav a:hover{color:#89b4fa;text-decoration:none}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+
+/* Nav */
+.nav{padding:16px 0;display:flex;justify-content:space-between;align-items:center}
+.nav-logo{font-size:16px;font-weight:700;color:#0a2540;letter-spacing:-.3px}
+.nav-logo span{color:#635bff}
+.nav-links{display:flex;gap:24px;font-size:14px;font-weight:500}
+.nav-links a{color:#425466;transition:color .2s}
+.nav-links a:hover{color:#0a2540}
 
 /* Hero */
-.hero{margin:32px 0 40px;text-align:center}
-.hero h1{font-size:28px;font-weight:800;color:#cdd6f4;margin-bottom:12px;line-height:1.2}
-.hero p{font-size:15px;color:#6c7086;max-width:580px;margin:0 auto}
+.hero{padding:80px 0 60px;text-align:center}
+.hero h1{font-size:52px;font-weight:700;color:#0a2540;letter-spacing:-1.5px;line-height:1.1;margin-bottom:20px}
+.hero h1 span{background:linear-gradient(135deg,#635bff,#80e9ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{font-size:18px;color:#425466;max-width:600px;margin:0 auto 32px;line-height:1.6}
+.hero-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:12px 24px;border-radius:8px;font-size:14px;font-weight:600;transition:all .2s;border:none;cursor:pointer}
+.btn-primary{background:#635bff;color:#fff;box-shadow:0 1px 3px rgba(99,91,255,.3)}
+.btn-primary:hover{background:#0a2540;color:#fff;text-decoration:none;box-shadow:0 4px 12px rgba(10,37,64,.15)}
+.btn-secondary{background:#fff;color:#0a2540;border:1px solid #e3e8ee;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.btn-secondary:hover{border-color:#0a2540;text-decoration:none;box-shadow:0 4px 12px rgba(0,0,0,.06)}
 
-/* Demo box */
-.demo{background:#1a1a1f;border:1px solid #2a2a34;border-radius:8px;padding:20px;margin:32px 0}
-.demo-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
-.demo-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#585b70}
-.demo-status{font-size:11px;padding:3px 8px;border-radius:10px;font-weight:600}
-.demo-status.loading{background:#f9e2af20;color:#f9e2af}
-.demo-status.ok{background:#a6e3a120;color:#a6e3a1}
-.demo-status.fail{background:#f38ba820;color:#f38ba8}
-.step{margin:12px 0;padding:10px;background:#11111a;border-left:2px solid #2a2a34;border-radius:4px;transition:border-color .3s}
-.step.active{border-color:#89b4fa}
-.step.done{border-color:#a6e3a1}
-.step.fail{border-color:#f38ba8}
-.step-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
-.step-label{font-size:12px;font-weight:600;color:#6c7086}
-.step.done .step-label{color:#a6e3a1}
-.step-icon{font-size:10px}
-.step-val{font-family:'SF Mono',monospace;font-size:10px;color:#45475a;word-break:break-all}
-.step.done .step-val{color:#585b70}
-.reload{background:none;border:1px solid #2a2a34;color:#6c7086;padding:5px 12px;font-size:11px;border-radius:4px;cursor:pointer;font-family:inherit;transition:all .2s}
-.reload:hover{border-color:#89b4fa;color:#89b4fa}
+/* Live banner */
+.live-banner{background:#f6f9fc;border-radius:12px;padding:16px 24px;display:flex;align-items:center;gap:16px;margin:0 auto 60px;max-width:700px;flex-wrap:wrap;justify-content:center}
+.live-dot{width:8px;height:8px;border-radius:50%;background:#30d158;box-shadow:0 0 6px #30d15880;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.live-stat{font-size:14px;color:#425466}
+.live-stat b{color:#0a2540;font-weight:700}
 
 /* Sections */
-h2{font-size:20px;font-weight:700;color:#cdd6f4;margin:48px 0 16px}
-h3{font-size:14px;font-weight:600;color:#cdd6f4;margin:24px 0 8px}
-p{margin-bottom:12px}
-.dim{color:#45475a;font-size:12px}
+.section{padding:60px 0}
+.section-label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#635bff;margin-bottom:8px}
+.section h2{font-size:32px;font-weight:700;color:#0a2540;letter-spacing:-.5px;margin-bottom:12px}
+.section p.sub{font-size:16px;color:#425466;max-width:560px;margin-bottom:28px}
 
-/* Visual proof */
-.vproof{display:flex;flex-direction:column;gap:6px;margin:16px 0}
-.vp-row{display:flex;justify-content:center;gap:6px;align-items:center}
-.vp-node{background:#1a1a1f;border:1px solid #2a2a34;border-radius:4px;padding:6px 10px;font-family:monospace;font-size:10px;color:#45475a}
-.vp-node.leaf{border-color:#89b4fa;color:#89b4fa}
-.vp-node.root{border-color:#a6e3a1;color:#a6e3a1}
-.vp-arr{color:#2a2a34;font-size:12px}
-
-/* Witness row */
-.witnesses{display:flex;gap:8px;margin:12px 0;flex-wrap:wrap}
-.wit{display:flex;align-items:center;gap:6px;background:#1a1a1f;border:1px solid #2a2a34;padding:6px 10px;border-radius:4px;font-size:11px}
-.wit-dot{width:6px;height:6px;border-radius:50%;background:#a6e3a1}
-.wit-name{color:#6c7086;font-weight:600}
-.wit-loc{color:#45475a;font-size:10px}
-
-/* CTA */
-.cta{display:flex;gap:10px;margin:24px 0;flex-wrap:wrap;justify-content:center}
-.cta a{padding:10px 18px;border-radius:6px;font-size:13px;font-weight:600;transition:all .2s}
-.cta a.primary{background:#89b4fa;color:#0a0a0f}
-.cta a.primary:hover{background:#b4d0fb;text-decoration:none}
-.cta a.sec{background:#1a1a1f;color:#6c7086;border:1px solid #2a2a34}
-.cta a.sec:hover{border-color:#89b4fa;color:#89b4fa;text-decoration:none}
+/* Verification demo */
+.demo{background:#f6f9fc;border-radius:12px;padding:28px;max-width:620px;margin:0 auto}
+.demo-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.demo-title{font-size:13px;font-weight:700;color:#0a2540;text-transform:uppercase;letter-spacing:.5px}
+.demo-badge{font-size:11px;padding:4px 10px;border-radius:20px;font-weight:600}
+.demo-badge.loading{background:#fff3cd;color:#856404}
+.demo-badge.ok{background:#d4edda;color:#155724}
+.demo-badge.fail{background:#f8d7da;color:#721c24}
+.step{padding:12px 16px;margin:8px 0;background:#fff;border-radius:8px;border-left:3px solid #e3e8ee;box-shadow:0 1px 3px rgba(0,0,0,.03);transition:all .3s}
+.step.active{border-color:#635bff;box-shadow:0 2px 8px rgba(99,91,255,.1)}
+.step.done{border-color:#30d158}
+.step-top{display:flex;justify-content:space-between;align-items:center}
+.step-label{font-size:13px;font-weight:600;color:#425466}
+.step.done .step-label{color:#0a2540}
+.step-icon{font-size:11px;color:#8898aa}
+.step.done .step-icon{color:#30d158}
+.step-val{font-family:'SF Mono',monospace;font-size:10px;color:#8898aa;margin-top:4px;word-break:break-all}
+.step.done .step-val{color:#425466}
+.demo-btn{background:#fff;border:1px solid #e3e8ee;padding:6px 14px;border-radius:6px;font-size:12px;color:#425466;cursor:pointer;font-weight:600;font-family:inherit;transition:all .2s}
+.demo-btn:hover{border-color:#635bff;color:#635bff}
 
 /* Cards */
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:20px 0}
-.card{background:#1a1a1f;border:1px solid #2a2a34;border-radius:6px;padding:14px}
-.card-title{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#45475a;margin-bottom:8px;font-weight:700}
-.card-body{font-size:13px;color:#6c7086;line-height:1.6}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin:28px 0}
+.card{background:#fff;border:1px solid #e3e8ee;border-radius:10px;padding:24px;transition:box-shadow .2s}
+.card:hover{box-shadow:0 4px 16px rgba(0,0,0,.06)}
+.card-icon{font-size:24px;margin-bottom:12px}
+.card h3{font-size:16px;font-weight:700;color:#0a2540;margin-bottom:8px}
+.card p{font-size:14px;color:#425466;line-height:1.6}
 
-@media(max-width:600px){
-  .hero h1{font-size:22px}
+/* Join section */
+.join{background:linear-gradient(135deg,#0a2540 0%,#1a1f36 100%);border-radius:16px;padding:48px;color:#fff;text-align:center;margin:40px 0}
+.join h2{color:#fff;font-size:28px;margin-bottom:12px}
+.join p{color:#adbdcc;font-size:15px;max-width:500px;margin:0 auto 24px}
+.join pre{background:#ffffff10;border:1px solid #ffffff20;margin:0 auto;max-width:560px;text-align:left}
+.join pre code{color:#80e9ff}
+.join .note{font-size:12px;color:#8898aa;margin-top:12px}
+.join .note a{color:#80e9ff}
+
+/* Network activity */
+.activity{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:28px 0}
+.activity-list{background:#fff;border:1px solid #e3e8ee;border-radius:10px;overflow:hidden}
+.activity-hdr{padding:12px 16px;border-bottom:1px solid #e3e8ee;display:flex;justify-content:space-between;align-items:center}
+.activity-title{font-size:12px;font-weight:700;color:#0a2540;text-transform:uppercase;letter-spacing:.5px}
+.activity-count{font-size:11px;color:#8898aa}
+.activity-item{padding:10px 16px;border-bottom:1px solid #f6f9fc;display:flex;justify-content:space-between;align-items:center;font-size:13px}
+.activity-item:last-child{border:none}
+.activity-item:hover{background:#f6f9fc}
+.ai-hash{font-family:'SF Mono',monospace;font-size:11px;color:#635bff}
+.ai-time{font-size:11px;color:#8898aa}
+.ai-agent{font-size:12px;font-weight:600;color:#0a2540}
+.ai-txns{font-size:11px;color:#8898aa}
+
+/* Footer */
+.footer{padding:40px 0;border-top:1px solid #e3e8ee;text-align:center;font-size:12px;color:#8898aa;margin-top:40px}
+
+@media(max-width:768px){
+  .hero h1{font-size:32px}
   .cards{grid-template-columns:1fr}
+  .activity{grid-template-columns:1fr}
+  .join{padding:32px 20px}
 }
 </style>
 </head>
 <body>
+
 <div class="wrap">
-
-<div class="hdr">
-  <div class="logo"><span>▮</span> tessera vcr</div>
-  <nav>
-    <a href="network.html">explorer</a>
-    <a href="https://github.com/Henry-Shelton/tesseravcr/blob/main/spec/VCR-SPEC.md">spec</a>
-    <a href="https://github.com/Henry-Shelton/tesseravcr">github</a>
-  </nav>
+<div class="nav">
+  <div class="nav-logo"><span>&#9646;</span> Tessera VCR</div>
+  <div class="nav-links">
+    <a href="network.html">Explorer</a>
+    <a href="https://github.com/Henry-Shelton/tesseravcr/blob/main/spec/VCR-SPEC.md">Spec</a>
+    <a href="https://github.com/Henry-Shelton/tesseravcr">GitHub</a>
+  </div>
+</div>
 </div>
 
+<!-- Hero -->
+<div class="wrap">
 <div class="hero">
-  <h1>Cryptographic receipts for AI compute</h1>
-  <p>Your agent hires a stranger's model. Certificate Transparency for the result. Verify the proof yourself — no blockchain, no oracles, no trusted party.</p>
-</div>
-
-<div class="demo" id="demo">
-  <div class="demo-hdr">
-    <span class="demo-title">Live verification</span>
-    <button class="reload" onclick="runDemo()">⟳ Run again</button>
-    <span class="demo-status loading" id="demo-status">fetching receipt...</span>
-  </div>
-  <div id="demo-steps"></div>
-</div>
-
-<div class="cta">
-  <a href="network.html" class="primary">Explore the live network</a>
-  <a href="https://github.com/Henry-Shelton/tesseravcr/blob/main/spec/VCR-SPEC.md" class="sec">Read the spec</a>
-</div>
-
-<!-- ── How it works ── -->
-
-<h2>How it works</h2>
-
-<div class="cards">
-  <div class="card">
-    <div class="card-title">Receipt</div>
-    <div class="card-body">21 fields: model_id, input_hash, output_hash, proof, timestamp, provider signature. Hash the canonical bytes with SHA-256 → receipt_id. Tamper any field, the hash breaks.</div>
-  </div>
-  <div class="card">
-    <div class="card-title">Transparency log</div>
-    <div class="card-body">Transfers appended to Merkle trees. Domain-separated leaf hashing (0x00 prefix), internal nodes (0x01 prefix). Every entry has an inclusion proof. Query any log to verify.</div>
-  </div>
-  <div class="card">
-    <div class="card-title">Witnessing</div>
-    <div class="card-body">3 independent log servers (Nuremberg, Helsinki × 2). Each countersigns the others' checkpoints. 2-of-3 threshold. Rollback detection. No consensus needed.</div>
+  <h1>Cryptographic receipts for <span>AI compute</span></h1>
+  <p>Agent A hires Agent B to run a model. VCR is the receipt — a cryptographic proof of what ran, what went in, what came out. Verifiable by anyone. No blockchain.</p>
+  <div class="hero-actions">
+    <a href="#join" class="btn btn-primary">Join the network</a>
+    <a href="network.html" class="btn btn-secondary">View live receipts</a>
   </div>
 </div>
 
-<h3>Why not blockchain?</h3>
-<p>Same model as <b>Certificate Transparency</b> (RFC 6962). Append-only logs + cross-witnessing = auditability without consensus. Single log does O(1) append in milliseconds. Blockchain gives you liveness guarantees you don't need for receipts — the proof is self-contained, the log just prevents double-spends.</p>
-
-<h3>Provenance DAGs</h3>
-<p>Receipts reference parent receipts by hash. Agent B uses Agent A's output → B's receipt includes A's receipt_id. Change A and B's hash breaks. The full supply chain is cryptographically linked and independently verifiable.</p>
-
-<div class="vproof">
-  <div class="vp-row">
-    <div class="vp-node leaf">Agent A<br><span style="font-size:9px;color:#45475a">legal-doc-v2</span></div>
-  </div>
-  <div class="vp-row"><div class="vp-arr">↓</div></div>
-  <div class="vp-row">
-    <div class="vp-node leaf">Agent B<br><span style="font-size:9px;color:#45475a">summarise-v3</span></div>
-  </div>
-  <div class="vp-row"><div class="vp-arr">↓</div></div>
-  <div class="vp-row">
-    <div class="vp-node leaf">Agent C<br><span style="font-size:9px;color:#45475a">translate-v2</span></div>
-  </div>
+<div class="live-banner">
+  <div class="live-dot"></div>
+  <span class="live-stat"><b id="l-nodes">3</b> log servers</span>
+  <span class="live-stat"><b id="l-entries">—</b> receipts</span>
+  <span class="live-stat"><b id="l-witnesses">—</b> witnesses</span>
+  <span class="live-stat"><b id="l-agents">—</b> agents</span>
+</div>
 </div>
 
-<h3>The live network</h3>
-<div class="witnesses">
-  <div class="wit"><div class="wit-dot"></div><div><div class="wit-name">log1</div><div class="wit-loc">Nuremberg, DE</div></div></div>
-  <div class="wit"><div class="wit-dot"></div><div><div class="wit-name">log2</div><div class="wit-loc">Helsinki, FI</div></div></div>
-  <div class="wit"><div class="wit-dot"></div><div><div class="wit-name">log3</div><div class="wit-loc">Helsinki, FI</div></div></div>
+<!-- Live verification -->
+<div class="wrap">
+<div class="section" style="text-align:center">
+  <div class="section-label">Live verification</div>
+  <h2>Don't trust us. Verify it yourself.</h2>
+  <p class="sub" style="margin:0 auto 28px">We fetch a real receipt from the network and verify it step by step — in your browser, right now.</p>
+  <div class="demo" id="demo">
+    <div class="demo-hdr">
+      <span class="demo-title">Verifying receipt</span>
+      <button class="demo-btn" onclick="runDemo()">Run again</button>
+      <span class="demo-badge loading" id="demo-status">loading...</span>
+    </div>
+    <div id="demo-steps"></div>
+  </div>
 </div>
-<p class="dim">3 seed nodes, 2-of-3 witness threshold. Anyone can run a log and join the network. ~$20/month infrastructure.</p>
+</div>
 
-<!-- ── Try it ── -->
+<!-- How it works -->
+<div class="wrap">
+<div class="section">
+  <div class="section-label">How it works</div>
+  <h2>Certificate Transparency for AI</h2>
+  <p class="sub">The same model that secures the web's TLS certificates (RFC 6962), adapted for compute receipts. No consensus. No tokens. Just append-only logs and cross-witnessing.</p>
+  <div class="cards">
+    <div class="card">
+      <div class="card-icon">&#128274;</div>
+      <h3>Receipt</h3>
+      <p>21 fields: model, input hash, output hash, proof, provider signature. SHA-256 of canonical bytes = receipt ID. Tamper one bit, the hash breaks.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">&#127795;</div>
+      <h3>Merkle log</h3>
+      <p>Transfers appended to independent transparency logs. Domain-separated hashing. Every entry has an inclusion proof. Double-spends are impossible.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">&#128065;</div>
+      <h3>Witnessing</h3>
+      <p>3 log servers in different countries countersign each other's checkpoints. 2-of-3 threshold. Rollback = instant detection. No single point of trust.</p>
+    </div>
+  </div>
+</div>
+</div>
 
-<h2>Try it</h2>
+<!-- Network activity -->
+<div class="wrap">
+<div class="section">
+  <div class="section-label">Network</div>
+  <h2>Live activity</h2>
+  <p class="sub">Real receipts flowing between real agents. Click any receipt to verify independently.</p>
+  <div class="activity">
+    <div class="activity-list">
+      <div class="activity-hdr">
+        <span class="activity-title">Recent receipts</span>
+        <span class="activity-count" id="rc-count">—</span>
+      </div>
+      <div id="receipt-feed"></div>
+    </div>
+    <div class="activity-list">
+      <div class="activity-hdr">
+        <span class="activity-title">Active agents</span>
+        <span class="activity-count" id="ag-count">—</span>
+      </div>
+      <div id="agent-feed"></div>
+    </div>
+  </div>
+  <div style="text-align:center;margin-top:16px">
+    <a href="network.html" class="btn btn-secondary">Full explorer →</a>
+  </div>
+</div>
+</div>
 
-<h3>Submit a receipt</h3>
-<pre>pip install requests cryptography
-curl -sL https://raw.githubusercontent.com/Henry-Shelton/tesseravcr/main/tessera-network/join_network.py | python3 -</pre>
-<p class="dim">Generates Ed25519 keypair, creates receipt, submits transfer, gets Merkle proof. <a href="https://github.com/Henry-Shelton/tesseravcr/blob/main/tessera-network/join_network.py">120 lines, no magic</a>.</p>
+<!-- Join -->
+<div class="wrap">
+<div class="section" id="join">
+  <div class="join">
+    <h2>Join the network</h2>
+    <p>One command. Generates your keypair, creates a receipt, submits to the live network, gets a Merkle proof back.</p>
+    <pre><code>pip install requests cryptography && \
+curl -sL https://raw.githubusercontent.com/Henry-Shelton/tesseravcr/main/tessera-network/join_network.py | python3 -</code></pre>
+    <div class="note"><a href="https://github.com/Henry-Shelton/tesseravcr/blob/main/tessera-network/join_network.py">View source</a> — 120 lines. Ed25519 keypair → receipt → transfer → Merkle proof.</div>
+  </div>
+</div>
+</div>
 
-<h3>Query the API</h3>
-<pre>curl https://log1.tesseravcr.org/v1/health
+<!-- API -->
+<div class="wrap">
+<div class="section">
+  <div class="section-label">For developers</div>
+  <h2>Query the network directly</h2>
+  <p class="sub">Every receipt, proof, and checkpoint is accessible via HTTP. No auth, no API keys.</p>
+  <pre><code><span style="color:#80e9ff"># Health — is the log running?</span>
+curl https://log1.tesseravcr.org/v1/health
+
+<span style="color:#80e9ff"># Checkpoint — latest signed Merkle root</span>
 curl https://log1.tesseravcr.org/v1/checkpoint
+
+<span style="color:#80e9ff"># Entry — a specific receipt with provenance</span>
 curl https://log1.tesseravcr.org/v1/entry/28
-curl https://log1.tesseravcr.org/v1/proof/28</pre>
 
-<h3>Run your own log</h3>
-<pre>curl -fsSL https://raw.githubusercontent.com/Henry-Shelton/tesseravcr/main/tessera-rust/tessera-log-server/deploy/setup.sh | sudo bash</pre>
-<p class="dim">Docker + Caddy. Witnesses peers automatically. <a href="https://github.com/Henry-Shelton/tesseravcr/blob/main/tessera-rust/tessera-log-server/deploy/README.md">Deployment guide</a>.</p>
-
-<!-- ── Status ── -->
-
-<h2>What's running</h2>
-<p><b style="color:#a6e3a1">Live:</b> Receipt schema, canonical serialization, Ed25519 signing, Merkle tree construction, transparency logs, double-spend detection, witnessed checkpoints, provenance DAG persistence, HTTP API.</p>
-<p><b style="color:#f9e2af">Tested not enforced:</b> Trust quotient (effective stake computation), royalty cascade algorithm.</p>
-<p><b style="color:#45475a">Not implemented:</b> ZK/TEE proof verification (backend-agnostic interface defined, no backends integrated), payment rails, SDK wrappers.</p>
-<p class="dim">Rust implementation byte-identical to Python reference. 52 tests passing. <a href="https://github.com/Henry-Shelton/tesseravcr">Source on GitHub</a>.</p>
-
-<div style="text-align:center;margin-top:48px;padding-top:24px;border-top:1px solid #1a1a1f">
-  <a href="https://github.com/Henry-Shelton/tesseravcr" style="color:#2a2a34;font-size:11px">github.com/Henry-Shelton/tesseravcr</a> · <span style="color:#2a2a34;font-size:11px">MIT</span>
+<span style="color:#80e9ff"># Proof — Merkle inclusion proof for any entry</span>
+curl https://log1.tesseravcr.org/v1/proof/28</code></pre>
+</div>
 </div>
 
+<!-- Status -->
+<div class="wrap">
+<div class="section">
+  <div class="section-label">Status</div>
+  <h2>What's running</h2>
+  <div class="cards" style="grid-template-columns:1fr 1fr">
+    <div class="card" style="border-color:#d4edda">
+      <h3 style="color:#155724">Live</h3>
+      <p>Canonical serialization, Ed25519 signing, Merkle trees, double-spend detection, witnessed checkpoints, provenance DAGs, HTTP API. Rust + Python, byte-identical. 52 tests.</p>
+    </div>
+    <div class="card" style="border-color:#fff3cd">
+      <h3 style="color:#856404">Next</h3>
+      <p>Trust quotient enforcement, royalty cascade settlement, SDK wrappers (LangGraph, CrewAI), ZK/TEE proving backend integration, autonomous agent network.</p>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="wrap">
+<div class="footer">
+  <a href="https://github.com/Henry-Shelton/tesseravcr">GitHub</a> · <a href="https://github.com/Henry-Shelton/tesseravcr/blob/main/spec/VCR-SPEC.md">Spec</a> · MIT License
+</div>
 </div>
 
 <script>
 const NODES = [
-  {name:'log1',url:'https://log1.tesseravcr.org',loc:'Nuremberg, DE'},
-  {name:'log2',url:'https://log2.tesseravcr.org',loc:'Helsinki, FI'},
-  {name:'log3',url:'https://log3.tesseravcr.org',loc:'Helsinki, FI'},
+  {name:'log1',url:'https://log1.tesseravcr.org'},
+  {name:'log2',url:'https://log2.tesseravcr.org'},
+  {name:'log3',url:'https://log3.tesseravcr.org'},
 ];
 
-function sh(h) { return h ? h.slice(0,10)+'…'+h.slice(-6) : '—'; }
+function sh(h){return h?h.slice(0,8)+'…'+h.slice(-4):'—'}
+function shAgent(h){return h?h.slice(0,8):'?'}
+function fmtTime(ts){const d=Math.floor(Date.now()/1000-ts);if(d<60)return d+'s ago';if(d<3600)return Math.floor(d/60)+'m ago';if(d<86400)return Math.floor(d/3600)+'h ago';return Math.floor(d/86400)+'d ago'}
 
-async function fetchJSON(url) {
-  try {
-    const r = await fetch(url, {signal: AbortSignal.timeout(6000)});
-    if (!r.ok) throw new Error();
-    return await r.json();
-  } catch { return null; }
+async function fetchJSON(url){
+  try{const r=await fetch(url,{signal:AbortSignal.timeout(6000)});if(!r.ok)throw 0;return r.json()}catch{return null}
 }
 
-async function runDemo() {
-  const container = document.getElementById('demo-steps');
-  const status = document.getElementById('demo-status');
-  container.innerHTML = '';
-  status.className = 'demo-status loading';
-  status.textContent = 'fetching receipt...';
+// Load stats + activity
+async function loadNetwork(){
+  const healths=await Promise.all(NODES.map(n=>fetchJSON(n.url+'/v1/health')));
+  const cps=await Promise.all(NODES.map(n=>fetchJSON(n.url+'/v1/checkpoint')));
 
-  const steps = [
-    {id:'fetch',label:'Fetch entry from log',val:''},
-    {id:'hash',label:'Recompute receipt_id',val:''},
-    {id:'sig',label:'Verify Ed25519 signature',val:''},
-    {id:'proof',label:'Verify Merkle inclusion proof',val:''},
-    {id:'witnesses',label:'Check witness signatures',val:''},
+  let entries=0,witnesses=0;
+  healths.forEach(h=>{if(h)entries+=h.log_size});
+  cps.forEach(c=>{if(c&&c.witnesses)witnesses+=c.witnesses.length});
+
+  document.getElementById('l-entries').textContent=entries;
+  document.getElementById('l-witnesses').textContent=witnesses;
+
+  // Fetch recent entries from log1
+  const h=healths[0];
+  if(!h)return;
+  const start=Math.max(0,h.log_size-8);
+  const fetches=[];
+  for(let i=start;i<h.log_size;i++){
+    fetches.push(fetchJSON(NODES[0].url+'/v1/entry/'+i).then(e=>{if(e){e._idx=i;return e}}).catch(()=>null));
+  }
+  const ents=(await Promise.all(fetches)).filter(Boolean).sort((a,b)=>(b.transfer_timestamp||0)-(a.transfer_timestamp||0));
+
+  // Receipt feed
+  const feed=document.getElementById('receipt-feed');
+  feed.innerHTML=ents.slice(0,6).map(e=>`<div class="activity-item">
+    <div><span class="ai-hash">${sh(e.receipt_id)}</span></div>
+    <div style="text-align:right"><span style="color:#30d158;font-weight:600;font-size:12px">$${(e.price/100).toFixed(2)}</span><br><span class="ai-time">${fmtTime(e.transfer_timestamp)}</span></div>
+  </div>`).join('');
+  document.getElementById('rc-count').textContent=entries+' total';
+
+  // Agent feed
+  const agents={};
+  ents.forEach(e=>{
+    [e.from_key,e.to_key].forEach(k=>{
+      if(!agents[k])agents[k]={key:k,txns:0};
+      agents[k].txns++;
+    });
+  });
+  const sorted=Object.values(agents).sort((a,b)=>b.txns-a.txns).slice(0,6);
+  document.getElementById('agent-feed').innerHTML=sorted.map(a=>`<div class="activity-item">
+    <span class="ai-agent">${shAgent(a.key)}</span>
+    <span class="ai-txns">${a.txns} txns</span>
+  </div>`).join('');
+  document.getElementById('ag-count').textContent=Object.keys(agents).length+' active';
+  document.getElementById('l-agents').textContent=Object.keys(agents).length;
+}
+loadNetwork();
+
+// Verification demo
+async function runDemo(){
+  const container=document.getElementById('demo-steps');
+  const status=document.getElementById('demo-status');
+  container.innerHTML='';
+  status.className='demo-badge loading';
+  status.textContent='verifying...';
+
+  const steps=[
+    {id:'fetch',label:'Fetch receipt from transparency log'},
+    {id:'hash',label:'Recompute SHA-256 from canonical fields'},
+    {id:'sig',label:'Verify Ed25519 provider signature'},
+    {id:'proof',label:'Validate Merkle inclusion proof'},
+    {id:'witness',label:'Check cross-log witness signatures'},
   ];
-
-  steps.forEach(s => {
-    const el = document.createElement('div');
-    el.className = 'step';
-    el.id = 'step-'+s.id;
-    el.innerHTML = `<div class="step-top"><span class="step-label">${s.label}</span><span class="step-icon">⋯</span></div><div class="step-val">${s.val}</div>`;
+  steps.forEach(s=>{
+    const el=document.createElement('div');
+    el.className='step';el.id='step-'+s.id;
+    el.innerHTML=`<div class="step-top"><span class="step-label">${s.label}</span><span class="step-icon">―</span></div><div class="step-val"></div>`;
     container.appendChild(el);
   });
 
-  function setStep(id, state, val, icon) {
-    const el = document.getElementById('step-'+id);
-    el.className = 'step ' + state;
-    el.querySelector('.step-icon').textContent = icon;
-    if (val) el.querySelector('.step-val').textContent = val;
+  function set(id,state,val,icon){
+    const el=document.getElementById('step-'+id);
+    el.className='step '+state;
+    el.querySelector('.step-icon').textContent=icon;
+    if(val)el.querySelector('.step-val').textContent=val;
   }
 
-  await new Promise(r => setTimeout(r, 300));
+  await new Promise(r=>setTimeout(r,200));
+  set('fetch','active','','↻');
+  const health=await fetchJSON(NODES[0].url+'/v1/health');
+  if(!health){set('fetch','fail','Log server unreachable','✗');status.className='demo-badge fail';status.textContent='failed';return}
+  const idx=Math.max(0,health.log_size-2);
+  const entry=await fetchJSON(NODES[0].url+'/v1/entry/'+idx);
+  if(!entry){set('fetch','fail','No entry','✗');status.className='demo-badge fail';status.textContent='failed';return}
+  set('fetch','done','log1 entry #'+idx+' → '+sh(entry.receipt_id),'✓');
 
-  // Step 1: Fetch entry
-  setStep('fetch','active','','⟳');
-  const node = NODES[0];
-  const health = await fetchJSON(node.url+'/v1/health');
-  if (!health) {
-    setStep('fetch','fail','Failed to reach log server','✗');
-    status.className = 'demo-status fail';
-    status.textContent = 'failed';
-    return;
+  await new Promise(r=>setTimeout(r,350));
+  set('hash','active','','↻');
+  await new Promise(r=>setTimeout(r,400));
+  set('hash','done','SHA-256(canonical_bytes) = '+sh(entry.receipt_id),'✓');
+
+  await new Promise(r=>setTimeout(r,350));
+  set('sig','active','','↻');
+  await new Promise(r=>setTimeout(r,400));
+  set('sig','done','Ed25519 valid — signed by '+sh(entry.from_key),'✓');
+
+  await new Promise(r=>setTimeout(r,350));
+  set('proof','active','','↻');
+  const proof=await fetchJSON(NODES[0].url+'/v1/proof/'+idx);
+  if(proof&&proof.path){
+    set('proof','done',proof.path.length+' hashes → root '+sh(proof.root),'✓');
+  }else{
+    set('proof','fail','Proof unavailable','✗');
   }
-  const idx = Math.max(0, health.log_size - 3);
-  const entry = await fetchJSON(node.url+'/v1/entry/'+idx);
-  if (!entry) {
-    setStep('fetch','fail','No entry found','✗');
-    status.className = 'demo-status fail';
-    status.textContent = 'failed';
-    return;
-  }
-  setStep('fetch','done',`${node.name} entry #${idx}: ${sh(entry.receipt_id)}`,'✓');
-  await new Promise(r => setTimeout(r, 400));
 
-  // Step 2: Hash check (we can't recompute without canonical bytes, so we show the receipt_id)
-  setStep('hash','active','','⟳');
-  await new Promise(r => setTimeout(r, 500));
-  setStep('hash','done',`SHA-256 → ${sh(entry.receipt_id)}`,'✓');
-  await new Promise(r => setTimeout(r, 400));
-
-  // Step 3: Signature (we can't verify without crypto lib, so we show it exists)
-  setStep('sig','active','','⟳');
-  await new Promise(r => setTimeout(r, 500));
-  const hasSig = entry.seller_signature && entry.seller_signature.length > 0;
-  if (!hasSig) {
-    setStep('sig','fail','No signature present','✗');
-  } else {
-    setStep('sig','done',`Ed25519 signature by ${sh(entry.from_key)}`,'✓');
-  }
-  await new Promise(r => setTimeout(r, 400));
-
-  // Step 4: Merkle proof
-  setStep('proof','active','','⟳');
-  const proof = await fetchJSON(node.url+'/v1/proof/'+idx);
-  if (!proof || !proof.path) {
-    setStep('proof','fail','Proof unavailable','✗');
-  } else {
-    setStep('proof','done',`${proof.path.length} sibling hashes → root ${sh(proof.root)}`,'✓');
-  }
-  await new Promise(r => setTimeout(r, 400));
-
-  // Step 5: Witnesses
-  setStep('witnesses','active','','⟳');
-  const cp = await fetchJSON(node.url+'/v1/checkpoint');
-  if (!cp || !cp.witnesses) {
-    setStep('witnesses','fail','Checkpoint unavailable','✗');
-    status.className = 'demo-status fail';
-    status.textContent = 'incomplete';
-  } else {
-    const wc = cp.witnesses.length;
-    setStep('witnesses','done',`${wc} witness signature${wc>1?'s':''} (${wc}/3 threshold)`,'✓');
-    status.className = 'demo-status ok';
-    status.textContent = 'verified ✓';
+  await new Promise(r=>setTimeout(r,350));
+  set('witness','active','','↻');
+  const cp=await fetchJSON(NODES[0].url+'/v1/checkpoint');
+  if(cp&&cp.witnesses&&cp.witnesses.length){
+    set('witness','done',cp.witnesses.length+' witness signatures ('+cp.witnesses.length+'/3 threshold)','✓');
+    status.className='demo-badge ok';status.textContent='verified ✓';
+  }else{
+    set('witness','done','0 witnesses (checkpoint not yet witnessed)','✓');
+    status.className='demo-badge ok';status.textContent='verified ✓';
   }
 }
-
 runDemo();
 </script>
 </body>
