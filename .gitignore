@@ -1,9 +1,8 @@
 # Local planning docs - don't upload
 CHANGELOG.md
-next.md
 NEXT.md
-deploy-checklist.md
-deploy-plan.md
+DEPLOY-CHECKLIST.md
+DEPLOY-PLAN.md
 hn.txt
 
 # Rust
