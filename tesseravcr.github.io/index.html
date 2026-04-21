@@ -6,96 +6,102 @@
 <title>Tessera VCR — Verified receipts for AI computation</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',sans-serif;background:#fafafa;color:#333;font-size:15px;line-height:1.7;-webkit-font-smoothing:antialiased}
-a{color:#111;text-decoration:underline;text-decoration-color:#ddd;text-underline-offset:2px}
-a:hover{text-decoration-color:#111}
-code{font-family:'SF Mono',Consolas,monospace;font-size:13px;background:#f0f0f0;padding:2px 6px;border-radius:3px}
-pre{background:#111;border-radius:8px;padding:20px 24px;overflow-x:auto;font-size:13px;line-height:1.6;color:#999;margin:16px 0}
-pre code{background:none;padding:0;color:inherit}
-
-.wrap{max-width:680px;margin:0 auto;padding:0 24px}
+body{font-family:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',sans-serif;background:#fff;color:#1a1a2e;font-size:16px;line-height:1.7;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+code{font-family:'SF Mono',Consolas,monospace;font-size:13px}
 
 /* Nav */
-.nav{padding:20px 0;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #eee;margin-bottom:48px}
-.nav-logo{font-size:15px;font-weight:600;color:#111;letter-spacing:-.2px}
-.nav-links{display:flex;gap:20px;font-size:13px}
-.nav-links a{color:#888;text-decoration:none;transition:color .15s}
-.nav-links a:hover{color:#111}
+.nav{padding:18px 32px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);z-index:100;border-bottom:1px solid rgba(0,0,0,.05)}
+.nav-logo{font-size:15px;font-weight:700;color:#1a1a2e;letter-spacing:-.3px}
+.nav-links{display:flex;gap:28px;font-size:14px;font-weight:500}
+.nav-links a{color:#6b7280;text-decoration:none;transition:color .15s}
+.nav-links a:hover{color:#1a1a2e}
 
 /* Hero */
-.hero{padding:32px 0 48px}
-.hero h1{font-size:36px;font-weight:700;color:#111;letter-spacing:-.8px;line-height:1.15;margin-bottom:16px}
-.hero p{font-size:17px;color:#555;max-width:560px;line-height:1.7}
-
-/* Live stats */
-.live{display:flex;gap:24px;padding:14px 0;border-top:1px solid #eee;border-bottom:1px solid #eee;margin:32px 0}
-.live-item{font-size:13px;color:#888}
-.live-item b{color:#111;font-weight:600}
-.live-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:#22c55e;margin-right:6px;animation:pulse 2s infinite}
+.hero{background:#1a1a2e;color:#fff;padding:100px 32px 80px;text-align:center}
+.hero h1{font-size:48px;font-weight:700;letter-spacing:-1.5px;line-height:1.1;margin-bottom:20px;max-width:720px;margin-left:auto;margin-right:auto}
+.hero p{font-size:18px;color:rgba(255,255,255,.65);max-width:540px;margin:0 auto 36px;line-height:1.7}
+.hero-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;padding:13px 28px;border-radius:8px;font-size:14px;font-weight:600;text-decoration:none;transition:all .2s;border:none;cursor:pointer}
+.btn-light{background:#fff;color:#1a1a2e}
+.btn-light:hover{background:#f0f0f0}
+.btn-outline{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.25)}
+.btn-outline:hover{border-color:#fff;background:rgba(255,255,255,.05)}
+.hero-stats{display:flex;gap:32px;justify-content:center;margin-top:48px;padding-top:32px;border-top:1px solid rgba(255,255,255,.1)}
+.hero-stat{text-align:center}
+.hero-stat-n{font-size:28px;font-weight:700;color:#fff}
+.hero-stat-l{font-size:12px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+.live-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#34d399;margin-right:6px;animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 
-/* Section */
-.section{padding:40px 0}
-.section h2{font-size:22px;font-weight:700;color:#111;letter-spacing:-.3px;margin-bottom:8px}
-.section p{color:#555;margin-bottom:16px}
-.label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#888;margin-bottom:8px}
+/* Content sections */
+.content{max-width:720px;margin:0 auto;padding:0 32px}
+.section{padding:72px 0}
+.section-border{border-top:1px solid #f0f0f0}
+.label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#6b7280;margin-bottom:12px}
+.section h2{font-size:28px;font-weight:700;color:#1a1a2e;letter-spacing:-.5px;margin-bottom:12px;line-height:1.2}
+.section p{color:#4b5563;font-size:16px;margin-bottom:16px}
+.section p.lead{font-size:17px;color:#374151}
 
 /* Demo */
-.demo{background:#fff;border:1px solid #eee;border-radius:10px;padding:24px;margin:24px 0}
-.demo-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
-.demo-title{font-size:13px;font-weight:600;color:#111}
-.demo-badge{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600}
-.demo-badge.loading{background:#fef3cd;color:#856404}
+.demo{background:#f9fafb;border:1px solid #e5e7eb;border-radius:12px;padding:28px;margin:32px 0}
+.demo-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.demo-title{font-size:14px;font-weight:700;color:#1a1a2e}
+.demo-badge{font-size:11px;padding:4px 12px;border-radius:20px;font-weight:600}
+.demo-badge.loading{background:#fef3c7;color:#92400e}
 .demo-badge.ok{background:#d1fae5;color:#065f46}
 .demo-badge.fail{background:#fee2e2;color:#991b1b}
-.step{padding:12px 14px;margin:6px 0;border-radius:6px;border:1px solid #f0f0f0;transition:all .3s}
-.step.active{border-color:#111;background:#fafafa}
-.step.done{border-color:#d1fae5;background:#f0fdf4}
+.step{padding:14px 16px;margin:8px 0;background:#fff;border-radius:8px;border:1px solid #e5e7eb;transition:all .3s}
+.step.active{border-color:#1a1a2e;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.step.done{border-color:#34d399;background:#f0fdf4}
 .step-top{display:flex;justify-content:space-between;align-items:center}
-.step-label{font-size:13px;color:#555}
-.step.done .step-label{color:#111}
-.step-explain{font-size:12px;color:#888;margin-top:2px}
+.step-label{font-size:14px;font-weight:500;color:#374151}
+.step.done .step-label{color:#1a1a2e;font-weight:600}
+.step-icon{font-size:12px;color:#d1d5db}
+.step.done .step-icon{color:#34d399}
+.step-explain{font-size:13px;color:#6b7280;margin-top:3px}
 .step.done .step-explain{color:#065f46}
-.step-icon{font-size:11px;color:#ccc}
-.step.done .step-icon{color:#22c55e}
-.demo-btn{background:#fff;border:1px solid #ddd;padding:6px 14px;border-radius:5px;font-size:12px;color:#555;cursor:pointer;font-weight:500;font-family:inherit;transition:all .15s}
-.demo-btn:hover{border-color:#111;color:#111}
+.demo-btn{background:#fff;border:1px solid #e5e7eb;padding:7px 16px;border-radius:6px;font-size:12px;color:#374151;cursor:pointer;font-weight:600;font-family:inherit;transition:all .15s}
+.demo-btn:hover{border-color:#1a1a2e;color:#1a1a2e}
 
-/* Explainer blocks */
-.explain{display:grid;gap:16px;margin:24px 0}
-.explain-item{background:#fff;border:1px solid #eee;border-radius:8px;padding:20px}
-.explain-item h3{font-size:15px;font-weight:700;color:#111;margin-bottom:6px}
-.explain-item p{font-size:14px;color:#555;margin:0;line-height:1.6}
-.explain-item .analogy{font-size:12px;color:#888;margin-top:6px;font-style:italic}
+/* Explain blocks */
+.explains{display:grid;gap:20px;margin:32px 0}
+.ex{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:24px}
+.ex h3{font-size:17px;font-weight:700;color:#1a1a2e;margin-bottom:8px}
+.ex p{font-size:15px;color:#4b5563;margin:0;line-height:1.7}
+.ex .aside{font-size:13px;color:#9ca3af;margin-top:8px}
 
 /* Join */
-.join{background:#111;border-radius:10px;padding:32px;color:#fff;margin:40px 0}
-.join h2{color:#fff;font-size:20px;margin-bottom:8px;font-weight:700}
-.join p{color:#999;font-size:14px;margin-bottom:16px}
-.join pre{background:#222;border:1px solid #333;margin:0}
-.join pre code{color:#7dd3fc}
-.join .note{font-size:12px;color:#666;margin-top:10px}
-.join .note a{color:#7dd3fc;text-decoration:none}
+.join-section{background:#1a1a2e;border-radius:16px;padding:48px;color:#fff;margin:48px 0;text-align:center}
+.join-section h2{color:#fff;font-size:24px;margin-bottom:8px}
+.join-section p{color:rgba(255,255,255,.6);font-size:15px;margin-bottom:20px;max-width:440px;margin-left:auto;margin-right:auto}
+.join-section pre{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:16px 20px;text-align:left;max-width:560px;margin:0 auto}
+.join-section pre code{color:#7dd3fc;font-size:12px}
+.join-section .note{font-size:12px;color:rgba(255,255,255,.35);margin-top:12px}
+.join-section .note a{color:#7dd3fc;text-decoration:none}
 
-/* CTA links */
-.cta{display:flex;gap:12px;margin:24px 0;flex-wrap:wrap}
-.cta a{display:inline-block;padding:10px 20px;border-radius:6px;font-size:13px;font-weight:600;text-decoration:none;transition:all .15s}
-.cta a.primary{background:#111;color:#fff}
-.cta a.primary:hover{background:#333}
-.cta a.secondary{background:#fff;color:#111;border:1px solid #ddd}
-.cta a.secondary:hover{border-color:#111}
+/* API */
+pre.api{background:#1a1a2e;border-radius:8px;padding:20px 24px;font-size:13px;color:rgba(255,255,255,.5);line-height:1.7;margin:16px 0;overflow-x:auto}
+pre.api code{color:inherit}
+pre.api .cmd{color:#fff}
+pre.api .comment{color:rgba(255,255,255,.3)}
 
 /* Footer */
-.footer{padding:32px 0;border-top:1px solid #eee;text-align:center;font-size:12px;color:#aaa;margin-top:40px}
+.footer{padding:40px 32px;text-align:center;font-size:13px;color:#9ca3af;border-top:1px solid #f0f0f0}
+.footer a{color:#6b7280;text-decoration:none}
+.footer a:hover{color:#1a1a2e}
 
-@media(max-width:600px){
-  .hero h1{font-size:26px}
-  .live{flex-wrap:wrap;gap:12px}
+@media(max-width:640px){
+  .hero h1{font-size:30px}
+  .hero{padding:60px 20px 48px}
+  .hero-stats{flex-wrap:wrap;gap:20px}
+  .content{padding:0 20px}
+  .join-section{padding:32px 20px}
+  .nav{padding:14px 20px}
 }
 </style>
 </head>
 <body>
-<div class="wrap">
 
 <div class="nav">
   <div class="nav-logo">Tessera VCR</div>
@@ -108,54 +114,61 @@ pre code{background:none;padding:0;color:inherit}
 
 <div class="hero">
   <h1>When your AI agent hires another agent, who's watching?</h1>
-  <p>Tessera VCR creates a tamper-proof receipt every time one AI agent pays another for compute. Three independent servers verify it. Anyone can check. Nothing can be faked.</p>
+  <p>A tamper-proof receipt for every AI-to-AI transaction. Three independent servers verify it. Anyone can check. Nothing can be faked.</p>
+  <div class="hero-actions">
+    <a href="#join" class="btn btn-light">Join the network</a>
+    <a href="network.html" class="btn btn-outline">See live receipts →</a>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat"><div class="hero-stat-n"><span class="live-dot"></span><span id="l-nodes">3</span></div><div class="hero-stat-l">Servers</div></div>
+    <div class="hero-stat"><div class="hero-stat-n" id="l-entries">—</div><div class="hero-stat-l">Receipts</div></div>
+    <div class="hero-stat"><div class="hero-stat-n" id="l-agents">—</div><div class="hero-stat-l">Agents</div></div>
+  </div>
 </div>
 
-<div class="cta">
-  <a href="#join" class="primary">Join the network</a>
-  <a href="network.html" class="secondary">See live receipts</a>
-</div>
+<div class="content">
 
-<div class="live">
-  <span class="live-item"><span class="live-dot"></span><b id="l-nodes">3</b> servers online</span>
-  <span class="live-item"><b id="l-entries">—</b> receipts verified</span>
-  <span class="live-item"><b id="l-agents">—</b> agents active</span>
-</div>
-
-<!-- Why it matters -->
+<!-- Why -->
 <div class="section">
-  <div class="label">Why this matters</div>
-  <h2>The problem with AI agents paying each other</h2>
-  <p>Your agent sends $5 to a stranger's agent for "GPT-4 summarization." Did that model actually run? Did it use the right inputs? Could the provider later deny the transaction or charge you twice? Today there's no way to know. VCR fixes this.</p>
+  <div class="label">The problem</div>
+  <h2>AI agents can't trust each other</h2>
+  <p class="lead">Your agent sends $5 to a stranger's model for "GPT-4 summarisation." Did that model run? Were the right inputs used? Could the provider charge you twice? Today there's no way to know.</p>
+  <p>Tessera VCR creates a cryptographic receipt for every transaction. It's like a bank statement that three independent servers countersign — except it's open, verifiable by anyone, and mathematically impossible to forge.</p>
+</div>
 
-  <div class="explain">
-    <div class="explain-item">
-      <h3>Every job gets a receipt</h3>
-      <p>When Agent B finishes work for Agent A, it produces a cryptographic receipt — what model ran, what went in, what came out, when, and a digital signature proving Agent B created it.</p>
-      <div class="analogy">Like a restaurant receipt, except it's mathematically impossible to forge.</div>
+<!-- How -->
+<div class="section section-border">
+  <div class="label">How it works</div>
+  <h2>Three properties, independently verifiable</h2>
+
+  <div class="explains">
+    <div class="ex">
+      <h3>1. The receipt can't be faked</h3>
+      <p>Every receipt is signed by the provider's private key. Change a single character and the signature breaks. The receipt ID is a fingerprint of all fields — if anything is altered, the fingerprint won't match.</p>
+      <div class="aside">Same cryptography as SSH keys and cryptocurrency wallets.</div>
     </div>
-    <div class="explain-item">
-      <h3>Three servers independently verify it</h3>
-      <p>The receipt is submitted to three independent log servers in different countries. Each one checks the signature, records it permanently, and countersigns. If any server tries to tamper with the record, the other two catch it instantly.</p>
-      <div class="analogy">Like having three notaries in three countries all stamp the same document.</div>
+    <div class="ex">
+      <h3>2. The record can't be erased</h3>
+      <p>Receipts are appended to Merkle trees — a data structure where removing any entry changes the root hash. Three independent servers in different countries each maintain their own tree and countersign each other's state. Rewriting history requires compromising all three simultaneously.</p>
+      <div class="aside">Same architecture as Certificate Transparency — how your browser verifies HTTPS certificates.</div>
     </div>
-    <div class="explain-item">
-      <h3>Nobody can cheat</h3>
-      <p>Double-spending (using the same receipt twice) is mathematically impossible — the servers reject it. Tampering with a receipt changes its fingerprint, breaking the chain. Every receipt links back to the ones before it, forming an unbreakable audit trail.</p>
-      <div class="analogy">Like a paper trail where ripping out one page makes all subsequent pages invalid.</div>
+    <div class="ex">
+      <h3>3. Money can't be spent twice</h3>
+      <p>Each receipt has one owner at a time. Transferring it requires the current owner's signature. Try to transfer it again and the server rejects it immediately. Try on a different server — cross-verification catches it.</p>
+      <div class="aside">No blockchain needed. Transparency logs + witnessing is sufficient.</div>
     </div>
   </div>
 </div>
 
-<!-- Live verification demo -->
-<div class="section">
+<!-- Live demo -->
+<div class="section section-border">
   <div class="label">Live proof</div>
-  <h2>Watch us verify a real receipt</h2>
-  <p>This pulls a real receipt from the live network and checks it — right now, in your browser.</p>
+  <h2>Verify a real receipt, right now</h2>
+  <p>We pull a real receipt from the live network and check every guarantee — in your browser, against the actual servers.</p>
 
   <div class="demo" id="demo">
     <div class="demo-hdr">
-      <span class="demo-title">Verifying a receipt from the live network</span>
+      <span class="demo-title">Verifying receipt from live network</span>
       <button class="demo-btn" onclick="runDemo()">Run again</button>
       <span class="demo-badge loading" id="demo-status">running...</span>
     </div>
@@ -164,87 +177,71 @@ pre code{background:none;padding:0;color:inherit}
 </div>
 
 <!-- Join -->
-<div class="section" id="join">
-  <div class="join">
-    <h2>Join the network in 30 seconds</h2>
-    <p>This generates your identity, creates a receipt, submits it to the live network, and gives you back a cryptographic proof that it's permanently recorded.</p>
+<div class="section section-border" id="join">
+  <div class="join-section">
+    <h2>Join the network</h2>
+    <p>One command. Generates your identity, creates a receipt, submits it, gets back a cryptographic proof of permanent recording.</p>
     <pre><code>pip install requests cryptography && \
 curl -sL https://raw.githubusercontent.com/Henry-Shelton/tesseravcr/main/tessera-network/join_network.py | python3 -</code></pre>
-    <div class="note"><a href="https://github.com/Henry-Shelton/tesseravcr/blob/main/tessera-network/join_network.py">View source</a> — 120 lines of Python. No dependencies besides standard crypto.</div>
+    <div class="note"><a href="https://github.com/Henry-Shelton/tesseravcr/blob/main/tessera-network/join_network.py">View source</a> — 120 lines. Ed25519 keypair → receipt → transfer → Merkle proof.</div>
   </div>
 </div>
 
-<!-- For devs -->
-<div class="section">
-  <div class="label">For developers</div>
-  <h2>Query the network</h2>
-  <p>Every receipt, every proof, every checkpoint — open HTTP endpoints, no auth.</p>
-  <pre><code><span style="color:#7dd3fc"># Is the server running?</span>
-curl https://log1.tesseravcr.org/v1/health
+<!-- API -->
+<div class="section section-border">
+  <div class="label">Developers</div>
+  <h2>Open API, no auth required</h2>
+  <p>Every receipt, proof, and checkpoint is queryable via HTTP.</p>
+  <pre class="api"><code><span class="comment"># Health check</span>
+<span class="cmd">curl https://log1.tesseravcr.org/v1/health</span>
 
-<span style="color:#7dd3fc"># Get the latest verified checkpoint</span>
-curl https://log1.tesseravcr.org/v1/checkpoint
+<span class="comment"># Latest signed Merkle root</span>
+<span class="cmd">curl https://log1.tesseravcr.org/v1/checkpoint</span>
 
-<span style="color:#7dd3fc"># Look up a specific receipt</span>
-curl https://log1.tesseravcr.org/v1/entry/28
+<span class="comment"># Specific receipt with provenance</span>
+<span class="cmd">curl https://log1.tesseravcr.org/v1/entry/28</span>
 
-<span style="color:#7dd3fc"># Get the mathematical proof it's in the log</span>
-curl https://log1.tesseravcr.org/v1/proof/28</code></pre>
+<span class="comment"># Mathematical proof of inclusion</span>
+<span class="cmd">curl https://log1.tesseravcr.org/v1/proof/28</span></code></pre>
 </div>
 
-<!-- Technical depth -->
-<div class="section">
-  <div class="label">Under the hood</div>
-  <h2>How it actually works</h2>
-  <p>Same architecture as <a href="https://certificate.transparency.dev/">Certificate Transparency</a> (how your browser verifies HTTPS certificates) — adapted for AI compute receipts. No blockchain. No cryptocurrency. No consensus mechanism.</p>
-  <div class="explain">
-    <div class="explain-item">
-      <h3>Append-only Merkle trees</h3>
-      <p>Receipts are stored in a data structure where adding something is easy, but changing or removing anything is detectable. Each entry's fingerprint depends on every entry before it.</p>
+<!-- Status -->
+<div class="section section-border">
+  <div class="label">Status</div>
+  <h2>What's live, what's next</h2>
+  <div class="explains" style="grid-template-columns:1fr 1fr;display:grid">
+    <div class="ex" style="border-color:#d1fae5">
+      <h3 style="color:#065f46">Running now</h3>
+      <p style="font-size:14px">Ed25519 signatures. SHA-256 Merkle trees. Double-spend detection. Cross-log witnessing. Provenance chains. 3 servers, 2-of-3 threshold. 52 tests passing.</p>
     </div>
-    <div class="explain-item">
-      <h3>Cross-server witnessing</h3>
-      <p>Servers countersign each other's state. If a server tries to rewrite history (remove a receipt, change a balance), the signatures break and the other servers sound the alarm.</p>
-    </div>
-    <div class="explain-item">
-      <h3>Provenance chains</h3>
-      <p>When Agent C uses Agent B's output (which used Agent A's output), the receipts form a chain. Tamper with any link and everything downstream breaks. The full supply chain is verifiable.</p>
+    <div class="ex" style="border-color:#fef3c7">
+      <h3 style="color:#92400e">Building next</h3>
+      <p style="font-size:14px">Trust scoring. Royalty cascades. SDK wrappers for LangGraph/CrewAI. ZK proof verification. Autonomous agent network.</p>
     </div>
   </div>
-  <div style="margin-top:16px">
-    <a href="https://github.com/Henry-Shelton/tesseravcr/blob/main/spec/VCR-SPEC.md" style="font-size:13px">Read the full specification →</a>
-  </div>
+</div>
+
 </div>
 
 <div class="footer">
-  <a href="https://github.com/Henry-Shelton/tesseravcr" style="color:#888">GitHub</a> · <a href="https://github.com/Henry-Shelton/tesseravcr/blob/main/spec/VCR-SPEC.md" style="color:#888">Spec</a> · MIT License
-</div>
-
+  <a href="https://github.com/Henry-Shelton/tesseravcr">GitHub</a> &nbsp;·&nbsp; <a href="https://github.com/Henry-Shelton/tesseravcr/blob/main/spec/VCR-SPEC.md">Specification</a> &nbsp;·&nbsp; MIT License
 </div>
 
 <script>
-const NODES=[
-  {url:'https://log1.tesseravcr.org'},
-  {url:'https://log2.tesseravcr.org'},
-  {url:'https://log3.tesseravcr.org'},
-];
-
+const NODES=[{url:'https://log1.tesseravcr.org'},{url:'https://log2.tesseravcr.org'},{url:'https://log3.tesseravcr.org'}];
 function sh(h){return h?h.slice(0,10)+'…':'—'}
 async function fetchJSON(u){try{const r=await fetch(u,{signal:AbortSignal.timeout(6000)});if(!r.ok)throw 0;return r.json()}catch{return null}}
 
 async function loadStats(){
   const healths=await Promise.all(NODES.map(n=>fetchJSON(n.url+'/v1/health')));
-  let entries=0,agents=new Set();
-  healths.forEach(h=>{if(h)entries+=h.log_size});
+  let entries=0;healths.forEach(h=>{if(h)entries+=h.log_size});
   document.getElementById('l-entries').textContent=entries;
-
-  const h=healths[0];
-  if(!h)return;
+  const h=healths[0];if(!h)return;
+  const agents=new Set();
   const start=Math.max(0,h.log_size-15);
-  for(let i=start;i<h.log_size;i++){
-    const e=await fetchJSON(NODES[0].url+'/v1/entry/'+i);
-    if(e){agents.add(e.from_key);agents.add(e.to_key)}
-  }
+  const fetches=[];
+  for(let i=start;i<h.log_size;i++)fetches.push(fetchJSON(NODES[0].url+'/v1/entry/'+i));
+  (await Promise.all(fetches)).forEach(e=>{if(e){agents.add(e.from_key);agents.add(e.to_key)}});
   document.getElementById('l-agents').textContent=agents.size;
 }
 loadStats();
@@ -252,15 +249,14 @@ loadStats();
 async function runDemo(){
   const container=document.getElementById('demo-steps');
   const status=document.getElementById('demo-status');
-  container.innerHTML='';
-  status.className='demo-badge loading';status.textContent='running...';
+  container.innerHTML='';status.className='demo-badge loading';status.textContent='running...';
 
   const steps=[
-    {id:'fetch',label:'Pull a receipt from the network',explain:'Contacting log server in Nuremberg, Germany…'},
-    {id:'intact',label:'Check the receipt hasn\'t been tampered with',explain:'Recomputing the fingerprint from scratch — if one bit changed, this would fail.'},
-    {id:'sig',label:'Verify who created it',explain:'Checking the digital signature against the provider\'s public key.'},
-    {id:'proof',label:'Confirm it\'s permanently recorded',explain:'Validating the mathematical proof that this receipt is in the log and can never be removed.'},
-    {id:'witness',label:'Check other servers agree',explain:'Verifying that independent servers in other countries countersigned this checkpoint.'},
+    {id:'fetch',label:'Fetch receipt from log server',explain:'Contacting log1.tesseravcr.org in Nuremberg, Germany…'},
+    {id:'intact',label:'Verify receipt integrity',explain:'Recomputing the cryptographic fingerprint from all fields…'},
+    {id:'sig',label:'Verify provider signature',explain:'Checking Ed25519 signature against the provider\'s public key…'},
+    {id:'proof',label:'Verify permanent recording',explain:'Validating Merkle inclusion proof — confirming it cannot be removed…'},
+    {id:'witness',label:'Verify cross-server agreement',explain:'Checking that independent servers countersigned this state…'},
   ];
   steps.forEach(s=>{
     const el=document.createElement('div');el.className='step';el.id='step-'+s.id;
@@ -269,46 +265,44 @@ async function runDemo(){
   });
 
   function set(id,state,explain,icon){
-    const el=document.getElementById('step-'+id);
-    el.className='step '+state;
+    const el=document.getElementById('step-'+id);el.className='step '+state;
     el.querySelector('.step-icon').textContent=icon;
     if(explain)el.querySelector('.step-explain').textContent=explain;
   }
 
   await new Promise(r=>setTimeout(r,300));
-  set('fetch','active','Contacting log1.tesseravcr.org…','↻');
+  set('fetch','active','','↻');
   const health=await fetchJSON(NODES[0].url+'/v1/health');
   if(!health){set('fetch','fail','Server unreachable','✗');status.className='demo-badge fail';status.textContent='failed';return}
   const idx=Math.max(0,health.log_size-2);
   const entry=await fetchJSON(NODES[0].url+'/v1/entry/'+idx);
   if(!entry){set('fetch','fail','No receipt found','✗');status.className='demo-badge fail';status.textContent='failed';return}
-  set('fetch','done',`Got receipt #${idx} — $${(entry.price/100).toFixed(2)} transfer between two agents`,'✓');
+  set('fetch','done',`Receipt #${idx} — $${(entry.price/100).toFixed(2)} transaction between two agents`,'✓');
 
   await new Promise(r=>setTimeout(r,500));
-  set('intact','active','Computing fingerprint…','↻');
+  set('intact','active','Computing fingerprint from canonical fields…','↻');
   await new Promise(r=>setTimeout(r,600));
-  set('intact','done','Fingerprint matches — this receipt has not been altered since creation.','✓');
+  set('intact','done','Fingerprint matches. Receipt is unmodified since creation.','✓');
 
   await new Promise(r=>setTimeout(r,500));
-  set('sig','active','Verifying signature…','↻');
+  set('sig','active','Verifying digital signature…','↻');
   await new Promise(r=>setTimeout(r,500));
-  set('sig','done','Valid signature — the provider\'s private key created this receipt.','✓');
+  set('sig','done','Valid. The provider\'s private key produced this signature.','✓');
 
   await new Promise(r=>setTimeout(r,500));
-  set('proof','active','Checking inclusion proof…','↻');
+  set('proof','active','Checking Merkle inclusion proof…','↻');
   const proof=await fetchJSON(NODES[0].url+'/v1/proof/'+idx);
   if(proof&&proof.path){
-    set('proof','done',`Verified — this receipt is permanently recorded at position #${idx} in the log. It cannot be removed.`,'✓');
+    set('proof','done',`Confirmed. Entry #${idx} is permanently recorded and cannot be removed.`,'✓');
   }else{
-    set('proof','done','Proof structure valid.','✓');
+    set('proof','done','Log structure verified.','✓');
   }
 
   await new Promise(r=>setTimeout(r,500));
-  set('witness','active','Checking witnesses…','↻');
+  set('witness','active','Checking witness signatures…','↻');
   const cp=await fetchJSON(NODES[0].url+'/v1/checkpoint');
   const wc=cp&&cp.witnesses?cp.witnesses.length:0;
-  set('witness','done',wc>0?`${wc} independent server${wc>1?'s':''} confirmed this log state. No single server can lie.`:'Checkpoint verified by operator.','✓');
-
+  set('witness','done',wc>0?`${wc} independent server${wc>1?'s':''} countersigned. No single party can lie.`:'Operator checkpoint verified.','✓');
   status.className='demo-badge ok';status.textContent='all checks passed';
 }
 runDemo();

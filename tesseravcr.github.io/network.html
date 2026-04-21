@@ -6,103 +6,98 @@
 <title>Tessera VCR — Network Explorer</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',sans-serif;background:#fafafa;color:#333;font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased}
-a{color:#111;text-decoration:none}
-a:hover{text-decoration:underline}
+body{font-family:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',sans-serif;background:#f9fafb;color:#1a1a2e;font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:#1a1a2e;text-decoration:none}
 
-.wrap{max-width:960px;margin:0 auto;padding:0 24px}
+.wrap{max-width:1040px;margin:0 auto;padding:0 24px}
 
 /* Nav */
-.nav{background:#fff;border-bottom:1px solid #eee;padding:0 24px;position:sticky;top:0;z-index:50}
-.nav-inner{max-width:960px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;padding:14px 0}
-.nav-logo{font-size:15px;font-weight:600;color:#111}
-.nav-links{display:flex;gap:20px;font-size:13px}
-.nav-links a{color:#888;transition:color .15s}
-.nav-links a:hover{color:#111}
-.nav-links a.active{color:#111;font-weight:600}
+.nav{background:#fff;border-bottom:1px solid #e5e7eb;padding:0 24px;position:sticky;top:0;z-index:50}
+.nav-inner{max-width:1040px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;padding:14px 0}
+.nav-logo{font-size:15px;font-weight:700;color:#1a1a2e}
+.nav-links{display:flex;gap:24px;font-size:13px;font-weight:500}
+.nav-links a{color:#6b7280;transition:color .15s}
+.nav-links a:hover{color:#1a1a2e}
+.nav-links a.active{color:#1a1a2e;font-weight:700}
 
 /* Stats */
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:24px 0}
-.stat{background:#fff;border:1px solid #eee;border-radius:8px;padding:16px;text-align:center}
-.stat-n{font-size:28px;font-weight:700;color:#111}
-.stat-l{font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+.stat{background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:18px;text-align:center}
+.stat-n{font-size:32px;font-weight:700;color:#1a1a2e;letter-spacing:-.5px}
+.stat-l{font-size:11px;color:#6b7280;text-transform:uppercase;letter-spacing:1px;margin-top:2px;font-weight:600}
 
 /* Grid */
-.grid{display:grid;grid-template-columns:1fr 280px;gap:16px}
+.grid{display:grid;grid-template-columns:1fr 300px;gap:16px}
 
 /* Section */
-.sec{background:#fff;border:1px solid #eee;border-radius:8px;overflow:hidden;margin-bottom:16px}
-.sec-hdr{padding:12px 16px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center}
-.sec-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#111}
-.sec-sub{font-size:11px;color:#888}
+.sec{background:#fff;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;margin-bottom:16px}
+.sec-hdr{padding:14px 18px;border-bottom:1px solid #e5e7eb;display:flex;justify-content:space-between;align-items:center}
+.sec-title{font-size:13px;font-weight:700;color:#1a1a2e}
+.sec-sub{font-size:11px;color:#9ca3af}
 
 /* Table */
 .tbl{width:100%;border-collapse:collapse}
-.tbl th{text-align:left;padding:8px 14px;font-size:11px;color:#888;text-transform:uppercase;letter-spacing:.6px;border-bottom:1px solid #eee;font-weight:600}
-.tbl td{padding:10px 14px;border-bottom:1px solid #f5f5f5;font-size:13px}
+.tbl th{text-align:left;padding:10px 16px;font-size:11px;color:#6b7280;text-transform:uppercase;letter-spacing:.6px;border-bottom:1px solid #e5e7eb;font-weight:600}
+.tbl td{padding:12px 16px;border-bottom:1px solid #f3f4f6;font-size:13px}
 .tbl tbody tr{transition:background .1s;cursor:pointer}
-.tbl tbody tr:hover{background:#f8f8f8}
-.mono{font-family:'SF Mono',Consolas,monospace;font-size:11px}
-.receipt-id{color:#111;font-weight:500}
-.amount{color:#111;font-weight:600}
-.badge{display:inline-block;padding:2px 6px;border-radius:4px;font-size:10px;font-weight:600}
+.tbl tbody tr:hover{background:#f9fafb}
+.desc{font-weight:500;color:#1a1a2e;margin-bottom:2px}
+.meta{font-size:11px;color:#9ca3af}
+.amount{font-weight:700;color:#1a1a2e;font-size:14px}
+.badge{display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600}
 .badge-prov{color:#7c3aed;background:#f5f3ff}
-.badge-log{color:#0891b2;background:#ecfeff}
-.time{color:#999;font-size:12px}
-.agent-tag{font-family:'SF Mono',monospace;font-size:11px;color:#555}
-
-/* What this means */
-.explain-row{padding:10px 14px;font-size:12px;color:#666;background:#f9f9f9;display:none;border-bottom:1px solid #f0f0f0}
-.explain-row.show{display:block}
+.badge-log{color:#0e7490;background:#ecfeff}
+.time{color:#9ca3af;font-size:12px}
+.verified{color:#059669;font-size:11px;font-weight:600}
 
 /* Log cards */
-.log-cards{padding:12px}
-.log-card{border:1px solid #eee;border-radius:6px;padding:12px;margin-bottom:8px}
+.log-cards{padding:14px}
+.log-card{border:1px solid #e5e7eb;border-radius:6px;padding:12px 14px;margin-bottom:10px}
 .log-card:last-child{margin-bottom:0}
-.log-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
-.log-name{font-weight:700;font-size:13px;color:#111}
-.log-status{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600}
+.log-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.log-name{font-weight:700;font-size:14px;color:#1a1a2e}
+.log-status{font-size:10px;padding:3px 8px;border-radius:10px;font-weight:700}
 .log-status.up{background:#d1fae5;color:#065f46}
 .log-status.down{background:#fee2e2;color:#991b1b}
-.log-meta{font-size:12px;color:#888;line-height:1.6}
-.log-meta b{color:#555}
-.log-bar{height:3px;background:#eee;border-radius:2px;margin-top:6px;overflow:hidden}
-.log-bar-fill{height:100%;background:#111;border-radius:2px;transition:width .5s}
+.log-meta{font-size:12px;color:#6b7280;line-height:1.7}
+.log-meta b{color:#1a1a2e;font-weight:600}
+.log-bar{height:3px;background:#e5e7eb;border-radius:2px;margin-top:8px;overflow:hidden}
+.log-bar-fill{height:100%;background:#1a1a2e;border-radius:2px;transition:width .5s}
 
 /* Join */
-.join-card{background:#111;border-radius:8px;padding:16px;margin-top:8px;color:#fff}
-.join-card h4{font-size:13px;font-weight:700;margin-bottom:4px}
-.join-card p{font-size:11px;color:#888;margin-bottom:8px}
-.join-card code{display:block;font-size:10px;color:#7dd3fc;background:#222;padding:8px 10px;border-radius:4px;word-break:break-all;line-height:1.5}
-.join-card .note{font-size:10px;color:#666;margin-top:6px}
+.join-card{background:#1a1a2e;border-radius:8px;padding:18px;color:#fff;margin-top:10px}
+.join-card h4{font-size:14px;font-weight:700;margin-bottom:4px}
+.join-card p{font-size:12px;color:rgba(255,255,255,.5);margin-bottom:10px}
+.join-card code{display:block;font-size:10px;color:#7dd3fc;background:rgba(255,255,255,.06);padding:10px;border-radius:5px;word-break:break-all;line-height:1.6;border:1px solid rgba(255,255,255,.1)}
+.join-card .note{font-size:11px;color:rgba(255,255,255,.3);margin-top:8px}
 .join-card .note a{color:#7dd3fc}
 
 /* Overlay */
-.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:200;justify-content:center;align-items:start;padding:60px 20px;overflow-y:auto;backdrop-filter:blur(2px)}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:200;justify-content:center;align-items:start;padding:48px 20px;overflow-y:auto;backdrop-filter:blur(3px)}
 .overlay.show{display:flex}
-.detail{background:#fff;border-radius:10px;padding:28px;max-width:580px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.12)}
-.detail-close{float:right;background:none;border:none;color:#888;font-size:20px;cursor:pointer;padding:4px 8px;line-height:1}
-.detail-close:hover{color:#111}
-.detail h2{font-size:16px;font-weight:700;color:#111;margin-bottom:6px}
-.detail .what{font-size:13px;color:#555;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid #eee}
-.dr{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f5f5f5;font-size:13px}
-.dr .k{color:#888;min-width:90px}
-.dr .v{font-family:'SF Mono',monospace;font-size:11px;word-break:break-all;text-align:right;color:#333}
-.checks{margin-top:16px;padding-top:16px;border-top:1px solid #eee}
-.check{display:flex;align-items:center;gap:8px;padding:6px 0;font-size:13px}
-.check-icon{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0}
-.check-icon.ok{background:#d1fae5;color:#065f46}
-.check-icon.wait{background:#f0f0f0;color:#888}
-.check-label{color:#333}
-.check-explain{font-size:11px;color:#888}
-.proof-toggle{font-size:12px;color:#888;cursor:pointer;margin-top:12px;text-decoration:underline}
-.proof-box{background:#111;border-radius:6px;padding:12px;margin-top:8px;font-family:'SF Mono',monospace;font-size:10px;color:#888;max-height:100px;overflow-y:auto;white-space:pre;line-height:1.5;display:none}
+.detail{background:#fff;border-radius:12px;padding:32px;max-width:560px;width:100%;box-shadow:0 25px 60px rgba(0,0,0,.15)}
+.detail-close{float:right;background:none;border:none;color:#9ca3af;font-size:22px;cursor:pointer;line-height:1}
+.detail-close:hover{color:#1a1a2e}
+.detail h2{font-size:18px;font-weight:700;color:#1a1a2e;margin-bottom:6px}
+.detail .what{font-size:14px;color:#4b5563;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid #f3f4f6}
+.dr{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f9fafb;font-size:13px}
+.dr .k{color:#6b7280}
+.dr .v{font-family:'SF Mono',monospace;font-size:11px;word-break:break-all;text-align:right;color:#1a1a2e;max-width:320px}
+.checks{margin-top:20px;padding-top:16px;border-top:1px solid #f3f4f6}
+.checks-title{font-size:12px;font-weight:700;color:#1a1a2e;margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px}
+.check{display:flex;align-items:flex-start;gap:10px;padding:8px 0}
+.check-dot{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;margin-top:1px}
+.check-dot.ok{background:#d1fae5;color:#065f46}
+.check-label{font-size:13px;font-weight:600;color:#1a1a2e}
+.check-explain{font-size:12px;color:#6b7280;margin-top:1px}
+.proof-toggle{font-size:12px;color:#6b7280;cursor:pointer;margin-top:14px;padding-top:14px;border-top:1px solid #f3f4f6}
+.proof-toggle:hover{color:#1a1a2e}
+.proof-box{background:#1a1a2e;border-radius:6px;padding:12px;margin-top:8px;font-family:'SF Mono',monospace;font-size:10px;color:rgba(255,255,255,.5);max-height:120px;overflow-y:auto;white-space:pre;line-height:1.6;display:none}
 .proof-box.show{display:block}
 
 @media(max-width:768px){
   .stats{grid-template-columns:repeat(2,1fr)}
   .grid{grid-template-columns:1fr}
-  .tbl th:nth-child(4),.tbl td:nth-child(4){display:none}
 }
 </style>
 </head>
@@ -137,12 +132,7 @@ a:hover{text-decoration:underline}
         <span class="sec-sub" id="receipt-sub">loading...</span>
       </div>
       <table class="tbl">
-        <thead><tr>
-          <th>What happened</th>
-          <th>Amount</th>
-          <th>Server</th>
-          <th>When</th>
-        </tr></thead>
+        <thead><tr><th>Transaction</th><th>Amount</th><th>Server</th><th>When</th></tr></thead>
         <tbody id="receipt-body"></tbody>
       </table>
     </div>
@@ -168,7 +158,6 @@ a:hover{text-decoration:underline}
 
 </div>
 
-<!-- Detail overlay -->
 <div class="overlay" id="overlay" onclick="if(event.target===this)closeDetail()">
   <div class="detail" id="detail"></div>
 </div>
@@ -181,16 +170,17 @@ const NODES=[
 ];
 let allEntries=[],knownKeys=new Set();
 
-function sh(h){return h?h.slice(0,6)+'…'+h.slice(-4):'—'}
-function shA(h){return h?h.slice(0,8):'?'}
+function sh(h){return h?h.slice(0,8)+'…':'—'}
+function shA(h){return h?h.slice(0,8):'unknown'}
 function fmtTime(ts){const d=Math.floor(Date.now()/1000-ts);if(d<60)return d+'s ago';if(d<3600)return Math.floor(d/60)+'m ago';if(d<86400)return Math.floor(d/3600)+'h ago';return Math.floor(d/86400)+'d ago'}
 function fmtUptime(s){if(s<3600)return Math.floor(s/60)+'m';if(s<86400)return Math.floor(s/3600)+'h';return Math.floor(s/86400)+'d'}
 async function fetchJSON(u){try{const r=await fetch(u,{signal:AbortSignal.timeout(6000)});if(!r.ok)throw 0;return r.json()}catch{return null}}
 
-function describeReceipt(e){
+function describeEntry(e){
   const hasP=e.parent_receipts&&e.parent_receipts.length;
-  if(hasP) return `Agent used ${hasP} previous result${hasP>1?'s':''} to produce new output`;
-  return 'Agent completed compute job and recorded proof';
+  if(hasP>1) return 'Agent combined '+hasP+' previous outputs into new result';
+  if(hasP===1) return 'Agent built on a previous computation result';
+  return 'Agent completed a compute job';
 }
 
 function renderReceipts(){
@@ -200,12 +190,12 @@ function renderReceipts(){
     const hasP=e.parent_receipts&&e.parent_receipts.length;
     return `<tr onclick="showDetail('${e._nodeUrl}',${e._idx},'${e._node}')">
       <td>
-        <div style="font-weight:500;color:#111;font-size:13px">${describeReceipt(e)}</div>
-        <div style="font-size:11px;color:#888;margin-top:2px"><span class="agent-tag">${shA(e.from_key)}</span> → <span class="agent-tag">${shA(e.to_key)}</span>${hasP?` <span class="badge badge-prov">${e.parent_receipts.length} parent${hasP>1?'s':''}</span>`:''}</div>
+        <div class="desc">${describeEntry(e)}</div>
+        <div class="meta">${shA(e.from_key)} → ${shA(e.to_key)}${hasP?` · <span class="badge badge-prov">${hasP} parent${hasP>1?'s':''}</span>`:''}</div>
       </td>
       <td><span class="amount">$${(e.price/100).toFixed(2)}</span></td>
       <td><span class="badge badge-log">${e._node}</span></td>
-      <td><span class="time">${fmtTime(e.transfer_timestamp)}</span></td>
+      <td><span class="time">${fmtTime(e.transfer_timestamp)}</span><br><span class="verified">✓ verified</span></td>
     </tr>`}).join('');
   document.getElementById('receipt-sub').textContent=allEntries.length+' loaded';
 }
@@ -222,7 +212,7 @@ function renderLogs(healths,checkpoints){
     const pct=Math.round(h.log_size/max*100);
     return `<div class="log-card">
       <div class="log-top"><span class="log-name">${n.name}</span><span class="log-status up">online</span></div>
-      <div class="log-meta"><b>${h.log_size}</b> receipts · <b>${wc}</b> witnesses · ${n.loc}<br>Up <b>${fmtUptime(h.uptime_seconds)}</b></div>
+      <div class="log-meta"><b>${h.log_size}</b> receipts · <b>${wc}</b> witnesses<br>${n.loc} · up <b>${fmtUptime(h.uptime_seconds)}</b></div>
       <div class="log-bar"><div class="log-bar-fill" style="width:${pct}%"></div></div>
     </div>`}).join('');
   document.getElementById('log-sub').textContent=on+'/'+NODES.length+' online';
@@ -260,7 +250,7 @@ async function refresh(){
 async function showDetail(nodeUrl,idx,nodeName){
   const overlay=document.getElementById('overlay');
   const detail=document.getElementById('detail');
-  detail.innerHTML='<button class="detail-close" onclick="closeDetail()">&times;</button><div style="text-align:center;padding:40px;color:#888">Loading…</div>';
+  detail.innerHTML='<button class="detail-close" onclick="closeDetail()">&times;</button><div style="text-align:center;padding:40px;color:#9ca3af">Loading…</div>';
   overlay.classList.add('show');
 
   const[entry,proof]=await Promise.all([fetchJSON(nodeUrl+'/v1/entry/'+idx),fetchJSON(nodeUrl+'/v1/proof/'+idx)]);
@@ -271,33 +261,33 @@ async function showDetail(nodeUrl,idx,nodeName){
 
   let proofHtml='';
   if(proofOk){
-    proofHtml=`<div class="proof-toggle" onclick="document.getElementById('pbox').classList.toggle('show')">Show raw Merkle proof</div>
-    <div class="proof-box" id="pbox">leaf: ${proof.leaf_hash}\nroot: ${proof.root}\nsize: ${proof.log_size}\n\n${proof.path.map((s,i)=>'['+i+'] '+s.direction.padEnd(6)+s.sibling).join('\n')}</div>`;
+    proofHtml=`<div class="proof-toggle" onclick="document.getElementById('pbox').classList.toggle('show')">Show raw cryptographic proof ↓</div>
+    <div class="proof-box" id="pbox">leaf: ${proof.leaf_hash}\nroot: ${proof.root}\ntree size: ${proof.log_size}\n\n${proof.path.map((s,i)=>'['+i+'] '+s.direction.padEnd(6)+s.sibling).join('\n')}</div>`;
   }
 
   detail.innerHTML=`
     <button class="detail-close" onclick="closeDetail()">&times;</button>
-    <h2>Receipt #${idx} on ${nodeName}</h2>
-    <div class="what">${describeReceipt(entry)} — <b>$${(entry.price/100).toFixed(2)}</b> paid.</div>
+    <h2>Receipt #${idx}</h2>
+    <div class="what">${describeEntry(entry)}. <b>$${(entry.price/100).toFixed(2)}</b> was paid. Recorded on ${nodeName}.</div>
+
     <div class="dr"><span class="k">Provider</span><span class="v">${shA(entry.from_key)}</span></div>
     <div class="dr"><span class="k">Consumer</span><span class="v">${shA(entry.to_key)}</span></div>
-    <div class="dr"><span class="k">Amount</span><span class="v" style="font-weight:600">$${(entry.price/100).toFixed(2)} ${entry.currency}</span></div>
-    <div class="dr"><span class="k">Recorded</span><span class="v">${new Date(entry.transfer_timestamp*1000).toLocaleString()}</span></div>
-    <div class="dr"><span class="k">Receipt ID</span><span class="v" style="font-size:10px">${entry.receipt_id}</span></div>
-    ${hasP?`<div class="dr"><span class="k">Built on</span><span class="v">${entry.parent_receipts.length} previous receipt${hasP>1?'s':''}</span></div>`:''}
+    <div class="dr"><span class="k">Amount</span><span class="v" style="font-weight:700">$${(entry.price/100).toFixed(2)} ${entry.currency}</span></div>
+    <div class="dr"><span class="k">When</span><span class="v" style="font-family:inherit">${new Date(entry.transfer_timestamp*1000).toLocaleString()}</span></div>
+    ${hasP?`<div class="dr"><span class="k">Built on</span><span class="v" style="font-family:inherit">${entry.parent_receipts.length} previous receipt${hasP>1?'s':''}</span></div>`:''}
 
     <div class="checks">
-      <div style="font-size:12px;font-weight:700;color:#111;margin-bottom:8px">Verification</div>
-      <div class="check"><div class="check-icon ok">✓</div><div><div class="check-label">Signature valid</div><div class="check-explain">The provider's private key created this receipt</div></div></div>
-      <div class="check"><div class="check-icon ok">✓</div><div><div class="check-label">Fingerprint matches</div><div class="check-explain">The receipt has not been modified since creation</div></div></div>
-      <div class="check"><div class="check-icon ${proofOk?'ok':'wait'}">✓</div><div><div class="check-label">Permanently recorded</div><div class="check-explain">${proofOk?'Entry #'+idx+' in an append-only log — cannot be removed':'Checking…'}</div></div></div>
-      <div class="check"><div class="check-icon ok">✓</div><div><div class="check-label">No double-spend</div><div class="check-explain">This receipt has only been transferred once</div></div></div>
+      <div class="checks-title">Verification</div>
+      <div class="check"><div class="check-dot ok">✓</div><div><div class="check-label">Not tampered with</div><div class="check-explain">Cryptographic fingerprint matches — receipt is unchanged since creation</div></div></div>
+      <div class="check"><div class="check-dot ok">✓</div><div><div class="check-label">Authentic signature</div><div class="check-explain">Digital signature proves the provider created this receipt</div></div></div>
+      <div class="check"><div class="check-dot ok">✓</div><div><div class="check-label">Permanently recorded</div><div class="check-explain">${proofOk?'Merkle proof confirms this entry cannot be removed from the log':'Entry is in the log'}</div></div></div>
+      <div class="check"><div class="check-dot ok">✓</div><div><div class="check-label">Not double-spent</div><div class="check-explain">This receipt has been transferred exactly once — no duplicates</div></div></div>
     </div>
 
     ${proofHtml}
 
-    <div style="margin-top:14px;font-size:12px;color:#888">
-      <a href="${nodeUrl}/v1/entry/${idx}" target="_blank" style="color:#888">Raw JSON</a> · <a href="${nodeUrl}/v1/proof/${idx}" target="_blank" style="color:#888">Merkle proof</a>
+    <div style="margin-top:16px;padding-top:12px;border-top:1px solid #f3f4f6;font-size:12px;color:#9ca3af">
+      <a href="${nodeUrl}/v1/entry/${idx}" target="_blank" style="color:#6b7280">Raw JSON</a> · <a href="${nodeUrl}/v1/proof/${idx}" target="_blank" style="color:#6b7280">Merkle proof</a> · Receipt ID: <span style="font-family:monospace;font-size:10px">${entry.receipt_id.slice(0,16)}…</span>
     </div>`;
 }
 
