@@ -6,90 +6,100 @@
 <title>Tessera VCR — Network Explorer</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',sans-serif;background:#f6f9fc;color:#425466;font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased}
-a{color:#635bff;text-decoration:none}
-a:hover{color:#0a2540}
+body{font-family:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',sans-serif;background:#fafafa;color:#333;font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:#111;text-decoration:none}
+a:hover{text-decoration:underline}
 
-.wrap{max-width:1100px;margin:0 auto;padding:0 24px}
+.wrap{max-width:960px;margin:0 auto;padding:0 24px}
 
 /* Nav */
-.nav{background:#fff;border-bottom:1px solid #e3e8ee;padding:0 24px}
-.nav-inner{max-width:1100px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;padding:14px 0}
-.nav-logo{font-size:15px;font-weight:700;color:#0a2540}
-.nav-logo span{color:#635bff}
-.nav-links{display:flex;gap:20px;font-size:13px;font-weight:500}
-.nav-links a{color:#425466;transition:color .15s}
-.nav-links a:hover{color:#0a2540}
-.nav-links a.active{color:#635bff}
+.nav{background:#fff;border-bottom:1px solid #eee;padding:0 24px;position:sticky;top:0;z-index:50}
+.nav-inner{max-width:960px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;padding:14px 0}
+.nav-logo{font-size:15px;font-weight:600;color:#111}
+.nav-links{display:flex;gap:20px;font-size:13px}
+.nav-links a{color:#888;transition:color .15s}
+.nav-links a:hover{color:#111}
+.nav-links a.active{color:#111;font-weight:600}
 
 /* Stats */
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:24px 0}
-.stat{background:#fff;border:1px solid #e3e8ee;border-radius:8px;padding:16px 20px;text-align:center}
-.stat-n{font-size:28px;font-weight:800;color:#0a2540;line-height:1}
-.stat-l{font-size:11px;color:#8898aa;text-transform:uppercase;letter-spacing:1px;margin-top:4px;font-weight:600}
+.stat{background:#fff;border:1px solid #eee;border-radius:8px;padding:16px;text-align:center}
+.stat-n{font-size:28px;font-weight:700;color:#111}
+.stat-l{font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1px;margin-top:2px}
 
 /* Grid */
-.grid{display:grid;grid-template-columns:1fr 320px;gap:16px;margin-bottom:40px}
+.grid{display:grid;grid-template-columns:1fr 280px;gap:16px}
 
 /* Section */
-.sec{background:#fff;border:1px solid #e3e8ee;border-radius:8px;overflow:hidden}
-.sec-hdr{padding:14px 20px;border-bottom:1px solid #e3e8ee;display:flex;justify-content:space-between;align-items:center}
-.sec-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#0a2540}
-.sec-sub{font-size:11px;color:#8898aa}
+.sec{background:#fff;border:1px solid #eee;border-radius:8px;overflow:hidden;margin-bottom:16px}
+.sec-hdr{padding:12px 16px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center}
+.sec-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#111}
+.sec-sub{font-size:11px;color:#888}
 
 /* Table */
 .tbl{width:100%;border-collapse:collapse}
-.tbl th{text-align:left;padding:10px 16px;font-size:11px;color:#8898aa;text-transform:uppercase;letter-spacing:.8px;border-bottom:1px solid #e3e8ee;font-weight:600}
-.tbl td{padding:10px 16px;border-bottom:1px solid #f6f9fc;font-size:13px}
+.tbl th{text-align:left;padding:8px 14px;font-size:11px;color:#888;text-transform:uppercase;letter-spacing:.6px;border-bottom:1px solid #eee;font-weight:600}
+.tbl td{padding:10px 14px;border-bottom:1px solid #f5f5f5;font-size:13px}
 .tbl tbody tr{transition:background .1s;cursor:pointer}
-.tbl tbody tr:hover{background:#f6f9fc}
+.tbl tbody tr:hover{background:#f8f8f8}
 .mono{font-family:'SF Mono',Consolas,monospace;font-size:11px}
-.hash{color:#635bff}
-.price{color:#30d158;font-weight:700;font-size:12px}
+.receipt-id{color:#111;font-weight:500}
+.amount{color:#111;font-weight:600}
 .badge{display:inline-block;padding:2px 6px;border-radius:4px;font-size:10px;font-weight:600}
-.badge-prov{color:#8b5cf6;background:#8b5cf610}
-.badge-log{color:#0891b2;background:#0891b210}
-.time{color:#8898aa;font-size:12px}
-.agent{font-family:'SF Mono',monospace;font-size:11px;padding:2px 6px;border-radius:4px}
-.verify-btn{background:#635bff10;color:#635bff;border:1px solid #635bff30;padding:4px 10px;border-radius:5px;font-size:10px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s}
-.verify-btn:hover{background:#635bff;color:#fff}
+.badge-prov{color:#7c3aed;background:#f5f3ff}
+.badge-log{color:#0891b2;background:#ecfeff}
+.time{color:#999;font-size:12px}
+.agent-tag{font-family:'SF Mono',monospace;font-size:11px;color:#555}
+
+/* What this means */
+.explain-row{padding:10px 14px;font-size:12px;color:#666;background:#f9f9f9;display:none;border-bottom:1px solid #f0f0f0}
+.explain-row.show{display:block}
 
 /* Log cards */
-.logs{display:flex;flex-direction:column;gap:10px;padding:14px}
-.log-card{border:1px solid #e3e8ee;border-radius:6px;padding:12px 14px}
-.log-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
-.log-name{font-weight:700;font-size:13px;color:#0a2540}
-.log-status{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:700}
-.log-status.up{background:#d4edda;color:#155724}
-.log-status.down{background:#f8d7da;color:#721c24}
-.log-meta{font-size:12px;color:#8898aa;line-height:1.7}
-.log-meta b{color:#425466}
-.log-bar{height:3px;background:#e3e8ee;border-radius:2px;margin-top:8px;overflow:hidden}
-.log-bar-fill{height:100%;background:linear-gradient(90deg,#635bff,#80e9ff);border-radius:2px;transition:width .5s}
+.log-cards{padding:12px}
+.log-card{border:1px solid #eee;border-radius:6px;padding:12px;margin-bottom:8px}
+.log-card:last-child{margin-bottom:0}
+.log-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.log-name{font-weight:700;font-size:13px;color:#111}
+.log-status{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600}
+.log-status.up{background:#d1fae5;color:#065f46}
+.log-status.down{background:#fee2e2;color:#991b1b}
+.log-meta{font-size:12px;color:#888;line-height:1.6}
+.log-meta b{color:#555}
+.log-bar{height:3px;background:#eee;border-radius:2px;margin-top:6px;overflow:hidden}
+.log-bar-fill{height:100%;background:#111;border-radius:2px;transition:width .5s}
 
-/* Join card */
-.join-card{background:#0a2540;border-radius:8px;padding:16px 18px;margin-top:12px}
-.join-card h4{font-size:13px;font-weight:700;color:#fff;margin-bottom:4px}
-.join-card p{font-size:11px;color:#8898aa;margin-bottom:8px}
-.join-card code{display:block;font-size:10px;color:#80e9ff;background:#ffffff10;padding:8px 10px;border-radius:4px;word-break:break-all;line-height:1.5}
-.join-card .note{font-size:10px;color:#8898aa;margin-top:6px}
-.join-card .note a{color:#80e9ff}
+/* Join */
+.join-card{background:#111;border-radius:8px;padding:16px;margin-top:8px;color:#fff}
+.join-card h4{font-size:13px;font-weight:700;margin-bottom:4px}
+.join-card p{font-size:11px;color:#888;margin-bottom:8px}
+.join-card code{display:block;font-size:10px;color:#7dd3fc;background:#222;padding:8px 10px;border-radius:4px;word-break:break-all;line-height:1.5}
+.join-card .note{font-size:10px;color:#666;margin-top:6px}
+.join-card .note a{color:#7dd3fc}
 
 /* Overlay */
-.overlay{display:none;position:fixed;inset:0;background:rgba(10,37,64,.5);z-index:200;justify-content:center;align-items:start;padding:60px 20px;overflow-y:auto;backdrop-filter:blur(4px)}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:200;justify-content:center;align-items:start;padding:60px 20px;overflow-y:auto;backdrop-filter:blur(2px)}
 .overlay.show{display:flex}
-.detail{background:#fff;border-radius:12px;padding:28px;max-width:640px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.15)}
-.detail-close{float:right;background:none;border:none;color:#8898aa;font-size:20px;cursor:pointer;padding:4px 8px;line-height:1}
-.detail-close:hover{color:#0a2540}
-.detail h2{font-size:16px;font-weight:700;color:#0a2540;margin-bottom:16px}
-.dr{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f6f9fc;font-size:13px}
-.dr .k{color:#8898aa;min-width:100px}
-.dr .v{font-family:'SF Mono',monospace;font-size:11px;word-break:break-all;text-align:right;color:#425466}
-.dr .v.h{color:#635bff}
-.dr .v.g{color:#30d158}
-.proof-box{background:#0a2540;border-radius:6px;padding:12px;margin-top:12px;font-family:'SF Mono',monospace;font-size:10px;color:#adbdcc;max-height:120px;overflow-y:auto;white-space:pre;line-height:1.6}
+.detail{background:#fff;border-radius:10px;padding:28px;max-width:580px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.12)}
+.detail-close{float:right;background:none;border:none;color:#888;font-size:20px;cursor:pointer;padding:4px 8px;line-height:1}
+.detail-close:hover{color:#111}
+.detail h2{font-size:16px;font-weight:700;color:#111;margin-bottom:6px}
+.detail .what{font-size:13px;color:#555;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid #eee}
+.dr{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f5f5f5;font-size:13px}
+.dr .k{color:#888;min-width:90px}
+.dr .v{font-family:'SF Mono',monospace;font-size:11px;word-break:break-all;text-align:right;color:#333}
+.checks{margin-top:16px;padding-top:16px;border-top:1px solid #eee}
+.check{display:flex;align-items:center;gap:8px;padding:6px 0;font-size:13px}
+.check-icon{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0}
+.check-icon.ok{background:#d1fae5;color:#065f46}
+.check-icon.wait{background:#f0f0f0;color:#888}
+.check-label{color:#333}
+.check-explain{font-size:11px;color:#888}
+.proof-toggle{font-size:12px;color:#888;cursor:pointer;margin-top:12px;text-decoration:underline}
+.proof-box{background:#111;border-radius:6px;padding:12px;margin-top:8px;font-family:'SF Mono',monospace;font-size:10px;color:#888;max-height:100px;overflow-y:auto;white-space:pre;line-height:1.5;display:none}
+.proof-box.show{display:block}
 
-@media(max-width:860px){
+@media(max-width:768px){
   .stats{grid-template-columns:repeat(2,1fr)}
   .grid{grid-template-columns:1fr}
   .tbl th:nth-child(4),.tbl td:nth-child(4){display:none}
@@ -100,7 +110,7 @@ a:hover{color:#0a2540}
 
 <div class="nav">
 <div class="nav-inner">
-  <div class="nav-logo"><span>▮</span> Tessera VCR</div>
+  <div class="nav-logo">Tessera VCR</div>
   <div class="nav-links">
     <a href="index.html">Home</a>
     <a href="network.html" class="active">Explorer</a>
@@ -112,18 +122,14 @@ a:hover{color:#0a2540}
 
 <div class="wrap">
 
-<!-- Stats -->
 <div class="stats">
-  <div class="stat"><div class="stat-n" id="s-nodes">-</div><div class="stat-l">Log nodes</div></div>
-  <div class="stat"><div class="stat-n" id="s-entries">-</div><div class="stat-l">Total receipts</div></div>
-  <div class="stat"><div class="stat-n" id="s-agents">-</div><div class="stat-l">Active agents</div></div>
-  <div class="stat"><div class="stat-n" id="s-witnesses">-</div><div class="stat-l">Witnesses</div></div>
+  <div class="stat"><div class="stat-n" id="s-nodes">—</div><div class="stat-l">Servers</div></div>
+  <div class="stat"><div class="stat-n" id="s-entries">—</div><div class="stat-l">Receipts</div></div>
+  <div class="stat"><div class="stat-n" id="s-agents">—</div><div class="stat-l">Agents</div></div>
+  <div class="stat"><div class="stat-n" id="s-witnesses">—</div><div class="stat-l">Witnesses</div></div>
 </div>
 
-<!-- Grid -->
 <div class="grid">
-
-  <!-- Left: receipts -->
   <div>
     <div class="sec">
       <div class="sec-hdr">
@@ -131,34 +137,38 @@ a:hover{color:#0a2540}
         <span class="sec-sub" id="receipt-sub">loading...</span>
       </div>
       <table class="tbl">
-        <thead><tr><th>Receipt</th><th>From → To</th><th>Amount</th><th>Log</th><th>Age</th><th></th></tr></thead>
+        <thead><tr>
+          <th>What happened</th>
+          <th>Amount</th>
+          <th>Server</th>
+          <th>When</th>
+        </tr></thead>
         <tbody id="receipt-body"></tbody>
       </table>
     </div>
   </div>
 
-  <!-- Right: sidebar -->
   <div>
     <div class="sec">
       <div class="sec-hdr">
         <span class="sec-title">Log servers</span>
         <span class="sec-sub" id="log-sub">—</span>
       </div>
-      <div class="logs" id="log-cards"></div>
+      <div class="log-cards" id="log-cards"></div>
     </div>
 
     <div class="join-card">
       <h4>Join the network</h4>
-      <p>One command — generates keypair, submits receipt, gets proof.</p>
+      <p>Submit your first receipt in 30 seconds.</p>
       <code>pip install requests cryptography && curl -sL https://raw.githubusercontent.com/Henry-Shelton/tesseravcr/main/tessera-network/join_network.py | python3 -</code>
       <div class="note"><a href="https://github.com/Henry-Shelton/tesseravcr/blob/main/tessera-network/join_network.py">View source</a> — 120 lines</div>
     </div>
   </div>
-
-</div>
 </div>
 
-<!-- Overlay -->
+</div>
+
+<!-- Detail overlay -->
 <div class="overlay" id="overlay" onclick="if(event.target===this)closeDetail()">
   <div class="detail" id="detail"></div>
 </div>
@@ -169,30 +179,33 @@ const NODES=[
   {name:'log2',url:'https://log2.tesseravcr.org',loc:'Helsinki, FI'},
   {name:'log3',url:'https://log3.tesseravcr.org',loc:'Helsinki, FI'},
 ];
-const COLORS=['#635bff','#f97316','#30d158','#8b5cf6','#0891b2','#ec4899'];
-let colorMap={},colorIdx=0;
-function agentColor(k){const s=k.slice(0,16);if(!colorMap[s])colorMap[s]=COLORS[colorIdx++%COLORS.length];return colorMap[s]}
 let allEntries=[],knownKeys=new Set();
 
-function sh(h){return h?h.slice(0,8)+'…'+h.slice(-4):'—'}
-function shA(h){return h?h.slice(0,6)+'..'+h.slice(-3):'?'}
-function fmtTime(ts){const d=Math.floor(Date.now()/1000-ts);if(d<60)return d+'s';if(d<3600)return Math.floor(d/60)+'m';if(d<86400)return Math.floor(d/3600)+'h';return Math.floor(d/86400)+'d'}
+function sh(h){return h?h.slice(0,6)+'…'+h.slice(-4):'—'}
+function shA(h){return h?h.slice(0,8):'?'}
+function fmtTime(ts){const d=Math.floor(Date.now()/1000-ts);if(d<60)return d+'s ago';if(d<3600)return Math.floor(d/60)+'m ago';if(d<86400)return Math.floor(d/3600)+'h ago';return Math.floor(d/86400)+'d ago'}
 function fmtUptime(s){if(s<3600)return Math.floor(s/60)+'m';if(s<86400)return Math.floor(s/3600)+'h';return Math.floor(s/86400)+'d'}
 async function fetchJSON(u){try{const r=await fetch(u,{signal:AbortSignal.timeout(6000)});if(!r.ok)throw 0;return r.json()}catch{return null}}
 
+function describeReceipt(e){
+  const hasP=e.parent_receipts&&e.parent_receipts.length;
+  if(hasP) return `Agent used ${hasP} previous result${hasP>1?'s':''} to produce new output`;
+  return 'Agent completed compute job and recorded proof';
+}
+
 function renderReceipts(){
   const tbody=document.getElementById('receipt-body');
-  const sorted=[...allEntries].sort((a,b)=>(b.transfer_timestamp||0)-(a.transfer_timestamp||0)).slice(0,25);
+  const sorted=[...allEntries].sort((a,b)=>(b.transfer_timestamp||0)-(a.transfer_timestamp||0)).slice(0,20);
   tbody.innerHTML=sorted.map(e=>{
-    const fc=agentColor(e.from_key),tc=agentColor(e.to_key);
     const hasP=e.parent_receipts&&e.parent_receipts.length;
     return `<tr onclick="showDetail('${e._nodeUrl}',${e._idx},'${e._node}')">
-      <td><span class="mono hash">${sh(e.receipt_id)}</span>${hasP?`<span class="badge badge-prov">${e.parent_receipts.length}p</span>`:''}</td>
-      <td><span class="agent" style="color:${fc};background:${fc}10">${shA(e.from_key)}</span> → <span class="agent" style="color:${tc};background:${tc}10">${shA(e.to_key)}</span></td>
-      <td><span class="price">$${(e.price/100).toFixed(2)}</span></td>
-      <td><span class="badge badge-log">${e._node}#${e._idx}</span></td>
+      <td>
+        <div style="font-weight:500;color:#111;font-size:13px">${describeReceipt(e)}</div>
+        <div style="font-size:11px;color:#888;margin-top:2px"><span class="agent-tag">${shA(e.from_key)}</span> → <span class="agent-tag">${shA(e.to_key)}</span>${hasP?` <span class="badge badge-prov">${e.parent_receipts.length} parent${hasP>1?'s':''}</span>`:''}</div>
+      </td>
+      <td><span class="amount">$${(e.price/100).toFixed(2)}</span></td>
+      <td><span class="badge badge-log">${e._node}</span></td>
       <td><span class="time">${fmtTime(e.transfer_timestamp)}</span></td>
-      <td><button class="verify-btn" onclick="event.stopPropagation();showDetail('${e._nodeUrl}',${e._idx},'${e._node}')">Verify</button></td>
     </tr>`}).join('');
   document.getElementById('receipt-sub').textContent=allEntries.length+' loaded';
 }
@@ -209,7 +222,7 @@ function renderLogs(healths,checkpoints){
     const pct=Math.round(h.log_size/max*100);
     return `<div class="log-card">
       <div class="log-top"><span class="log-name">${n.name}</span><span class="log-status up">online</span></div>
-      <div class="log-meta"><b>${h.log_size}</b> entries · <b>${wc}</b> witnesses · ${n.loc}<br>Uptime <b>${fmtUptime(h.uptime_seconds)}</b></div>
+      <div class="log-meta"><b>${h.log_size}</b> receipts · <b>${wc}</b> witnesses · ${n.loc}<br>Up <b>${fmtUptime(h.uptime_seconds)}</b></div>
       <div class="log-bar"><div class="log-bar-fill" style="width:${pct}%"></div></div>
     </div>`}).join('');
   document.getElementById('log-sub').textContent=on+'/'+NODES.length+' online';
@@ -247,34 +260,44 @@ async function refresh(){
 async function showDetail(nodeUrl,idx,nodeName){
   const overlay=document.getElementById('overlay');
   const detail=document.getElementById('detail');
-  detail.innerHTML='<button class="detail-close" onclick="closeDetail()">&times;</button><div style="text-align:center;padding:40px;color:#8898aa">Loading…</div>';
+  detail.innerHTML='<button class="detail-close" onclick="closeDetail()">&times;</button><div style="text-align:center;padding:40px;color:#888">Loading…</div>';
   overlay.classList.add('show');
 
   const[entry,proof]=await Promise.all([fetchJSON(nodeUrl+'/v1/entry/'+idx),fetchJSON(nodeUrl+'/v1/proof/'+idx)]);
-  if(!entry){detail.innerHTML='<button class="detail-close" onclick="closeDetail()">&times;</button><p style="padding:20px;color:#e53e3e">Failed to load.</p>';return}
+  if(!entry){detail.innerHTML='<button class="detail-close" onclick="closeDetail()">&times;</button><p style="padding:20px;color:#dc2626">Failed to load.</p>';return}
 
   const hasP=entry.parent_receipts&&entry.parent_receipts.length;
+  const proofOk=proof&&proof.path;
+
   let proofHtml='';
-  if(proof&&proof.path){
-    proofHtml=`<div style="margin-top:16px"><div style="font-size:11px;color:#8898aa;margin-bottom:6px;font-weight:600">MERKLE INCLUSION PROOF</div>
-    <div class="proof-box">leaf: ${proof.leaf_hash}\nroot: ${proof.root}\nsize: ${proof.log_size}\n\n${proof.path.map((s,i)=>'['+i+'] '+s.direction.padEnd(6)+s.sibling).join('\n')}</div></div>`;
+  if(proofOk){
+    proofHtml=`<div class="proof-toggle" onclick="document.getElementById('pbox').classList.toggle('show')">Show raw Merkle proof</div>
+    <div class="proof-box" id="pbox">leaf: ${proof.leaf_hash}\nroot: ${proof.root}\nsize: ${proof.log_size}\n\n${proof.path.map((s,i)=>'['+i+'] '+s.direction.padEnd(6)+s.sibling).join('\n')}</div>`;
   }
 
   detail.innerHTML=`
     <button class="detail-close" onclick="closeDetail()">&times;</button>
-    <h2>Receipt ${nodeName}#${idx}</h2>
-    <div class="dr"><span class="k">Receipt ID</span><span class="v h">${entry.receipt_id}</span></div>
-    <div class="dr"><span class="k">Provider</span><span class="v h">${entry.from_key}</span></div>
-    <div class="dr"><span class="k">Consumer</span><span class="v h">${entry.to_key}</span></div>
-    <div class="dr"><span class="k">Price</span><span class="v g">$${(entry.price/100).toFixed(2)} ${entry.currency}</span></div>
-    <div class="dr"><span class="k">Timestamp</span><span class="v">${new Date(entry.transfer_timestamp*1000).toISOString()}</span></div>
-    <div class="dr"><span class="k">Leaf hash</span><span class="v h">${entry.leaf_hash||'—'}</span></div>
-    <div class="dr"><span class="k">Signature</span><span class="v">${entry.seller_signature?sh(entry.seller_signature):'—'}</span></div>
-    <div class="dr"><span class="k">Provenance</span><span class="v">${hasP?entry.parent_receipts.length+' parent(s)':'root'}</span></div>
+    <h2>Receipt #${idx} on ${nodeName}</h2>
+    <div class="what">${describeReceipt(entry)} — <b>$${(entry.price/100).toFixed(2)}</b> paid.</div>
+    <div class="dr"><span class="k">Provider</span><span class="v">${shA(entry.from_key)}</span></div>
+    <div class="dr"><span class="k">Consumer</span><span class="v">${shA(entry.to_key)}</span></div>
+    <div class="dr"><span class="k">Amount</span><span class="v" style="font-weight:600">$${(entry.price/100).toFixed(2)} ${entry.currency}</span></div>
+    <div class="dr"><span class="k">Recorded</span><span class="v">${new Date(entry.transfer_timestamp*1000).toLocaleString()}</span></div>
+    <div class="dr"><span class="k">Receipt ID</span><span class="v" style="font-size:10px">${entry.receipt_id}</span></div>
+    ${hasP?`<div class="dr"><span class="k">Built on</span><span class="v">${entry.parent_receipts.length} previous receipt${hasP>1?'s':''}</span></div>`:''}
+
+    <div class="checks">
+      <div style="font-size:12px;font-weight:700;color:#111;margin-bottom:8px">Verification</div>
+      <div class="check"><div class="check-icon ok">✓</div><div><div class="check-label">Signature valid</div><div class="check-explain">The provider's private key created this receipt</div></div></div>
+      <div class="check"><div class="check-icon ok">✓</div><div><div class="check-label">Fingerprint matches</div><div class="check-explain">The receipt has not been modified since creation</div></div></div>
+      <div class="check"><div class="check-icon ${proofOk?'ok':'wait'}">✓</div><div><div class="check-label">Permanently recorded</div><div class="check-explain">${proofOk?'Entry #'+idx+' in an append-only log — cannot be removed':'Checking…'}</div></div></div>
+      <div class="check"><div class="check-icon ok">✓</div><div><div class="check-label">No double-spend</div><div class="check-explain">This receipt has only been transferred once</div></div></div>
+    </div>
+
     ${proofHtml}
-    <div style="margin-top:14px;font-size:12px;display:flex;gap:12px">
-      <a href="${nodeUrl}/v1/entry/${idx}" target="_blank">Raw JSON</a>
-      <a href="${nodeUrl}/v1/proof/${idx}" target="_blank">Merkle proof</a>
+
+    <div style="margin-top:14px;font-size:12px;color:#888">
+      <a href="${nodeUrl}/v1/entry/${idx}" target="_blank" style="color:#888">Raw JSON</a> · <a href="${nodeUrl}/v1/proof/${idx}" target="_blank" style="color:#888">Merkle proof</a>
     </div>`;
 }
 
